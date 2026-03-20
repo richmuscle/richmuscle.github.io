@@ -1,0 +1,5 @@
+# Mark CSS and Static assets as documentation/generated so they don't skew language stats
+style/** linguist-documentation
+static/** linguist-documentation
+*.js linguist-generated
+*.html linguist-generated

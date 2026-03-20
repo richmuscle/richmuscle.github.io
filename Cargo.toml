@@ -1,0 +1,41 @@
+[package]
+name = "richardmussell"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# The CSR feature is the most important part!
+# Security: Use compatible version ranges with Cargo.lock for reproducible builds
+# Cargo.lock (committed to git) provides security through reproducible builds
+# Run `cargo update` periodically and review the diff
+# latest: v0.8.x — minor update from 0.6, check CHANGELOG before upgrading
+leptos = { version = "0.6", features = ["csr"] }
+leptos_meta = { version = "0.6", features = ["csr"] }
+leptos_router = { version = "0.6", features = ["csr"] }
+serde = { version = "1", features = ["derive"] }
+gloo-net = { version = "0.5", features = ["http"] }
+gloo-timers = { version = "0.3", features = ["futures"] }
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["Clipboard", "Document", "Element", "History", "HtmlIFrameElement", "IntersectionObserver", "IntersectionObserverEntry", "IntersectionObserverInit", "MediaQueryList", "Navigator", "Window"] }
+
+# getrandom must have the `js` feature on wasm32-unknown-unknown so that
+# HashMap::RandomState (SipHash) and wasm-bindgen's string-intern cache
+# can seed themselves via window.crypto.getRandomValues() instead of
+# returning an error that leaves HashMap internals in a corrupt state.
+# latest: v0.4.x — major update, needs migration (js feature obsolete in 0.4)
+getrandom = { version = "0.2", features = ["js"] }
+
+# Security audit: Run `cargo audit` to check dependencies against RustSec advisory database
+# Install: cargo install cargo-audit
+# This checks all deps against RustSec advisory database
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+overflow-checks = false
+
+# Optional: override for dev-only deps (e.g. avoid stripping test helpers).
+# [profile.release.package."*"]  # leave commented; strip = true is safe for Wasm

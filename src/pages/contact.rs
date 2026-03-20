@@ -1,0 +1,106 @@
+use leptos::*;
+use leptos_meta::{Meta, Title};
+use leptos_router::A;
+use crate::data::{EMAIL, GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE};
+use crate::utils::track;
+
+#[component]
+pub fn ContactPage() -> impl IntoView {
+    let (email_copied, set_email_copied) = create_signal(false);
+    view! {
+        <Title text=move || format!("Contact · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
+        <Meta name="description" content="Contact Richard Mussell — Information Technology & Systems Professional available for systems engineering, SRE, and platform roles. Responds to every email."/>
+        <main id="main-content" class="contact-page page-enter">
+            <div class="contact-header">
+                <div class="contact-header-inner">
+                    <p class="contact-header-label">"Contact"</p>
+                    <h1 class="contact-heading">"Let's talk systems & platform engineering."</h1>
+                    <p class="contact-subtext">
+                        "Disciplined IT Systems Professional and BS in ITAM graduate. I specialize in engineering repeatable infrastructure, managing enterprise identity fabrics, and automating complex system lifecycles."
+                    </p>
+                </div>
+            </div>
+
+            <div class="contact-body">
+                <div class="contact-left">
+                    <p class="contact-section-label">"Reach me"</p>
+                    <div class="contact-row">
+                        <span class="contact-row-glyph" aria-hidden="true">"✉"</span>
+                        <div class="contact-row-content">
+                            <span class="contact-row-label">"Email"</span>
+                            <span class="contact-row-value">{EMAIL}</span>
+                            <button
+                                type="button"
+                                class="contact-copy-btn"
+                                on:click=move |_| {
+                                    let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
+                                    set_email_copied.set(true);
+                                    track("email_copy", r#"{"source":"contact"}"#);
+                                    let _ = gloo_timers::callback::Timeout::new(2000, move || set_email_copied.set(false));
+                                }
+                                aria-label="Copy email address"
+                            >
+                                {move || if email_copied.get() { "✓ Copied" } else { "Copy" }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <span class="contact-row-glyph contact-glyph-in" aria-hidden="true">"in"</span>
+                        <div class="contact-row-content">
+                            <span class="contact-row-label">"LinkedIn"</span>
+                            <a href=LINKEDIN_URL target="_blank" rel="noopener noreferrer" class="contact-row-value">"/in/richard-mussell"</a>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <span class="contact-row-glyph contact-glyph-gh" aria-hidden="true">"gh"</span>
+                        <div class="contact-row-content">
+                            <span class="contact-row-label">"GitHub"</span>
+                            <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" class="contact-row-value">"richardmussell"</a>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <span class="contact-row-glyph" aria-hidden="true">"◎"</span>
+                        <div class="contact-row-content">
+                            <span class="contact-row-label">"Location"</span>
+                            <span class="contact-row-value">"Oklahoma City, OK"</span>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <span class="contact-row-glyph" aria-hidden="true">
+                            <span class="contact-status-dot"></span>
+                        </span>
+                        <div class="contact-row-content">
+                            <span class="contact-row-label">"Status"</span>
+                            <span class="contact-row-value">"Open to Systems & Platform Engineering roles"</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-divider" aria-hidden="true"></div>
+
+                <div class="contact-right">
+                    <p class="contact-section-label">"What I am looking for"</p>
+                    <div class="contact-want-list">
+                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Junior Platform Engineer, Systems Administrator, or DevOps roles."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Building and scaling Kubernetes (k8s) environments for modern delivery."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Implementing Infrastructure as Code (Terraform, Pulumi) to eliminate manual toil."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Managing Identity Fabrics (Active Directory/Entra ID) and hybrid-cloud access."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Teams focused on automated provisioning and deterministic system state."</div>
+                    </div>
+                    <div class="contact-action-buttons">
+                        <A href="/resume" class="hero-btn">"Download Resume"</A>
+                        <A href="/" class="hero-btn">"View Projects"</A>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-footer-band">
+                "Available for interviews immediately · Response time: same day"
+            </div>
+        </main>
+    }
+}
+
+// ============================================================
+//  ONE-PAGER  — Recruiter 90-second summary
+// ============================================================

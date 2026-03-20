@@ -1,0 +1,62 @@
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: ["main"]
+permissions:
+  contents: write
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - name: Install Trunk
+        run: |
+          wget -qO- https://github.com/trunk-rs/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+          sudo mv trunk /usr/local/bin/
+      - name: Build with Trunk (Release)
+        env:
+          RUSTFLAGS: "-C target-feature=+bulk-memory"
+        run: trunk build --release
+      - name: Manual Asset Verification & Placement
+        run: |
+          # Create the directory in the build output
+          mkdir -p dist/fonts
+
+          # Force a clean font placement into dist/fonts/ so it maps to /fonts/ on GitHub Pages
+          rm -rf dist/fonts
+          mkdir -p dist/fonts
+
+          # Copy physical fonts into the production folder
+          cp -v static/fonts/*.woff2 dist/fonts/
+
+          # Verify expected filenames exist (case-sensitive)
+          test -f dist/fonts/inter-400.woff2
+          test -f dist/fonts/inter-500.woff2
+          test -f dist/fonts/jbmono-400.woff2
+
+          # SPA Routing fixes
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean: true
+          commit-message: "Deployment: Production build updated via CI/CD pipeline"

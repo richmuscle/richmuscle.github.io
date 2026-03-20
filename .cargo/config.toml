@@ -1,0 +1,10 @@
+# Cargo configuration for WASM binary size optimization
+# Note: bulk-memory/mutable-globals were removed so Trunk's wasm-opt pass
+# does not require --enable-bulk-memory-opt (portfolio does not need them).
+
+[target.wasm32-unknown-unknown]
+rustflags = [
+  "-C", "link-arg=--no-entry",
+  "-C", "link-arg=-zstack-size=1048576",
+  "-C", "link-arg=--import-memory",
+]

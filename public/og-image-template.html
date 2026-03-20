@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--
+  OG image generator — NOT served as a route.
+  Open this file in a browser, set viewport to 1200×630, screenshot,
+  save as public/og-image.png, then add to Trunk copy-file so /og-image.png is in dist/.
+  See the GitHub Actions workflow for the exact procedure.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200, height=630">
+  <title>OG Image — Richard Mussell</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1200px;
+      height: 630px;
+      background: #0a0f1a;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      display: flex;
+      flex-direction: column;
+      padding: 48px 56px;
+    }
+    .row { display: flex; flex: 1; min-height: 0; }
+    .left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-right: 48px;
+    }
+    .name {
+      font-size: 52px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 12px;
+    }
+    .title {
+      font-size: 24px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+    .tagline {
+      font-size: 16px;
+      color: #22d3ee;
+      letter-spacing: 2px;
+    }
+    .right {
+      width: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+    .project-line {
+      font-size: 14px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .project-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .bottom-bar {
+      border-top: 1px solid #1e2630;
+      padding-top: 12px;
+      text-align: center;
+      font-size: 14px;
+      color: #22d3ee;
+    }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <div class="left">
+      <div class="name">Richard Mussell</div>
+      <div class="title">Systems Engineer</div>
+      <div class="tagline">Rust · WebAssembly · Kubernetes · eBPF</div>
+    </div>
+    <div class="right">
+      <div class="project-line"><span class="project-dot" style="background:#f97316"></span>Rust-to-Wasm Edge Runtime</div>
+      <div class="project-line"><span class="project-dot" style="background:#3b82f6"></span>Kubernetes Custom Controller</div>
+      <div class="project-line"><span class="project-dot" style="background:#8b5cf6"></span>eBPF Kernel Monitor</div>
+      <div class="project-line"><span class="project-dot" style="background:#8b5cf6"></span>OTel Tracing Pipeline</div>
+      <div class="project-line"><span class="project-dot" style="background:#10b981"></span>Bare-Metal IaC Provisioner</div>
+    </div>
+  </div>
+  <div class="bottom-bar">richardmussell.dev</div>
+</body>
+</html>

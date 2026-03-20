@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+# One-pager is a direct recruiter tool — do not index (would compete with homepage in search).
+Disallow: /one-pager
+Sitemap: https://richardmussell.dev/sitemap.xml

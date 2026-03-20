@@ -1,0 +1,22 @@
+# Build: trunk build --release
+# Output: dist/
+# Deploy: GitHub Pages (static, no server)
+# WASM: wasm32-unknown-unknown target
+# Optimise: wasm-opt -Oz (via trunk's built-in wasm-opt pass)
+# Note: All routes are client-side — configure host to serve
+#       index.html for all 404s (SPA refresh fix via 404.html)
+
+[build]
+# Trunk automatically runs wasm-opt on the WASM binary.
+# For additional size reduction, set opt_level in Cargo.toml:
+#   [profile.release]
+#   opt-level = "z"
+#   lto = "fat"
+#   codegen-units = 1
+#   strip = true
+# Target binary size goal: < 500 KB gzipped.
+target = "index.html"
+
+[serve]
+port = 8080
+open = false

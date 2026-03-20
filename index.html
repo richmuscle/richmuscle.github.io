@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" style="background-color:#0f172a">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSP is set by hosting response headers; no meta CSP to avoid duplication. -->
+    <title>Richard J. Mussell | IT Systems Administrator & Platform Operations</title>
+    <meta name="description" content="Professional portfolio of Richard J. Mussell. IT Systems Professional specializing in Systems Administration, Cloud Infrastructure, and Cyber Security. Grounded in operational discipline and focused on secure, automated system lifecycles.">
+    <meta property="og:title" content="Richard J. Mussell | IT Systems & Platform Operations">
+    <meta property="og:description" content="Systems professional bridging enterprise reliability with modern automation. Specializing in Windows/Linux administration, Cloud hardening, and Identity Management (IAM).">
+    <meta property="og:image" content="https://richardmussell.github.io/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://richardmussell.github.io/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Richard J. Mussell | IT Systems Administrator">
+    <meta name="twitter:description" content="Specializing in secure, scalable IT operations, hybrid-cloud administration, and system automation.">
+    <meta name="theme-color" content="#0f172a" />
+
+    <link rel="canonical" href="https://richardmussell.github.io/">
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    <!-- Preload critical-path fonts only (above-the-fold weights) -->
+    <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="/fonts/inter-500.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="/fonts/jbmono-400.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; }
+        html {
+          background: #0f172a;
+          color: #e8edf5;
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        html.light { background: #f0f4f8; color: #0a1628; }
+        body {
+          min-height: 100vh;
+          -webkit-font-smoothing: antialiased;
+          background-color: #0f172a;
+        }
+        html.light body { background-color: #f0f4f8; }
+    </style>
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+
+    <!-- Trunk directives ─────────────────────────────────────── -->
+    <!-- Build and inject the WASM app (required for any output).
+         Trunk emits the Wasm script with type="module"; no defer/async needed. -->
+    <link data-trunk rel="rust" data-wasm-opt="0" />
+    <!-- Wasm preload: Trunk does not support data-trunk rel="preload"; inject at runtime from loader script. -->
+    <!-- Bundle the custom stylesheet into dist/ -->
+    <link data-trunk rel="css" href="style/style.css"/>
+    <!-- Copy self-hosted fonts to dist/fonts/ -->
+    <link data-trunk rel="copy-dir" href="static/fonts" />
+    <!-- Copy writeup and project content JSON (lazy-loaded at runtime) -->
+    <link data-trunk rel="copy-dir" href="static/writeups"/>
+    <link data-trunk rel="copy-dir" href="static/projects"/>
+    <link data-trunk rel="copy-file" href="public/sitemap.xml"/>
+    <link data-trunk rel="copy-file" href="robots.txt"/>
+    <link data-trunk rel="copy-file" href="manifest.json"/>
+    <link data-trunk rel="copy-file" href="public/og-image.png"/>
+    <!-- Copy favicons to dist root -->
+    <link data-trunk rel="copy-file" href="favicon.svg"/>
+    <link data-trunk rel="copy-file" href="favicon-32.png"/>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Richard J. Mussell",
+      "jobTitle": "Systems Administrator & Platform Operations",
+      "description": "Professional portfolio of Richard J. Mussell specializing in Systems Administration, Cloud Infrastructure, and Cyber Security Operations. Grounded in operational discipline and building toward modern platform engineering.",
+      "url": "https://richardmussell.dev",
+      "email": "richard.mussell@yahoo.com",
+      "sameAs": [
+        "https://www.linkedin.com/in/richard-mussell/",
+        "https://github.com/richardmussell"
+      ],
+      "knowsAbout": [
+        "Systems Administration",
+        "Kubernetes",
+        "Terraform",
+        "Linux Hardening",
+        "Active Directory",
+        "NIST Framework"
+      ],
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "Central Washington University"
+      }
+    }
+    </script>
+    <script>
+    // Insert Wasm preload hint: Trunk does not support data-trunk rel="preload".
+    // Derive .wasm URL from modulepreload href (xxx.js -> xxx_bg.wasm) or from script[src].
+    (function() {
+      var wasmHref = null;
+      var modulepreload = document.querySelector('link[rel="modulepreload"]');
+      if (modulepreload) {
+        var h = modulepreload.getAttribute('href');
+        if (h && h.indexOf('.js') !== -1) wasmHref = h.replace(/\.js$/, '_bg.wasm');
+      }
+      if (!wasmHref) {
+        var scripts = document.querySelectorAll('script[src*=".js"]');
+        for (var i = 0; i < scripts.length; i++) {
+          var s = scripts[i].getAttribute('src');
+          if (s) { wasmHref = s.replace(/\.js$/, '_bg.wasm'); break; }
+        }
+      }
+      if (wasmHref) {
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'fetch';
+        link.type = 'application/wasm';
+        link.crossOrigin = 'anonymous';
+        link.href = wasmHref;
+        document.head.appendChild(link);
+      }
+    })();
+    </script>
+    </head>
+<!-- FOUC guard: matches dark-mode default. Overridden by create_effect in main.rs -->
+<body style="background-color: #0f172a;">
+  <noscript>
+    <div style="font-family:monospace;padding:40px;color:#94a3b8;background:#0a0f1a;min-height:100vh">
+      <p>This portfolio requires JavaScript (WebAssembly) to run.</p>
+      <p>Richard J. Mussell — Systems Administrator & Platform Operations — Rust · Terraform · Linux</p>
+      <p>Contact: richard.mussell@yahoo.com</p>
+    </div>
+  </noscript>
+  <!-- Visible fallback: disappears once WASM mounts successfully.
+       If you still see this text after 10 seconds, the WASM is not running. -->
+  <div id="wasm-init-indicator"
+       style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+              color:#22d3ee;font-family:monospace;font-size:13px;text-align:center;
+              pointer-events:none;">
+    <div>Initializing…</div>
+    <div style="margin-top:6px;font-size:10px;color:#4a6380;">
+      If this does not disappear, open DevTools → Console for errors
+    </div>
+  </div>
+  <script>
+  (function() {
+    setTimeout(function() {
+      var el = document.getElementById('wasm-init-indicator');
+      if (el && el.parentNode) {
+        el.innerHTML = '<div style="color:#94a3b8;">App failed to load. Check the console or refresh.</div>';
+        el.id = '';
+        setTimeout(function() { if (el.parentNode) el.remove(); }, 8000);
+      }
+    }, 10000);
+  })();
+  </script>
+</body>
+</html>

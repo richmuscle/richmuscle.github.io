@@ -1,0 +1,39 @@
+# Cargo-deny configuration for security and license compliance
+# Install: cargo install cargo-deny
+# Run: cargo deny check
+
+[advisories]
+# Deny all known vulnerabilities
+vulnerability = "deny"
+# Warn about unmaintained crates
+unmaintained = "warn"
+# Deny yanked crates
+yanked = "deny"
+# Warn about notices
+notice = "warn"
+
+[licenses]
+# Deny unlicensed crates
+unlicensed = "deny"
+# Only allow these licenses
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "ISC",
+    "Unicode-DFS-2016",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "Zlib",
+]
+# Default to deny for unknown licenses
+default = "deny"
+
+[bans]
+# Warn about multiple versions of the same crate
+multiple-versions = "warn"
+# Allow specific duplicate versions if needed
+# allow = []
+
+[source]
+# Ensure all sources are from trusted registries
+# registry = ["https://github.com/rust-lang/crates.io-index"]

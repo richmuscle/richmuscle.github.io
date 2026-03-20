@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://richardmussell.dev/</loc>
+       <priority>1.0</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.dev/project/rust-wasm-edge-runtime</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.dev/project/kubernetes-custom-controller</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.dev/project/ebpf-kernel-monitor</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.dev/project/otel-tracing-pipeline</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.dev/project/bare-metal-iac-provisioner</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.dev/writing</loc>
+       <priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.dev/writing/rust-wasm-edge-runtime-internals</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.dev/writing/kubernetes-controller-reconciliation-deep-dive</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.dev/writing/ebpf-from-zero-to-prod</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.dev/writing/otel-ebpf-tracing-without-instrumentation</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.dev/resume</loc>
+       <priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.dev/contact</loc>
+       <priority>0.8</priority><changefreq>monthly</changefreq></url>
+</urlset>
