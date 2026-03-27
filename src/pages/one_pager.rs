@@ -35,7 +35,7 @@ pub fn OnePageSummary() -> impl IntoView {
                 </section>
 
                 <section class="one-pager-section">
-                    <p class="one-pager-sentence">"I build the infrastructure layer between bare metal and the cloud-native control plane — in Rust, with zero JavaScript, and with eBPF tracing from day one."</p>
+                    <p class="one-pager-sentence">"I orchestrate high-integrity ecosystems between the physical bedrock and the unified control plane — building deterministic environments where complexity is silenced to ensure a resilient, 50-year lookout."</p>
                 </section>
 
                 <section class="one-pager-section">
@@ -93,16 +93,16 @@ pub fn OnePageSummary() -> impl IntoView {
                     <h2 class="one-pager-h2">"Technical Depth"</h2>
                     <div class="one-pager-three-col one-pager-tech-grid">
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"Core"</strong>
-                            <p>"Rust, WebAssembly/wasm-bindgen, Linux kernel/syscalls"</p>
+                            <strong class="one-pager-col-label">"Bedrock Sovereignty"</strong>
+                            <p>"Deterministic Kernel-level enforcement, Bare-metal state reconciliation, and the orchestration of immutable system lifecycles."</p>
                         </div>
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"Orchestration"</strong>
-                            <p>"Kubernetes CRDs, controller-runtime, Helm"</p>
+                            <strong class="one-pager-col-label">"Unified Control Planes"</strong>
+                            <p>"Declarative state enforcement through Crossplane compositions, CRD-based reconciliation loops, and self-healing infrastructure logic."</p>
                         </div>
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"Observability"</strong>
-                            <p>"eBPF CO-RE, OpenTelemetry, Prometheus"</p>
+                            <strong class="one-pager-col-label">"High-Fidelity Signal"</strong>
+                            <p>"eBPF-driven telemetry at the syscall layer, semantic observability, and high-integrity temporal correlation of system events."</p>
                         </div>
                     </div>
                 </section>
@@ -110,18 +110,48 @@ pub fn OnePageSummary() -> impl IntoView {
                 <section class="one-pager-section">
                     <h2 class="one-pager-h2">"What I am looking for"</h2>
                     <ul class="contact-wish-list">
-                        <li><span class="contact-arrow">"→"</span>" Junior Platform Engineer, DevOps Engineer, or Systems Engineer roles."</li>
-                        <li><span class="contact-arrow">"→"</span>" Teams utilizing Kubernetes (k8s) for container orchestration and cloud-native delivery."</li>
-                        <li><span class="contact-arrow">"→"</span>" Environments scaling through Infrastructure as Code (Terraform, Pulumi) and automated CI/CD pipelines."</li>
-                        <li><span class="contact-arrow">"→"</span>" Engineering-centric cultures focused on Linux internals, developer experience (DevEx), and system reliability."</li>
-                        <li><span class="contact-arrow">"→"</span>" Opportunities based in Oklahoma City or Remote-friendly organizations."</li>
+                        <li><span class="contact-arrow">"->"</span>" Designing deterministic environments where infrastructure complexity is silenced to serve organizational velocity."</li>
+                        <li><span class="contact-arrow">"->"</span>" Architecting Unified Control Planes (Crossplane) that orchestrate multi-cloud compositions beyond standard cluster management."</li>
+                        <li><span class="contact-arrow">"->"</span>" Refactoring 'Old Guard' static IaC into dynamic, self-healing landscapes driven by continuous, deterministic state reconciliation."</li>
+                        <li><span class="contact-arrow">"->"</span>" Scaling high-integrity ecosystems where identity, connectivity, and governance function as vital, self-governing organs."</li>
+                        <li><span class="contact-arrow">"->"</span>" Strategic partnerships with organizations focused on Pinnacle Orchestration (Remote-first or Oklahoma City-based)."</li>
                     </ul>
                 </section>
 
                 <section class="one-pager-section">
-                    <h2 class="one-pager-h2">"Education + Certs"</h2>
-                    <p>"BS Information Technology — Central Washington University"</p>
-                    <p class="one-pager-certs">"Pursuing: CKA · CKAD · RHCSA"</p>
+                    <h2 class="one-pager-h2">"ACADEMIC_FOUNDATION_//_STRATEGIC_PURSUIT"</h2>
+                    <div class="one-pager-edu-block">
+                        <p class="one-pager-edu-row">
+                            <span class="one-pager-edu-label">"Institution:"</span>
+                            "Central Washington University (2020 - 2024)"
+                        </p>
+                        <p class="one-pager-edu-row">
+                            <span class="one-pager-edu-label">"Degree:"</span>
+                            "Bachelor of Science (BS), Information Technology — "
+                            <span class="one-pager-edu-accent">"Cybersecurity Specialization"</span>
+                        </p>
+                        <p class="one-pager-edu-row one-pager-edu-focus">
+                            <span class="one-pager-edu-label">"Strategic Focus (Minors):"</span>
+                        </p>
+                        <ul class="one-pager-edu-list">
+                            <li>"Sustainable Practices in IT "
+                                <span class="one-pager-edu-accent">"(The 50-Year Lookout)"</span>
+                            </li>
+                            <li>"Project Management "
+                                <span class="one-pager-edu-accent">"(The Builder's Ledger)"</span>
+                            </li>
+                        </ul>
+                        <p class="one-pager-edu-summary">
+                            "Architectural foundation focused on the sovereignty of critical infrastructure. Trained in deterministic system hardening, high-fidelity incident response, and the logic of global network security. Specializing in the intersection of environmental sustainability and high-integrity technical governance."
+                        </p>
+                    </div>
+                    <div class="one-pager-edu-divider" aria-hidden="true"></div>
+                    <p class="one-pager-h2">"STRATEGIC_REFINEMENT_//_IN_PROGRESS"</p>
+                    <ul class="one-pager-edu-list one-pager-edu-list-certs">
+                        <li><span class="one-pager-edu-label">"Google Cloud"</span>" — Professional Cloud Architect"</li>
+                        <li><span class="one-pager-edu-label">"RHCSA"</span>" — Red Hat Certified System Administrator"</li>
+                        <li><span class="one-pager-edu-label">"CKA / CKAD"</span>" — Kubernetes Administrator & Application Developer"</li>
+                    </ul>
                 </section>
 
                 <section class="one-pager-section">

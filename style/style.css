@@ -744,12 +744,65 @@ h3 {
 /* 7. WRITING & WRITEUP DETAIL */
 /* ── QA: Writeup card link (entire card tappable) ─────────────────── */
 .writeup-card-link {
-  text-decoration: none;
   color: inherit;
   display: block;
 }
 .writeup-card-link:hover {
   border-color: var(--accent-cyan);
+}
+
+.writeup-card-main {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.writeup-pdf-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+
+.writeup-pdf-link:hover {
+  color: var(--accent-cyan);
+}
+
+.writeup-pdf-icon {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.core-essay-card {
+  border-left: 2px solid color-mix(in srgb, var(--accent-cyan) 70%, transparent);
+  padding-left: 14px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-cyan) 14%, transparent),
+              0 0 18px color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+  border-radius: 8px;
+}
+
+.core-essay-title {
+  font-weight: 800;
+}
+
+.core-essay-badge {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  background: color-mix(in srgb, var(--accent-cyan) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 22%, transparent);
+  border-radius: 4px;
+  padding: 2px 6px;
+  line-height: 1;
 }
 
 /* Writing page search input */
@@ -947,6 +1000,66 @@ h3 {
   margin-top: 8px;
   font-size: 12px;
   color: var(--text-muted);
+}
+
+.one-pager-edu-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.one-pager-edu-row {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.one-pager-edu-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-right: 6px;
+}
+
+.one-pager-edu-focus {
+  margin-top: 2px;
+}
+
+.one-pager-edu-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.one-pager-edu-list li::marker {
+  color: var(--accent-cyan);
+}
+
+.one-pager-edu-accent {
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+
+.one-pager-edu-summary {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.85;
+}
+
+.one-pager-edu-divider {
+  margin: 18px 0 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.one-pager-edu-list-certs .one-pager-edu-label {
+  color: var(--accent-cyan);
 }
 @media print {
   .one-pager { font-size: 11px; line-height: 1.5; }
@@ -5440,10 +5553,12 @@ html.light .po-scrim {
 }
 
 .wu-meta-item {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 11px;
   color: var(--text-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  font-variant: all-small-caps;
+  text-transform: lowercase;
 }
 
 .wu-meta-dot {
@@ -5465,29 +5580,30 @@ html.light .po-scrim {
 .wu-summary {
   font-size: 16px;
   color: var(--text-secondary);
-  line-height: 1.75;
-  margin: 0 0 24px;
-  max-width: 600px;
+  line-height: 1.9;
+  margin: 0 0 26px;
+  max-width: 640px;
 }
 
 /* Tags */
 .wu-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0;
 }
 
 .wu-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
-  color: #22d3ee;
-  background: color-mix(in srgb, #22d3ee 8%, transparent);
-  border: 1px solid color-mix(in srgb, #22d3ee 25%, transparent);
-  border-radius: 4px;
-  padding: 4px 10px;
+  color: var(--text-muted);
+}
+
+.wu-tag:not(:last-child)::after {
+  content: " · ";
+  color: var(--border);
 }
 
 /* ── Article body band ─────────────────────────────────────── */
@@ -5532,11 +5648,13 @@ html.light .po-scrim {
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.04em;
   line-height: 1.25;
   margin: 48px 0 16px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border);
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  text-transform: uppercase;
 }
 
 .wu-prose h3,
@@ -5544,8 +5662,8 @@ html.light .po-scrim {
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.02em;
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0;
   margin: 32px 0 10px;
 }
 
@@ -5576,9 +5694,9 @@ html.light .po-scrim {
 }
 
 .wu-prose .pd-challenge-body {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-secondary);
-  line-height: 1.8;
+  line-height: 1.9;
   margin: 0;
 }
 
@@ -5623,6 +5741,142 @@ html.light .po-scrim {
   margin-top: 48px;
 }
 
+.wu-prose .manifesto-track-label {
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+
+.wu-prose .manifesto-horizon {
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, #22d3ee 24%, var(--border));
+  margin: 40px 0 8px;
+}
+
+.wu-prose .manifesto-essay {
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.wu-prose .manifesto-essay-wide {
+  max-width: 680px;
+}
+
+.wu-prose .manifesto-essay p {
+  font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 70ch;
+  text-align: left;
+  hyphens: none;
+}
+
+.wu-prose .manifesto-subheading {
+  font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--text-primary);
+  margin: 30px 0 12px;
+}
+
+.wu-prose .manifesto-signature {
+  font-style: italic;
+  color: var(--text-primary);
+  text-shadow: 0 0 12px color-mix(in srgb, #22d3ee 16%, transparent);
+}
+
+.wu-prose .manifesto-journal-head {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.wu-prose .manifesto-journal-title {
+  margin: 0 0 8px;
+  font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.wu-prose .manifesto-journal-meta {
+  margin: 0;
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.wu-prose .manifesto-action-bar {
+  display: none;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.wu-prose .manifesto-inline-btn {
+  margin: 0;
+}
+
+.wu-prose .manifesto-pull-quote {
+  margin: 30px auto;
+  max-width: 70ch;
+  border: 0;
+  padding: 4px 0 4px 14px;
+}
+
+.wu-prose .manifesto-pull-quote p {
+  margin: 0;
+  text-align: left;
+  font-style: italic;
+  font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.wu-prose .manifesto-seal {
+  margin-top: 30px;
+  text-align: left;
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  text-transform: none;
+}
+
+.wu-prose .narrative-bridge {
+  position: relative;
+  margin: 36px 0 26px;
+  border-top: 1px solid color-mix(in srgb, #22d3ee 18%, var(--border));
+  padding-top: 12px;
+}
+
+.wu-prose .narrative-bridge-label {
+  font-family: Inter, Geist, "SF Pro Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.wu-prose .builder-philosophy .pd-body-text {
+  margin-bottom: 26px;
+}
+
+.wu-prose .architect-signature {
+  font-weight: 700;
+  color: color-mix(in srgb, #22d3ee 68%, var(--text-primary));
+}
+
 /* ── Footer nav ─────────────────────────────────────────── */
 .wu-footer-nav {
   display: flex;
@@ -5638,10 +5892,11 @@ html.light .po-scrim {
   align-items: center;
   gap: 6px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
   text-decoration: none;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   transition: color 150ms ease;
 }
 

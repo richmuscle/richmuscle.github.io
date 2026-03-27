@@ -65,15 +65,6 @@ pub fn ContactPage() -> impl IntoView {
                             <span class="contact-row-value">"Oklahoma City, OK"</span>
                         </div>
                     </div>
-                    <div class="contact-row">
-                        <span class="contact-row-glyph" aria-hidden="true">
-                            <span class="contact-status-dot"></span>
-                        </span>
-                        <div class="contact-row-content">
-                            <span class="contact-row-label">"Status"</span>
-                            <span class="contact-row-value">"Open to Systems & Platform Engineering roles"</span>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="contact-divider" aria-hidden="true"></div>
@@ -81,11 +72,11 @@ pub fn ContactPage() -> impl IntoView {
                 <div class="contact-right">
                     <p class="contact-section-label">"What I am looking for"</p>
                     <div class="contact-want-list">
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Junior Platform Engineer, Systems Administrator, or DevOps roles."</div>
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Building and scaling Kubernetes (k8s) environments for modern delivery."</div>
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Implementing Infrastructure as Code (Terraform, Pulumi) to eliminate manual toil."</div>
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Managing Identity Fabrics (Active Directory/Entra ID) and hybrid-cloud access."</div>
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Teams focused on automated provisioning and deterministic system state."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Environments where Systems Sovereignty is the standard and the 50-Year Lookout is the primary lens for technical debt management."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Designing Unified Control Planes (Crossplane) that orchestrate multi-cloud compositions beyond the limitations of standard cluster management."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Refactoring 'Old Guard' static IaC into dynamic, self-healing landscapes driven by continuous, deterministic state reconciliation."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Scaling High-Integrity Ecosystems where identity, connectivity, and governance function as vital, self-governing organs."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Strategic partnerships with organizations focused on Pinnacle Orchestration (Remote-first or Oklahoma City-based)."</div>
                     </div>
                     <div class="contact-action-buttons">
                         <A href="/resume" class="hero-btn">"Download Resume"</A>

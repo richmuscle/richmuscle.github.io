@@ -20,3 +20,6 @@ target = "index.html"
 [serve]
 port = 8080
 open = false
+
+[[assets]]
+source = "public"

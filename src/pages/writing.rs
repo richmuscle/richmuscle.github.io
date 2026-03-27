@@ -7,62 +7,88 @@ use crate::utils::{sanitize_slug, track};
 #[component]
 pub fn WritingPage() -> impl IntoView {
     let (search_query, set_search_query) = create_signal(String::new());
-    let (active_tag, set_active_tag) = create_signal(None::<String>);
-    let all_tags = create_memo(move |_| {
-        let mut tags: Vec<String> = WRITEUPS.iter().flat_map(|w| w.tags.iter().map(|s| s.to_string())).collect();
-        tags.sort_unstable();
-        tags.dedup();
-        tags
-    });
+    let (active_category, set_active_category) = create_signal(None::<&'static str>);
+    let categories: [&'static str; 5] = [
+        "PLATFORM ARCHITECTURE",
+        "CYBERSECURITY & NIST",
+        "OBSERVABILITY & SOC-OPS",
+        "NETWORKING & INFRA",
+        "STRATEGY & GOVERNANCE",
+    ];
+    let core_order: [&'static str; 9] = [
+        "the-architect-of-the-prismatic-apex-orchestrating-equilibrium-in-a-holographic-landscape",
+        "the-orchestrated-landscape-building-a-high-integrity-ecosystem",
+        "the-sustainable-architect-engineering-low-entropy-landscapes-for-the-50-year-lookout",
+        "the-builders-ledger-orchestrating-technical-outcomes-through-project-governance",
+        "the-orchestrator-of-intent-reflections-on-service-provisioning",
+        "the-architect-of-oceanic-visibility-soc-operations-at-universal-scale",
+        "the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane",
+        "the-mirror-universe-architecting-deterministic-enterprise-simulations",
+        "universal-dialects-the-role-of-linux-and-shell-in-the-unified-control-plane",
+    ];
     let filtered = create_memo(move |_| {
         let q = search_query.get().to_lowercase();
-        let tag_filter = active_tag.get();
-        WRITEUPS.iter()
+        let category_filter = active_category.get();
+        let mut list = WRITEUPS.iter()
             .filter(|w| {
                 let search_ok = q.is_empty()
                     || w.title.to_lowercase().contains(&q)
                     || w.summary.to_lowercase().contains(&q)
                     || w.tags.iter().any(|t| t.to_lowercase().contains(&q));
-                let tag_ok = tag_filter.as_ref().map(|t| w.tags.contains(&t.as_str())).unwrap_or(true);
-                search_ok && tag_ok
+                let category_ok = category_filter.map(|c| w.category == c).unwrap_or(true);
+                search_ok && category_ok
             })
             .cloned()
-            .collect::<Vec<_>>()
+            .collect::<Vec<_>>();
+        list.sort_by(|a, b| {
+            if a.is_core != b.is_core {
+                return b.is_core.cmp(&a.is_core);
+            }
+            if a.is_core {
+                let a_rank = core_order.iter().position(|slug| slug == &a.slug).unwrap_or(usize::MAX);
+                let b_rank = core_order.iter().position(|slug| slug == &b.slug).unwrap_or(usize::MAX);
+                return a_rank.cmp(&b_rank);
+            }
+            let a_year = a.date.parse::<i32>().unwrap_or(0);
+            let b_year = b.date.parse::<i32>().unwrap_or(0);
+            b_year.cmp(&a_year).then_with(|| a.title.cmp(b.title))
+        });
+        list
     });
     view! {
         <Title text="Writing · Richard Mussell · Systems Engineering"/>
         <Meta name="description" content="Technical writing by Richard Mussell on IT systems and security operations: NIST-aligned automation, sysadmin hardening, zero-trust enforcement, and SIEM alert hygiene."/>
         <main class="min-h-screen pt-24 pb-24 page-enter">
             <div class="writing-page-container max-w-3xl mx-auto px-6">
-                <section class="pt-12 pb-10 border-b border-[var(--border-subtle)]">
+                <section class="pt-12 pb-14 border-b border-[var(--border-subtle)]">
                     <p class="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-[0.15em] mb-4">"Writing"</p>
                     <h1 class="text-[36px] font-bold text-[var(--text-primary)] tracking-tight mb-3">"Technical Write-ups"</h1>
-                    <p class="text-[14px] font-mono text-[var(--text-muted)]">"Operational deep dives into systems hardening, NIST-aligned automation, zero-trust administrative access, and SIEM/SOC signal quality."</p>
+                    <p class="text-[14px] font-mono text-[var(--text-muted)]">"Architectural manifestos and operational deep-dives focused on orchestrating equilibrium within high-integrity ecosystems-from the technical bedrock of connectivity to the 50-year lookout of strategic governance."</p>
                 </section>
                 <div class="tag-pills-row mb-4">
                     <button
                         type="button"
-                        class=move || format!("tag-pill {}", if active_tag.get().is_none() { "tag-pill-active" } else { "" })
+                        class=move || format!("tag-pill {}", if active_category.get().is_none() { "tag-pill-active" } else { "" })
                         on:click=move |_| {
-                            set_active_tag.set(None);
+                            set_active_category.set(None);
                         }
                     >
-                        "All"
+                        "ALL"
                     </button>
-                    {move || all_tags.get().into_iter().map(|tag| {
-                        let tag_for_active = tag.clone();
-                        let tag_click = tag.clone();
-                        let tag_view = tag;
-                        let is_active = move || active_tag.get().as_ref() == Some(&tag_for_active);
+                    {move || categories.iter().map(|&cat| {
+                        let cat_click = cat;
+                        let is_active = move || active_category.get() == Some(cat_click);
                         view! {
                             <button
                                 type="button"
                                 class=move || format!("tag-pill {}", if is_active() { "tag-pill-active" } else { "" })
                                 on:click=move |_| {
-                                    set_active_tag.update(|v| *v = if *v == Some(tag_click.clone()) { None } else { Some(tag_click.clone()) });
+                                    set_active_category.update(|v| {
+                                        *v = if *v == Some(cat_click) { None } else { Some(cat_click) };
+                                    });
                                 }
                             >
-                                {tag_view}
+                                {cat}
                             </button>
                         }
                     }).collect_view()}
@@ -87,33 +113,49 @@ pub fn WritingPage() -> impl IntoView {
                                 </p>
                             }.into_view()
                         } else {
-                            list.into_iter().enumerate().map(|(idx, w)| {
+                            list.into_iter().map(|w| {
                                 let slug      = w.slug.to_string();
                                 let title     = w.title.to_string();
                                 let subtitle  = w.summary.to_string();
                                 let date      = w.date.to_string();
                                 let read_time = w.read_time.to_string();
+                                let is_core   = w.is_core;
                                 let tags      = w.tags.iter().map(|s| s.to_string()).collect::<Vec<_>>();
-                                let title_class = if idx == 0 {
-                                    "text-[20px] font-bold text-[var(--accent-magenta)] group-hover:opacity-90 transition-colors mb-2 leading-snug"
+                                let title_class = if is_core {
+                                    "core-essay-title text-[20px] font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-cyan)] transition-colors mb-2 leading-snug"
                                 } else {
                                     "text-[20px] font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-cyan)] transition-colors mb-2 leading-snug"
                                 };
+                                let card_class = if is_core {
+                                    "writeup-card-link writeup-card core-essay-card block py-8 border-b border-[var(--border-subtle)] group"
+                                } else {
+                                    "writeup-card-link writeup-card block py-8 border-b border-[var(--border-subtle)] group"
+                                };
+                                let detail_href = format!("/writing/{}", sanitize_slug(&slug));
                                 view! {
-                                    <a href=format!("/writing/{}", sanitize_slug(&slug)) class="writeup-card-link writeup-card block py-8 border-b border-[var(--border-subtle)] group">
+                                    <article class=card_class>
                                         <div class="flex items-center gap-3 mb-3">
                                             <span class="text-[11px] font-mono text-[var(--text-muted)]">{date}</span>
+                                            {if is_core {
+                                                view! {
+                                                    <span class="core-essay-badge">"[CORE_ESSAY]"</span>
+                                                }.into_view()
+                                            } else {
+                                                view! { <span></span> }.into_view()
+                                            }}
                                             <span class="text-[var(--border-subtle)]">"·"</span>
                                             <span class="text-[11px] font-mono text-[var(--text-muted)]">{read_time}</span>
                                         </div>
-                                        <h2 class=title_class>{title}</h2>
-                                        <p class="text-[14px] text-[var(--text-secondary)] leading-7 mb-4">{subtitle}</p>
-                                        <div class="writeup-card-tags flex flex-wrap gap-2">
-                                            {tags.into_iter().map(|tag| view! {
-                                                <span class="text-[10px] font-mono px-2 py-1 rounded bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--accent-cyan)] uppercase tracking-wider">{tag}</span>
-                                            }).collect_view()}
-                                        </div>
-                                    </a>
+                                        <a href=detail_href class="writeup-card-main">
+                                            <h2 class=title_class>{title}</h2>
+                                            <p class="text-[14px] text-[var(--text-secondary)] leading-7 mb-4">{subtitle}</p>
+                                            <div class="writeup-card-tags flex flex-wrap gap-2">
+                                                {tags.into_iter().map(|tag| view! {
+                                                    <span class="text-[10px] font-mono px-2 py-1 rounded bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--accent-cyan)] uppercase tracking-wider">{tag}</span>
+                                                }).collect_view()}
+                                            </div>
+                                        </a>
+                                    </article>
                                 }
                             }).collect_view()
                         }
@@ -223,9 +265,22 @@ pub fn WriteupDetailPage() -> impl IntoView {
                                         Some(None) => view! {
                                             <p class="wu-error">"error[E0404]: writeup not found"</p>
                                         }.into_view(),
-                                        Some(Some(d)) => view! {
-                                            <article class="wu-prose" inner_html=d.content/>
-                                        }.into_view(),
+                                        Some(Some(d)) => {
+                                            let content = d.content
+                                                .replace("SECTION_01: THE TACTICAL DASHBOARD", "TECHNICAL FOUNDATIONS")
+                                                .replace("EXECUTIVE_SUMMARY_//_TECHNICAL_PILLARS", "Executive Summary")
+                                                .replace("//_BEGIN_STRATEGIC_NARRATIVE", "FULL NARRATIVE")
+                                                .replace("SECTION_02: THE STRATEGIC NARRATIVE (LaTeX View)", "FULL NARRATIVE")
+                                                .replace("SECTION_02: THE STRATEGIC NARRATIVE", "FULL NARRATIVE")
+                                                .replace("[DOWNLOAD_STRATEGIC_WHITE_PAPER_//_PDF]", "Download Strategic Brief (PDF)")
+                                                .replace("[DOWNLOAD_WHITE_PAPER_PDF]", "Download Strategic Brief (PDF)")
+                                                .replace("AUTHOR: Senior Principal Platform Architect", "AUTHOR: Richard Mussell — Principal Platform Architect")
+                                                .replace("// ARCHITECT'S SEAL // RICHARD MUSSELL // PRINCIPAL ARCHITECT", "Richard Mussell — Principal Platform Architect")
+                                                .replace("// ARCHITECT'S SEAL // Richard Mussell // PRINCIPAL ARCHITECT", "Richard Mussell — Principal Platform Architect");
+                                            view! {
+                                                <article class="wu-prose" inner_html=content/>
+                                            }.into_view()
+                                        }
                                     }}
                                 </Suspense>
 

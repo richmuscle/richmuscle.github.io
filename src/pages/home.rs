@@ -292,9 +292,9 @@ pub fn HomePage() -> impl IntoView {
                     <div class="hero-grid">
                         <div class="hero-left">
                             <h1 id="hero-heading" class="hero-name">"Richard J. Mussell"</h1>
-                            <p class="hero-subtitle">"Systems Administrator | IT Operations"</p>
+                            <p class="hero-subtitle">"Systems Administrator | DevOps Engineer"</p>
                             <p class="hero-body">
-                                "Disciplined IT Systems Professional and BS in ITAM graduate. I specialize in the reliable administration of hybrid-cloud environments, from managing core Active Directory/Entra ID fabrics to automating system lifecycles via PowerShell and Terraform. Grounded in operational discipline and building toward modern platform operations."
+                                "Systems Professional specializing in the administration of hybrid-cloud environments and automated infrastructure. Experienced in managing Active Directory/Entra ID fabrics and automating system lifecycles via PowerShell and Terraform. Focused on building reliable, secure, and deterministic systems through operational discipline."
                             </p>
                             <p class="hero-meta">
                                 <span class="text-[#64748b]">"Oklahoma City, OK"</span>
@@ -313,24 +313,24 @@ pub fn HomePage() -> impl IntoView {
                         </div>
                         <div class="hero-stats">
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Primary Focus"</span>
-                                <span class="hero-stat-value">"Systems Administration & IT Operations"</span>
+                                <span class="hero-stat-label">"PRIMARY_FOCUS"</span>
+                                <span class="hero-stat-value">"Systems Administration & DevOps Engineering"</span>
                             </div>
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Core Systems"</span>
-                                <span class="hero-stat-value">"Windows Server · Linux (RHEL) · Active Directory"</span>
+                                <span class="hero-stat-label">"CORE_INFRASTRUCTURE"</span>
+                                <span class="hero-stat-value">"Hybrid-Cloud Admin · Identity (AD/Entra ID) · Linux (RHEL)"</span>
                             </div>
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Foundations"</span>
-                                <span class="hero-stat-value">"Networking (CCNA) · Identity (IAM) · NIST"</span>
+                                <span class="hero-stat-label">"STANDARDS_&_SECURITY"</span>
+                                <span class="hero-stat-value">"Infrastructure as Code · NIST 800-53 · Network Security"</span>
                             </div>
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Automation"</span>
-                                <span class="hero-stat-value">"PowerShell · Bash · Terraform (IaC)"</span>
+                                <span class="hero-stat-label">"AUTOMATION_ENGINE"</span>
+                                <span class="hero-stat-value">"PowerShell Automation · Terraform · CI/CD Pipelines"</span>
                             </div>
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Status"</span>
-                                <span class="hero-stat-value">"Open to Entry-Level / Junior Roles"</span>
+                                <span class="hero-stat-label">"CURRENT_STATUS"</span>
+                                <span class="hero-stat-value">"Open to Systems & DevOps Engineering Roles"</span>
                             </div>
                         </div>
                     </div>
