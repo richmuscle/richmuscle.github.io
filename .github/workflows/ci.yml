@@ -19,3 +19,5 @@ jobs:
         run: cargo check --no-default-features --features ssr
       - name: cargo check (hydrate, wasm32)
         run: cargo check --no-default-features --features "hydrate sqlite" --target wasm32-unknown-unknown
+      - name: Check SSG binary (compile gate)
+        run: cargo check --features ssg --bin ssg

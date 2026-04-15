@@ -6,6 +6,12 @@
 //! Merge output with Trunk’s `dist/` (WASM/ CSS) for a full hydrate-capable deploy, or serve HTML for crawlers / no-JS baseline.
 //! COOP/COEP + SharedArrayBuffer workflows are documented in `public/_headers`.
 
+// KNOWN LIMITATION (Leptos 0.6): `leptos_reactive` pulls `wasm-bindgen`
+// unconditionally. Running this binary on native panics at runtime with
+// "cannot access imported statics on non-wasm targets". Compilation passes.
+// Tracked: upgrade path is Leptos 0.7+ which decouples the SSR/WASM boundary.
+// Validation gate: `cargo check --features ssg --bin ssg` (CI step).
+
 use leptos::ssr::render_to_string;
 use leptos::{create_runtime, provide_context, view};
 use leptos_router::{generate_route_list_inner, RouterIntegrationContext, ServerIntegration};
