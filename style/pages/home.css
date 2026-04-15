@@ -12,10 +12,10 @@ html.light .category-desc {
 .home-page-wrap {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 55px;
 }
 .hero-section { padding: 89px 0; }
-.certifications-section + .home-footer { margin-top: 80px; }
+.certifications-section + .home-footer { margin-top: 89px; }
 
 /* Hero */
 .hero-grid {
@@ -94,7 +94,7 @@ html.light .category-desc {
 /* Projects header */
 .projects-header { margin-bottom: 0; }
 .projects-eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
   text-transform: uppercase;
   letter-spacing: 0.15em;
@@ -102,38 +102,38 @@ html.light .category-desc {
   margin: 0 0 8px 0;
 }
 .projects-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 24px 0;
+  margin: 0 0 21px 0;
 }
 
 /* Category sections */
-.category-section { margin-bottom: 3rem; }
+.category-section { margin-bottom: 55px; }
 .category-section-hidden { display: none !important; }
 .category-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  margin-bottom: 21px;
+  padding-bottom: 13px;
   border-bottom: 1px solid var(--border);
 }
 .category-name {
-  font-size: 10px;
+  font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--accent-cyan);
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 4px 0;
 }
 .category-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
   margin: 0;
 }
 .category-count {
-  font-size: 10px;
+  font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
   color: var(--text-muted);
   flex-shrink: 0;
@@ -142,18 +142,18 @@ html.light .category-desc {
 /* Certifications (home page) */
 .home-page-wrap .certifications-section {
   border-top: 1px solid var(--border);
-  padding-top: 3rem;
+  padding-top: 55px;
   content-visibility: auto;
   contain-intrinsic-size: 0 400px;
 }
 .cert-section-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 13px;
+  margin-bottom: 34px;
 }
 .cert-section-name {
-  font-size: 10px;
+  font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -170,11 +170,11 @@ html.light .category-desc {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
+  padding: 13px 0;
   border-bottom: 1px solid var(--border);
 }
 .cert-name {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-primary);
   flex: 1;
   min-width: 0;
@@ -183,15 +183,15 @@ html.light .category-desc {
   white-space: nowrap;
 }
 .cert-issuer {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
-  margin: 0 1rem;
+  margin: 0 13px;
   flex-shrink: 0;
 }
 .cert-status {
-  padding: 3px 10px;
-  border-radius: 3px;
-  font-size: 9px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -222,23 +222,23 @@ html.light .category-desc {
 /* Home footer */
 .home-footer {
   border-top: 1px solid var(--border);
-  padding: 32px 0;
+  padding: 34px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 13px;
 }
 .home-footer-left {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
   font-family: 'JetBrains Mono', monospace;
 }
 .home-footer-right {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 12px;
+  gap: 4px;
+  font-size: 13px;
   font-family: 'JetBrains Mono', monospace;
 }
 .home-footer-link {
@@ -263,8 +263,8 @@ html.light .category-desc {
 .cert-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 0;
+  gap: 13px;
+  padding: 13px 0;
   border-bottom: 1px solid var(--border-subtle);
 }
 

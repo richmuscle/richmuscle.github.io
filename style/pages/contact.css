@@ -1,19 +1,19 @@
 
 .contact-page {
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 55px);
   display: flex;
   flex-direction: column;
 }
 
 .contact-header {
   border-bottom: 1px solid var(--border-subtle);
-  padding: 40px 0 56px;
+  padding: 34px 0 55px;
 }
 
 .contact-header-inner {
   max-width: 860px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 34px;
 }
 
 .contact-header-label {
@@ -22,22 +22,22 @@
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin: 0 0 16px;
+  margin: 0 0 13px;
 }
 
 .contact-heading {
-  font-size: clamp(28px, 4vw, 44px);
+  font-size: clamp(26px, 4vw, 42px);
   font-weight: 700;
   line-height: 1.1;
   color: var(--text-primary);
-  margin: 0 0 16px;
+  margin: 0 0 13px;
 }
 
 .contact-subtext {
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text-muted);
-  line-height: 1.6;
-  max-width: 520px;
+  line-height: 1.618;
+  max-width: 65ch;
   margin: 0;
   font-family: monospace;
 }
@@ -45,10 +45,10 @@
 .contact-body {
   max-width: 860px;
   margin: 0 auto;
-  padding: 40px 32px 64px;
+  padding: 34px 34px 55px;
   display: grid;
   grid-template-columns: 1fr 1px 1fr;
-  gap: 0 48px;
+  gap: 0 55px;
   flex: 1;
 }
 
@@ -64,22 +64,22 @@
 }
 
 .contact-section-label {
-  font-size: 10px;
+  font-size: 11px;
   font-family: monospace;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin: 0 0 20px;
-  padding-bottom: 12px;
+  margin: 0 0 21px;
+  padding-bottom: 13px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .contact-row {
   display: grid;
-  grid-template-columns: 32px 1fr;
-  gap: 0 16px;
+  grid-template-columns: 34px 1fr;
+  gap: 0 13px;
   align-items: start;
-  padding: 16px 0;
+  padding: 13px 0;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -92,9 +92,9 @@
 }
 
 .contact-row-glyph {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
-  padding-top: 14px;
+  padding-top: 13px;
   font-family: monospace;
   text-align: center;
 }
@@ -102,18 +102,18 @@
 .contact-row-glyph.contact-glyph-in,
 .contact-row-glyph.contact-glyph-gh {
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .contact-row-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 12px 0;
+  gap: 4px;
+  padding: 13px 0;
 }
 
 .contact-row-label {
-  font-size: 10px;
+  font-size: 11px;
   font-family: monospace;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -121,7 +121,7 @@
 }
 
 .contact-row-value {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--accent-cyan);
   font-family: monospace;
   text-decoration: none;
@@ -136,18 +136,18 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-bottom: 32px;
+  margin-bottom: 34px;
 }
 
 .contact-want-item {
   display: grid;
-  grid-template-columns: 20px 1fr;
-  gap: 0 10px;
-  padding: 12px 0;
+  grid-template-columns: 21px 1fr;
+  gap: 0 13px;
+  padding: 13px 0;
   border-bottom: 1px solid var(--border-subtle);
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .contact-want-item:first-child {
@@ -161,13 +161,13 @@
 .contact-want-arrow {
   color: var(--accent-cyan);
   font-family: monospace;
-  font-size: 12px;
-  padding-top: 1px;
+  font-size: 13px;
+  padding-top: 4px;
 }
 
 .contact-footer-band {
   border-top: 1px solid var(--border-subtle);
-  padding: 16px 32px;
+  padding: 13px 34px;
   text-align: center;
   font-size: 11px;
   font-family: monospace;
@@ -178,17 +178,17 @@
 
 @media (max-width: 768px) {
   .contact-header {
-    padding: 40px 0 32px;
+    padding: 34px 0 34px;
   }
 
   .contact-header-inner {
-    padding: 0 20px;
+    padding: 0 21px;
   }
 
   .contact-body {
     grid-template-columns: 1fr;
-    padding: 32px 20px;
-    gap: 40px 0;
+    padding: 34px 21px;
+    gap: 34px 0;
   }
 
   .contact-divider {
@@ -198,7 +198,7 @@
   }
 
   .contact-footer-band {
-    padding: 16px 20px;
+    padding: 13px 21px;
     text-align: left;
   }
 
@@ -216,30 +216,30 @@
 .contact-wish-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 21px 0;
 }
 .contact-wish-list li {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
   padding-left: 0;
 }
 .contact-arrow {
   color: var(--accent-cyan);
-  margin-right: 0.5rem;
+  margin-right: 8px;
 }
 
 /* ── QA: Contact row glyph alignment (max-width: 480px) ──────────── */
 @media (max-width: 480px) {
   .contact-row {
     display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 12px;
+    grid-template-columns: 21px 1fr;
+    gap: 13px;
     align-items: start;
-    padding: 12px 0;
+    padding: 13px 0;
   }
   .contact-row-glyph {
-    padding-top: 2px;
+    padding-top: 4px;
   }
   .contact-row-content {
     display: flex;

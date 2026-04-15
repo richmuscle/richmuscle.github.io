@@ -9,11 +9,11 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 /* Writing page search input */
 .writing-search-input {
   width: 100%;
-  margin-top: 1.5rem;
+  margin-top: 21px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  padding: 10px 16px;
+  border-radius: 8px;
+  padding: 8px 13px;
   font-size: 13px;
   font-family: 'JetBrains Mono', monospace;
   color: var(--text-primary);
@@ -31,26 +31,26 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
   display: block;
   max-width: 64rem;
   margin: 0 auto;
-  padding: 2rem 1.5rem 0;
+  padding: 34px 21px 0;
 }
 @media (min-width: 1024px) {
   .writeup-detail-layout {
     display: grid;
     grid-template-columns: 200px 1fr;
-    gap: 64px;
+    gap: 55px;
   }
 }
 .writeup-toc {
   display: none;
   position: sticky;
-  top: 80px;
-  padding-top: 0.5rem;
+  top: 89px;
+  padding-top: 8px;
 }
 @media (min-width: 1024px) {
   .writeup-toc {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 8px;
   }
 }
 .writeup-toc-link {
@@ -72,7 +72,7 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
   color: var(--accent-cyan);
   text-align: center;
   margin-top: auto;
-  padding-top: 0.75rem;
+  padding-top: 13px;
   margin-bottom: 0;
 }
 .writeup-detail-content {
@@ -85,8 +85,8 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 /* ── MOBILE RESPONSIVE ──────────────────────────────────────── */
 @media (max-width: 768px) {
-  .hero-title { 
-    font-size: 3rem !important; 
+  .hero-title {
+    font-size: 42px !important;
   }
   .writeup-detail-layout {
     grid-template-columns: 1fr;
@@ -97,7 +97,7 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
   .telemetry-bar {
     flex-direction: column;
-    gap: 0.9375rem;
+    gap: 13px;
     align-items: flex-start !important;
   }
 
@@ -121,20 +121,20 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 /* ── 6. WRITING PAGE (max-width: 768px) ─────────────────────────── */
 @media (max-width: 768px) {
   .writing-page-container {
-    padding: 24px 20px;
+    padding: 21px;
   }
   .writing-page-container > section h1 {
-    font-size: clamp(24px, 7vw, 32px);
+    font-size: clamp(26px, 7vw, 42px);
   }
   .writing-page-container > section > p:last-child {
-    line-height: 1.6;
-    margin-bottom: 24px;
+    line-height: 1.618;
+    margin-bottom: 21px;
   }
   .writing-search-input {
     width: 100%;
-    min-height: 48px;
+    min-height: 55px;
     font-size: 16px;
-    margin-top: 1rem;
+    margin-top: 13px;
     margin-left: 0;
     margin-right: 0;
   }
@@ -144,23 +144,23 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 4px 0 12px;
-    gap: 10px;
+    padding: 4px 0 13px;
+    gap: 13px;
   }
   .tag-pills-row::-webkit-scrollbar { display: none; }
   .tag-pill {
     white-space: nowrap;
     min-height: 44px;
-    padding: 6px 12px;
+    padding: 8px 13px;
   }
   .writeup-card {
-    padding: 20px 0;
+    padding: 21px 0;
   }
   .writeup-card + .writeup-card {
-    margin-top: 32px;
+    margin-top: 34px;
   }
   .writeup-card > div:first-child {
-    margin-bottom: 12px;
+    margin-bottom: 13px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--border-subtle);
   }
@@ -181,16 +181,16 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 }
 @media (max-width: 768px) {
   .writeup-detail-content {
-    padding: 0 20px;
+    padding: 0 21px;
   }
   .writeup-detail-header {
-    padding: 32px 20px 24px;
+    padding: 34px 21px 21px;
   }
   .writeup-title {
-    font-size: clamp(22px, 6vw, 32px);
+    font-size: clamp(26px, 6vw, 42px);
   }
   .writeup-subtitle {
-    font-size: 14px;
+    font-size: 13px;
   }
   .writeup-meta-row {
     flex-wrap: wrap;
@@ -202,13 +202,13 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
   }
   .writeup-detail-content .space-y-5 p,
   .writeup-body p {
-    font-size: 14px;
-    line-height: 1.75;
+    font-size: 13px;
+    line-height: 1.618;
   }
   .writeup-detail-content .code-block,
   .writeup-detail-layout .code-block {
-    margin-left: -20px;
-    margin-right: -20px;
+    margin-left: -21px;
+    margin-right: -21px;
     border-radius: 0;
     border-left: none;
     border-right: none;
@@ -217,29 +217,29 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 /* ── Prose typography ──────────────────────────────────────── */
 .wu-prose {
-  font-size: 15px;
-  line-height: 1.85;
+  font-size: 16px;
+  line-height: 1.618;
   color: var(--text-secondary);
 }
 
 .wu-prose p,
 .wu-prose .pd-body-text {
-  font-size: 15px;
-  line-height: 1.85;
+  font-size: 16px;
+  line-height: 1.618;
   color: var(--text-secondary);
-  margin: 0 0 20px;
+  margin: 0 0 21px;
   max-width: 65ch;
 }
 
 .wu-prose h2,
 .wu-prose .pd-section-heading {
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: 0.04em;
-  line-height: 1.25;
-  margin: 48px 0 16px;
-  padding-bottom: 10px;
+  line-height: 1.272;
+  margin: 55px 0 13px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
   font-family: var(--font-body);
   text-transform: uppercase;
@@ -247,33 +247,33 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 .wu-prose h3,
 .wu-prose .pd-challenge-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
   font-family: var(--font-body);
   letter-spacing: 0;
-  margin: 32px 0 10px;
+  margin: 34px 0 13px;
 }
 
 .wu-prose code,
 .wu-prose .pd-challenge-body code,
 .wu-prose .pd-lesson-item p code {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 13px;
   color: #22d3ee;
   background: color-mix(in srgb, #22d3ee 8%, var(--bg-base));
   border: 1px solid color-mix(in srgb, #22d3ee 20%, transparent);
-  border-radius: 3px;
-  padding: 2px 6px;
+  border-radius: 4px;
+  padding: 4px 8px;
 }
 
 .wu-prose .pd-challenge {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-left: 3px solid #22d3ee;
-  border-radius: 6px;
-  padding: 20px 24px;
-  margin: 24px 0;
+  border-radius: 8px;
+  padding: 21px;
+  margin: 21px 0;
 }
 
 .wu-prose .pd-challenge-title {
@@ -282,21 +282,21 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 }
 
 .wu-prose .pd-challenge-body {
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text-secondary);
-  line-height: 1.9;
+  line-height: 1.618;
   margin: 0;
 }
 
 .wu-prose .pd-lessons {
-  margin: 24px 0;
+  margin: 21px 0;
 }
 
 .wu-prose .pd-lesson-item {
   display: flex;
-  gap: 20px;
+  gap: 21px;
   align-items: flex-start;
-  padding: 16px 0;
+  padding: 13px 0;
   border-bottom: 1px solid var(--border);
 }
 
@@ -306,23 +306,23 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 .wu-prose .pd-lesson-num {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: #22d3ee;
-  padding-top: 2px;
+  padding-top: 4px;
   flex-shrink: 0;
-  width: 24px;
+  width: 21px;
 }
 
 .wu-prose .pd-lesson-item p {
-  font-size: 14px;
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.618;
   margin: 0;
   max-width: none;
 }
 
 .wu-prose .pd-section {
-  margin-top: 48px;
+  margin-top: 55px;
 }
 
 .wu-prose .manifesto-track-label {
@@ -332,13 +332,13 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
   letter-spacing: 0.01em;
   text-transform: none;
   color: var(--text-muted);
-  margin: 0 0 14px;
+  margin: 0 0 13px;
 }
 
 .wu-prose .manifesto-horizon {
   border: 0;
   border-top: 1px solid color-mix(in srgb, #22d3ee 24%, var(--border));
-  margin: 40px 0 8px;
+  margin: 34px 0 8px;
 }
 
 .wu-prose .manifesto-essay {
@@ -353,8 +353,8 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 .wu-prose .manifesto-essay p {
   font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
-  font-size: 17px;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.618;
   max-width: 70ch;
   text-align: left;
   hyphens: none;
@@ -362,12 +362,12 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 .wu-prose .manifesto-subheading {
   font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.01em;
   text-transform: none;
   color: var(--text-primary);
-  margin: 30px 0 12px;
+  margin: 34px 0 13px;
 }
 
 .wu-prose .manifesto-signature {
@@ -378,14 +378,14 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 .wu-prose .manifesto-journal-head {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 21px;
 }
 
 .wu-prose .manifesto-journal-title {
   margin: 0 0 8px;
   font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
-  font-size: 30px;
-  line-height: 1.2;
+  font-size: 26px;
+  line-height: 1.272;
   color: var(--text-primary);
   font-weight: 700;
 }
@@ -393,7 +393,7 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 .wu-prose .manifesto-journal-meta {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.02em;
   text-transform: none;
   color: var(--text-muted);
@@ -403,7 +403,7 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 .wu-prose .manifesto-action-bar {
   display: none;
   justify-content: flex-end;
-  margin-bottom: 14px;
+  margin-bottom: 13px;
 }
 
 .wu-prose .manifesto-inline-btn {
@@ -411,10 +411,10 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 }
 
 .wu-prose .manifesto-pull-quote {
-  margin: 30px auto;
+  margin: 34px auto;
   max-width: 70ch;
   border: 0;
-  padding: 4px 0 4px 14px;
+  padding: 4px 0 4px 13px;
 }
 
 .wu-prose .manifesto-pull-quote p {
@@ -423,12 +423,12 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
   font-style: italic;
   font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
   font-size: 21px;
-  line-height: 1.6;
+  line-height: 1.618;
   color: var(--text-primary);
 }
 
 .wu-prose .manifesto-seal {
-  margin-top: 30px;
+  margin-top: 34px;
   text-align: left;
   font-family: var(--font-body);
   font-size: 13px;
@@ -439,9 +439,9 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 .wu-prose .narrative-bridge {
   position: relative;
-  margin: 36px 0 26px;
+  margin: 34px 0 21px;
   border-top: 1px solid color-mix(in srgb, #22d3ee 18%, var(--border));
-  padding-top: 12px;
+  padding-top: 13px;
 }
 
 .wu-prose .narrative-bridge-label {
@@ -453,7 +453,7 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 }
 
 .wu-prose .builder-philosophy .pd-body-text {
-  margin-bottom: 26px;
+  margin-bottom: 21px;
 }
 
 .wu-prose .architect-signature {
