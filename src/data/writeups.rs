@@ -221,3 +221,7 @@ pub(crate) static WRITEUPS: LazyLock<Vec<WriteUpIndex>> = LazyLock::new(init_wri
 pub fn all_writeups() -> &'static Vec<WriteUpIndex> {
     &WRITEUPS
 }
+
+pub fn find_writeup(slug: &str) -> Option<WriteUpIndex> {
+    WRITEUPS.iter().find(|w| w.slug == slug).cloned()
+}
