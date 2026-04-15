@@ -165,7 +165,7 @@ fn init_projects_index() -> Vec<ProjectIndex> {
 static PROJECTS: LazyLock<Vec<ProjectIndex>> = LazyLock::new(init_projects_index);
 
 pub fn get_infrastructure_fleet() -> &'static Vec<ProjectIndex> {
-    &*PROJECTS
+    &PROJECTS
 }
 
 pub fn find_project(slug: &str) -> Option<ProjectIndex> {

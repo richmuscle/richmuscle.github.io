@@ -19,8 +19,7 @@ pub fn ProjectCard(
     let tech_tags = project
         .tech_stack
         .iter()
-        .take(3)
-        .map(|s| *s)
+        .take(3).copied()
         .collect::<Vec<_>>();
     let navigator = use_navigate();
     let project_title = project.title;

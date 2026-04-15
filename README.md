@@ -6,7 +6,6 @@
 ![CI](https://github.com/richmuscle/richmuscle.github.io/actions/workflows/deploy.yml/badge.svg)
 ![Rust](https://img.shields.io/badge/rust-1.77%2B-orange?logo=rust)
 ![WASM](https://img.shields.io/badge/target-wasm32--unknown--unknown-blue?logo=webassembly)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 ---
 

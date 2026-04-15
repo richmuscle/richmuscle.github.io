@@ -30,5 +30,5 @@ fn init_certifications() -> Vec<Certification> {
 static CERTIFICATIONS: LazyLock<Vec<Certification>> = LazyLock::new(init_certifications);
 
 pub fn get_certifications() -> &'static Vec<Certification> {
-    &*CERTIFICATIONS
+    &CERTIFICATIONS
 }

@@ -136,7 +136,7 @@ pub fn CommandPalette() -> impl IntoView {
                     if let Some(el) = doc.get_element_by_id("command-palette-input") {
                         if let Some(input) = el.dyn_ref::<web_sys::HtmlInputElement>() {
                             let _ = input.focus();
-                            let _ = input.select();
+                            input.select();
                         }
                     }
                 });

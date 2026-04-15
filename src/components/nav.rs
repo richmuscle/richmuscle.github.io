@@ -345,7 +345,7 @@ pub fn KeyboardNav() -> impl IntoView {
                         "p" | "P" => {
                             if let Some(p) = projects_clone.first() {
                                 navigator_clone(
-                                    &format!("/project/{}", sanitize_slug(&p.slug)),
+                                    &format!("/project/{}", sanitize_slug(p.slug)),
                                     Default::default(),
                                 );
                             }
@@ -356,20 +356,8 @@ pub fn KeyboardNav() -> impl IntoView {
                         _ => {}
                     }
                     *last_key_clone.borrow_mut() = String::new();
-                    return;
                 }
 
-                // Focus terminal search with '/'
-                if key == "/" && !ev.ctrl_key() && !ev.meta_key() && !ev.alt_key() {
-                    if let Some(el) = document_clone.get_element_by_id("terminal-input") {
-                        ev.prevent_default();
-                        if let Some(input) = el.dyn_ref::<web_sys::HtmlInputElement>() {
-                            let _ = input.focus().ok();
-                        } else if let Some(html_el) = el.dyn_ref::<web_sys::HtmlElement>() {
-                            let _ = html_el.focus().ok();
-                        }
-                    }
-                }
             }) as Box<dyn FnMut(_)>);
         window
             .add_event_listener_with_callback("keydown", closure.as_ref().unchecked_ref())

@@ -72,7 +72,7 @@ fn search_fallback(q_lower: &str, category: Option<ProjectCategory>) -> Vec<Proj
     let mut rows: Vec<ProjectIndex> = get_infrastructure_fleet()
         .iter()
         .filter(|p| {
-            category.as_ref().map_or(true, |c| p.category == *c)
+            category.as_ref().is_none_or(|c| p.category == *c)
                 && (q_lower.is_empty()
                     || p.title.to_lowercase().contains(q_lower)
                     || p.subtitle.to_lowercase().contains(q_lower)

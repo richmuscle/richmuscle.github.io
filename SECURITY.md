@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-This repository builds a static WASM bundle deployed to GitHub Pages. There is **no server-side execution surface** — no backend, no database, no authenticated endpoints, no user session state. The only actively supported version is the current deploy of the `main` branch at https://richardmussell.github.io/.
+This repository builds a static WASM bundle deployed to GitHub Pages. There is **no server-side execution surface** — no backend, no database, no authenticated endpoints, no user session state. The only actively supported version is the current deploy of the `main` branch at https://richmuscle.github.io/.
 
 | Version | Supported |
 |---|---|

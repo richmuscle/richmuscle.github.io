@@ -159,7 +159,6 @@ pub fn App() -> impl IntoView {
                                 <tr><td class="shortcuts-key">"g then h"</td><td class="shortcuts-desc">"Go to Home"</td></tr>
                                 <tr><td class="shortcuts-key">"g then p"</td><td class="shortcuts-desc">"Go to first project"</td></tr>
                                 <tr><td class="shortcuts-key">"g then r"</td><td class="shortcuts-desc">"Go to Resume"</td></tr>
-                                <tr><td class="shortcuts-key">"/"</td><td class="shortcuts-desc">"Focus terminal search"</td></tr>
                                 <tr><td class="shortcuts-key">"Esc"</td><td class="shortcuts-desc">"Close / blur"</td></tr>
                                 <tr><td class="shortcuts-key">"?"</td><td class="shortcuts-desc">"Toggle this help modal"</td></tr>
                             </tbody>

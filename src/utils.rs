@@ -148,7 +148,7 @@ fn hl_rust_line(line: &str) -> String {
                 if j < n && ch[j] == '"' {
                     j += 1;
                     let close: String = std::iter::once('"')
-                        .chain(std::iter::repeat('#').take(hashes))
+                        .chain(std::iter::repeat_n('#', hashes))
                         .collect();
                     let close_chars: Vec<char> = close.chars().collect();
                     while j < n {
@@ -801,11 +801,7 @@ fn hl_sh_line(line: &str) -> String {
                     .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
                 && s.chars().any(|c| c.is_ascii_uppercase());
             let cls = if SH_KW.contains(&s.as_str()) {
-                if matches!(s.as_str(), "then" | "do" | "else" | "elif") {
-                    cmd_pos = true;
-                } else {
-                    cmd_pos = false;
-                }
+                cmd_pos = matches!(s.as_str(), "then" | "do" | "else" | "elif");
                 "tok-kw"
             } else if all_up {
                 cmd_pos = false;
@@ -908,8 +904,8 @@ fn hl_yaml_line(line: &str) -> String {
     if trimmed.starts_with('#') {
         return pad + &tok("tok-cmt", trimmed);
     }
-    let (list_tok, body) = if trimmed.starts_with("- ") {
-        (tok("tok-op", "- "), &trimmed[2..])
+    let (list_tok, body) = if let Some(rest) = trimmed.strip_prefix("- ") {
+        (tok("tok-op", "- "), rest)
     } else if trimmed == "-" {
         return pad + &tok("tok-op", "-");
     } else {

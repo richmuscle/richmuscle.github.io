@@ -1,4 +1,4 @@
-use crate::components::{ProjectCard, Terminal};
+use crate::components::ProjectCard;
 use crate::data::{
     get_certifications, get_infrastructure_fleet, ProjectCardSignals, ProjectCategory, EMAIL,
     GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE,
@@ -141,11 +141,6 @@ pub fn HomePage() -> impl IntoView {
                     </div>
                 </section>
 
-                // ── INTERACTIVE TERMINAL ──────────────────────────────
-                <section class="terminal-section" aria-label="Interactive command terminal">
-                    <Terminal/>
-                </section>
-
                 // ── PROJECT GRID ──────────────────────────────────────
                 <section
                     class="projects-section"
@@ -173,7 +168,7 @@ pub fn HomePage() -> impl IntoView {
                     // Filter tabs
                     <div class="filter-tabs">
                         {
-                            let set_filter_all = set_filter.clone();
+                            let set_filter_all = set_filter;
                             view! {
                                 <button
                                     on:click=move |_| set_filter_all.set(None)
@@ -234,7 +229,7 @@ pub fn HomePage() -> impl IntoView {
                             let accent   = cat.accent();
                             let projects_snap = projects.get_value();
                             let projects_in_cat: Vec<_> = projects_snap
-                                .into_iter()
+                                .iter()
                                 .filter(|p| p.category == cat_for_render)
                                 .collect();
                             if projects_in_cat.is_empty() {
@@ -319,7 +314,7 @@ pub fn HomePage() -> impl IntoView {
                     None => view! { <span></span> }.into_view(),
                     Some(slug_val) => {
                         let all_projects = get_infrastructure_fleet();
-                        match all_projects.into_iter().find(|p| p.slug == slug_val.as_str()) {
+                        match all_projects.iter().find(|p| p.slug == slug_val.as_str()) {
                             None => view! { <span></span> }.into_view(),
                             Some(p) => {
                                 let p_title     = p.title;

@@ -329,9 +329,6 @@ pub fn TelemetryPage() -> impl IntoView {
         }
 
         let heap_interval = {
-            let set_heap_used = set_heap_used;
-            let set_heap_total = set_heap_total;
-            let set_logs = set_logs;
             Interval::new(2000, move || {
                 if let Some((used, total)) = read_heap_bytes() {
                     set_heap_used.set(Some(used));
@@ -355,19 +352,11 @@ pub fn TelemetryPage() -> impl IntoView {
             })
         };
 
-        {
-            let set_network_rows = set_network_rows;
-            let set_logs = set_logs;
-            spawn_local(async move {
-                run_network_probe(set_network_rows, set_logs).await;
-            });
-        }
+        spawn_local(async move {
+            run_network_probe(set_network_rows, set_logs).await;
+        });
         let network_interval = {
-            let set_network_rows = set_network_rows;
-            let set_logs = set_logs;
             Interval::new(15000, move || {
-                let set_network_rows = set_network_rows;
-                let set_logs = set_logs;
                 spawn_local(async move {
                     run_network_probe(set_network_rows, set_logs).await;
                 });
