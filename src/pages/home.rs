@@ -116,28 +116,6 @@ pub fn HomePage() -> impl IntoView {
                                 </a>
                             </div>
                         </div>
-                        <div class="hero-stats">
-                            <div class="hero-stat">
-                                <span class="hero-stat-label">"PRIMARY_FOCUS"</span>
-                                <span class="hero-stat-value">"Systems Administration & DevOps Engineering"</span>
-                            </div>
-                            <div class="hero-stat">
-                                <span class="hero-stat-label">"CORE_INFRASTRUCTURE"</span>
-                                <span class="hero-stat-value">"Hybrid-Cloud Admin · Identity (AD/Entra ID) · Linux (RHEL)"</span>
-                            </div>
-                            <div class="hero-stat">
-                                <span class="hero-stat-label">"STANDARDS_&_SECURITY"</span>
-                                <span class="hero-stat-value">"Infrastructure as Code · NIST 800-53 · Network Security"</span>
-                            </div>
-                            <div class="hero-stat">
-                                <span class="hero-stat-label">"AUTOMATION_ENGINE"</span>
-                                <span class="hero-stat-value">"PowerShell Automation · Terraform · CI/CD Pipelines"</span>
-                            </div>
-                            <div class="hero-stat">
-                                <span class="hero-stat-label">"CURRENT_STATUS"</span>
-                                <span class="hero-stat-value">"Open to Systems & DevOps Engineering Roles"</span>
-                            </div>
-                        </div>
                     </div>
                 </section>
 
