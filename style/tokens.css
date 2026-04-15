@@ -1,0 +1,275 @@
+/* ============================================================
+   RICHARD MUSSELL — PORTFOLIO
+   Design system foundation
+   - Geist Sans (display + body) · JetBrains Mono (code)
+   - Single accent: cyan
+   - Tokens: color, type, spacing, radius, shadow, motion, z-index
+   Legacy --accent-cyan, --bg-*, --text-*, --border* aliases live
+   at the bottom of :root so existing component CSS keeps working
+   while migration to the new tokens happens incrementally.
+   ============================================================ */
+
+/* === FONTS — self-hosted, no external requests ============== */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/geist-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/geist-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/geist-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/geist-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/jbmono-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/jbmono-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/jbmono-600.woff2') format('woff2');
+}
+
+/* === DESIGN TOKENS — DARK (default) ========================= */
+:root, html.dark {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --color-bg:               #080c14;
+  --color-surface:          #0d1320;
+  --color-elevated:         #111d2e;
+  --color-overlay:          rgba(0, 0, 0, 0.6);
+
+  /* Borders */
+  --color-border:           #1a2540;
+  --color-border-subtle:    #131c30;
+  --color-border-strong:    #243150;
+
+  /* Text — body bumped from #94a3b8 → #c9d4e3 for AA contrast on --color-bg */
+  --color-text:             #f1f5f9;
+  --color-text-body:        #c9d4e3;
+  --color-text-muted:       #8190a8;
+  --color-text-faint:       #475569;
+
+  /* Accent — single primary */
+  --color-accent:           #22d3ee;
+  --color-accent-strong:    #67e8f9;
+  --color-accent-muted:     rgba(34, 211, 238, 0.12);
+  --color-accent-text-on:   #06222a;
+
+  /* Category tints — badges/dots only, NOT load-bearing UI */
+  --color-cat-infra:        #34d399;
+  --color-cat-platform:     #60a5fa;
+  --color-cat-security:     #f59e0b;
+  --color-cat-data:         #f472b6;
+
+  /* Status */
+  --color-success:          #34d399;
+  --color-warning:          #fbbf24;
+  --color-danger:           #f87171;
+  --color-info:             var(--color-accent);
+
+  /* Code */
+  --color-code-bg:          #060b11;
+  --color-code-border:      #1a2540;
+  --color-code-text:        #c9d4e3;
+
+  /* Selection / focus */
+  --color-selection-bg:     rgba(34, 211, 238, 0.28);
+  --color-selection-fg:     #f1f5f9;
+  --color-focus-ring:       #22d3ee;
+
+  /* Typography — families */
+  --font-display:           'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body:              'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:              'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Type scale — modular ~1.125 off 15px body */
+  --text-3xs:               0.5625rem;  /* 9px  — micro labels (filter tabs etc.) */
+  --text-2xs:               0.6875rem;  /* 11px — metadata */
+  --text-xs:                0.75rem;    /* 12px — eyebrows, small caps */
+  --text-sm:                0.8125rem;  /* 13px — nav, body small */
+  --text-base:              0.9375rem;  /* 15px — body default */
+  --text-lg:                1.0625rem;  /* 17px — emphasized body */
+  --text-xl:                1.25rem;    /* 20px — small headings */
+  --text-2xl:               1.5rem;     /* 24px — section heading */
+  --text-3xl:               1.875rem;   /* 30px — page title */
+  --text-4xl:               2.5rem;     /* 40px — hero */
+
+  --leading-tight:          1.2;
+  --leading-snug:           1.35;
+  --leading-normal:         1.55;
+  --leading-relaxed:        1.7;
+
+  --tracking-tight:         -0.01em;
+  --tracking-normal:        0;
+  --tracking-wide:          0.04em;
+  --tracking-caps:          0.08em;
+
+  --weight-regular:         400;
+  --weight-medium:          500;
+  --weight-semibold:        600;
+  --weight-bold:            700;
+
+  /* Spacing — 4px base */
+  --space-0:                0;
+  --space-1:                0.25rem;   /* 4px  */
+  --space-2:                0.5rem;    /* 8px  */
+  --space-3:                0.75rem;   /* 12px */
+  --space-4:                1rem;      /* 16px */
+  --space-5:                1.25rem;   /* 20px */
+  --space-6:                1.5rem;    /* 24px */
+  --space-8:                2rem;      /* 32px */
+  --space-10:               2.5rem;    /* 40px */
+  --space-12:               3rem;      /* 48px */
+  --space-16:               4rem;      /* 64px */
+  --space-20:               5rem;      /* 80px */
+  --space-24:               6rem;      /* 96px */
+
+  /* Radii */
+  --radius-xs:              2px;
+  --radius-sm:              4px;
+  --radius-md:              6px;
+  --radius-lg:              8px;
+  --radius-xl:              12px;
+  --radius-full:            9999px;
+
+  /* Shadows — tuned for dark base */
+  --shadow-xs:              0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-sm:              0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-md:              0 4px 12px rgba(0, 0, 0, 0.40);
+  --shadow-lg:              0 12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-xl:              0 24px 60px rgba(0, 0, 0, 0.55);
+  --shadow-focus:           0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
+
+  /* Motion */
+  --duration-fast:          120ms;
+  --duration-base:          180ms;
+  --duration-slow:          280ms;
+  --ease-standard:          cubic-bezier(0.2, 0, 0.2, 1);
+  --ease-out:               cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:                cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* Z-index — named layers */
+  --z-base:                 0;
+  --z-raised:               10;
+  --z-sticky:               100;
+  --z-nav:                  500;
+  --z-overlay:              900;
+  --z-modal:                1000;
+  --z-toast:                1100;
+  --z-tooltip:              1200;
+  --z-skip:                 9999;
+
+  /* Layout */
+  --container-narrow:       56rem;
+  --container-default:      72rem;
+  --container-wide:         80rem;
+  --nav-height:             56px;
+
+  /* Border widths */
+  --border-thin:            1px;
+  --border-medium:          2px;
+
+  /* === LEGACY ALIASES — keep existing CSS working ============
+     These map the old variable names onto the new tokens so the
+     remainder of style.css does not need a sweep in this PR. */
+  --accent-cyan:            var(--color-accent);
+  --accent-magenta:         #ec4899;
+  --accent-rust:            #f97316;
+  --accent-k8s:             var(--color-cat-platform);
+  --accent-ebpf:            #8b5cf6;
+  --accent-infra:           var(--color-cat-infra);
+  --bg-base:                var(--color-bg);
+  --bg-surface:             var(--color-surface);
+  --bg-elevated:            var(--color-elevated);
+  --border:                 var(--color-border);
+  --border-subtle:          var(--color-border-subtle);
+  --border-active:          var(--color-accent);
+  --text-primary:           var(--color-text);
+  --text-body:              var(--color-text-body);
+  --text-secondary:         var(--color-text-body);
+  --text-muted:             var(--color-text-muted);
+  --code-bg:                var(--color-code-bg);
+  --code-border:            var(--color-code-border);
+  --code-text:              var(--color-code-text);
+  --card-shadow:            none;
+  --cyan-bright:            var(--color-accent);
+  --magenta-bright:         #ec4899;
+  --transition-base:        all var(--duration-base) var(--ease-standard);
+  --bp-sm:                  480px;
+  --bp-md:                  768px;
+  --bp-lg:                  1024px;
+}
+
+/* === DESIGN TOKENS — LIGHT ================================== */
+html.light {
+  color-scheme: light;
+
+  --color-bg:               #f0f4f8;
+  --color-surface:          #ffffff;
+  --color-elevated:         #ffffff;
+  --color-overlay:          rgba(15, 23, 42, 0.40);
+
+  --color-border:           #d4dde7;
+  --color-border-subtle:    #e4ecf4;
+  --color-border-strong:    #b8c5d4;
+
+  --color-text:             #0a1628;
+  --color-text-body:        #1e3a5f;
+  --color-text-muted:       #475569;
+  --color-text-faint:       #94a3b8;
+
+  --color-accent:           #0e7490;
+  --color-accent-strong:    #155e75;
+  --color-accent-muted:     rgba(14, 116, 144, 0.10);
+  --color-accent-text-on:   #ffffff;
+
+  --color-selection-bg:     rgba(14, 116, 144, 0.20);
+  --color-selection-fg:     #0a1628;
+  --color-focus-ring:       #0e7490;
+
+  --color-code-bg:          #f8fafc;
+  --color-code-border:      #d4dde7;
+  --color-code-text:        #1e293b;
+
+  --shadow-xs:              0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-sm:              0 1px 3px rgba(15, 23, 42, 0.10);
+  --shadow-md:              0 4px 12px rgba(15, 23, 42, 0.12);
+  --shadow-lg:              0 12px 32px rgba(15, 23, 42, 0.15);
+  --shadow-xl:              0 24px 60px rgba(15, 23, 42, 0.20);
+
+  /* Legacy alias overrides */
+  --accent-magenta:         #86198f;
+  --card-shadow:            var(--shadow-sm);
+}

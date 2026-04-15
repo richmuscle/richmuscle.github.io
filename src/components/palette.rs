@@ -1,5 +1,7 @@
 use crate::data::{get_infrastructure_fleet, WRITEUPS};
+use crate::GlobalAppState;
 use leptos::*;
+#[cfg(not(feature = "ssr"))]
 use leptos::wasm_bindgen::JsCast;
 use leptos_router::use_navigate;
 
@@ -80,7 +82,7 @@ fn build_index() -> Vec<PaletteItem> {
 
 #[component]
 pub fn CommandPalette() -> impl IntoView {
-    let palette_open = use_context::<RwSignal<bool>>().unwrap_or_else(|| create_rw_signal(false));
+    let palette_open = use_context::<GlobalAppState>().map(|s| s.palette_open).unwrap_or_else(|| create_rw_signal(false));
     let navigate = store_value(use_navigate());
     let (query, set_query) = create_signal(String::new());
     let (selected_idx, set_selected_idx) = create_signal(0usize);
@@ -100,6 +102,7 @@ pub fn CommandPalette() -> impl IntoView {
         ranked.into_iter().map(|(_, item)| item).take(24).collect::<Vec<_>>()
     });
 
+    #[cfg(not(feature = "ssr"))]
     create_effect(move |_| {
         if palette_open.get() {
             set_selected_idx.set(0);
@@ -134,7 +137,7 @@ pub fn CommandPalette() -> impl IntoView {
                             placeholder="Search projects, writing, routes..."
                             prop:value=move || query.get()
                             on:input=move |ev| set_query.set(event_target_value(&ev))
-                            on:keydown=move |ev: web_sys::KeyboardEvent| {
+                            on:keydown=move |ev: leptos::ev::KeyboardEvent| {
                                 let rows = results.get();
                                 match ev.key().as_str() {
                                     "ArrowDown" => {

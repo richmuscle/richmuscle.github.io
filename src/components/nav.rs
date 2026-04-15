@@ -1,7 +1,9 @@
 //! NavBar, KeyboardNav, BackToTop, ThemeToggle.
-use crate::data::{self, GITHUB_URL, ReadProgressSignals};
+use crate::data::{self, GITHUB_URL};
+use crate::GlobalAppState;
 use crate::utils::sanitize_slug;
 use leptos::*;
+#[cfg(not(feature = "ssr"))]
 use leptos::wasm_bindgen::JsCast;
 use leptos_router::{A, use_location, use_navigate};
 
@@ -12,7 +14,7 @@ pub fn NavBar(
 ) -> impl IntoView {
     let location = use_location();
     let current_path = move || location.pathname.get();
-    let shortcuts_open = use_context::<RwSignal<bool>>().unwrap_or_else(|| create_rw_signal(false));
+    let shortcuts_open = use_context::<GlobalAppState>().map(|s| s.shortcuts_open).unwrap_or_else(|| create_rw_signal(false));
     let (nav_open, set_nav_open) = create_signal(false);
 
     // Close drawer when route changes (e.g. keyboard shortcut navigation)
@@ -165,7 +167,8 @@ pub fn ThemeToggle(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) ->
 #[component]
 pub fn BackToTop() -> impl IntoView {
     let (visible, set_visible) = create_signal(false);
-    let read_progress_ctx = use_context::<ReadProgressSignals>();
+    let read_progress_ctx = use_context::<GlobalAppState>().map(|s| s.read_progress);
+    #[cfg(not(feature = "ssr"))]
     create_effect(move |_| {
         let window = web_sys::window().unwrap();
         let closure = wasm_bindgen::closure::Closure::wrap(Box::new(move || {
@@ -175,6 +178,8 @@ pub fn BackToTop() -> impl IntoView {
         window.add_event_listener_with_callback("scroll", closure.as_ref().unchecked_ref()).ok();
         closure.forget();
     });
+    #[cfg(feature = "ssr")]
+    let _ = set_visible;
     view! {
         <div class=move || format!("back-to-top-wrap {}", if visible.get() { "btt-visible" } else { "" })>
             {read_progress_ctx.map(|ctx| {
@@ -195,7 +200,10 @@ pub fn BackToTop() -> impl IntoView {
                     </svg>
                 }.into_view()
             }).unwrap_or_else(|| view! { <span></span> }.into_view())}
-            <button on:click=move |_| { web_sys::window().unwrap().scroll_to_with_x_and_y(0.0, 0.0); } aria-label="Back to top"
+            <button on:click=move |_| {
+                #[cfg(not(feature = "ssr"))]
+                { web_sys::window().unwrap().scroll_to_with_x_and_y(0.0, 0.0); }
+            } aria-label="Back to top"
                 class="back-to-top">
                 <span class="back-to-top-glyph">"↑"</span>
             </button>
@@ -209,9 +217,12 @@ pub fn KeyboardNav() -> impl IntoView {
     use std::rc::Rc;
     let navigator = use_navigate();
     let projects  = data::get_infrastructure_fleet();
-    let shortcuts_open = use_context::<RwSignal<bool>>().unwrap_or_else(|| create_rw_signal(false));
-    let palette_open = use_context::<RwSignal<bool>>().unwrap_or_else(|| create_rw_signal(false));
-    let project_card_signals = use_context::<data::ProjectCardSignals>();
+    let shortcuts_open = use_context::<GlobalAppState>().map(|s| s.shortcuts_open).unwrap_or_else(|| create_rw_signal(false));
+    let palette_open = use_context::<GlobalAppState>().map(|s| s.palette_open).unwrap_or_else(|| create_rw_signal(false));
+    let project_card_signals = use_context::<GlobalAppState>().map(|s| s.project_cards);
+    #[cfg(feature = "ssr")]
+    let _ = (navigator, projects, shortcuts_open, palette_open, project_card_signals);
+    #[cfg(not(feature = "ssr"))]
     create_effect(move |_| {
         let window   = web_sys::window().expect("window");
         let document = window.document().expect("document");

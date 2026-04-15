@@ -9,14 +9,14 @@ pub fn ContactPage() -> impl IntoView {
     let (email_copied, set_email_copied) = create_signal(false);
     view! {
         <Title text=move || format!("Contact · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
-        <Meta name="description" content="Contact Richard Mussell — Information Technology & Systems Professional available for systems engineering, SRE, and platform roles. Responds to every email."/>
+        <Meta name="description" content="Contact Richard Mussell — Systems Administrator & DevOps Engineer available for sysadmin, DevOps, and infrastructure roles."/>
         <main id="main-content" class="contact-page page-enter">
             <div class="contact-header">
                 <div class="contact-header-inner">
                     <p class="contact-header-label">"Contact"</p>
-                    <h1 class="contact-heading">"Let's talk systems & platform engineering."</h1>
+                    <h1 class="contact-heading">"Let's talk infrastructure, reliability, and automation."</h1>
                     <p class="contact-subtext">
-                        "Disciplined IT Systems Professional and BS in ITAM graduate. I specialize in engineering repeatable infrastructure, managing enterprise identity fabrics, and automating complex system lifecycles."
+                        "Systems Administrator and DevOps Engineer with a BS in IT & Administrative Management. I build repeatable infrastructure with Terraform, automate system administration with PowerShell and Bash, and manage identity and access through Active Directory."
                     </p>
                 </div>
             </div>
@@ -33,10 +33,13 @@ pub fn ContactPage() -> impl IntoView {
                                 type="button"
                                 class="contact-copy-btn"
                                 on:click=move |_| {
-                                    let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
-                                    set_email_copied.set(true);
-                                    track("email_copy", r#"{"source":"contact"}"#);
-                                    let _ = gloo_timers::callback::Timeout::new(2000, move || set_email_copied.set(false));
+                                    #[cfg(not(feature = "ssr"))]
+                                    {
+                                        let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
+                                        set_email_copied.set(true);
+                                        track("email_copy", r#"{"source":"contact"}"#);
+                                        let _ = gloo_timers::callback::Timeout::new(2000, move || set_email_copied.set(false));
+                                    }
                                 }
                                 aria-label="Copy email address"
                             >
@@ -65,15 +68,6 @@ pub fn ContactPage() -> impl IntoView {
                             <span class="contact-row-value">"Oklahoma City, OK"</span>
                         </div>
                     </div>
-                    <div class="contact-row">
-                        <span class="contact-row-glyph" aria-hidden="true">
-                            <span class="contact-status-dot"></span>
-                        </span>
-                        <div class="contact-row-content">
-                            <span class="contact-row-label">"Status"</span>
-                            <span class="contact-row-value">"Open to Systems & Platform Engineering roles"</span>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="contact-divider" aria-hidden="true"></div>
@@ -81,11 +75,11 @@ pub fn ContactPage() -> impl IntoView {
                 <div class="contact-right">
                     <p class="contact-section-label">"What I am looking for"</p>
                     <div class="contact-want-list">
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Junior Platform Engineer, Systems Administrator, or DevOps roles."</div>
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Building and scaling Kubernetes (k8s) environments for modern delivery."</div>
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Implementing Infrastructure as Code (Terraform, Pulumi) to eliminate manual toil."</div>
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Managing Identity Fabrics (Active Directory/Entra ID) and hybrid-cloud access."</div>
-                        <div class="contact-want-item"><span class="contact-want-arrow">"→"</span>" Teams focused on automated provisioning and deterministic system state."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Teams that treat infrastructure as code and value reproducible, auditable deployments."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Environments where systems administration includes automation, not just ticket queues."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Organizations investing in observability and proactive monitoring over reactive firefighting."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Hybrid-cloud or on-prem environments with real security requirements (NIST, CIS, zero-trust)."</div>
+                        <div class="contact-want-item"><span class="contact-want-arrow">"->"</span>" Remote-first or Oklahoma City-based. Open to relocation for the right role."</div>
                     </div>
                     <div class="contact-action-buttons">
                         <A href="/resume" class="hero-btn">"Download Resume"</A>

@@ -1,0 +1,456 @@
+
+/* Resume Background timeline */
+.resume-timeline {
+  border-left: 1px solid var(--border);
+  margin-left: 0;
+  padding-left: 24px;
+}
+.resume-timeline-item {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 600px) {
+  .resume-timeline-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+/* Dot-style timeline items (used by Professional Experience) */
+.resume-timeline-dot-item {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+.resume-timeline-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  margin-left: -36px;
+  float: left;
+  margin-top: 4px;
+}
+.resume-date {
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+  padding: 0;
+  line-height: 1.35;
+  align-self: start;
+}
+
+.resume-institution {
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+  padding: 0;
+  line-height: 1.3;
+}
+
+.resume-degree {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--accent-cyan);
+  margin: 6px 0 0 0;
+  padding: 0;
+  line-height: 1.3;
+}
+
+.resume-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 6px 0 0 0;
+  padding: 0;
+  line-height: 1.35;
+}
+
+.resume-desc {
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 10px 0 0 0;
+  padding: 0;
+  font-size: 14px;
+}
+.resume-timeline-year {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-cyan);
+  display: block;
+  margin-bottom: 2px;
+}
+.resume-timeline-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+.resume-timeline-detail {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 8. RESUME PAGE */
+/* ── RESUME PRINT ───────────────────────────────────────────── */
+@media print {
+  .navbar,
+  .back-to-top-wrap,
+  .reading-progress-bar,
+  .home-footer,
+  .one-pager-print-btn,
+  .theme-toggle-btn,
+  .resume-header-actions,
+  .resume-header-actions button,
+  .telemetry-status-link,
+  footer {
+    display: none !important;
+  }
+
+  html,
+  body,
+  main,
+  .resume-container,
+  .max-w-3xl,
+  .max-w-4xl,
+  .max-w-5xl,
+  .max-w-2xl {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body {
+    font-size: 10.5pt !important;
+    font-family: var(--font-body) !important;
+    line-height: 1.25 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  main,
+  .resume-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  h1, h2, h3, h4 {
+    color: #000 !important;
+    font-weight: 700 !important;
+    font-family: var(--font-body) !important;
+  }
+  h1 { font-size: 20pt !important; margin: 0 0 2pt !important; }
+  h2 { font-size: 10pt !important; letter-spacing: 0.06em !important; }
+  h3 { font-size: 10.5pt !important; }
+
+  p, li, span, div {
+    color: #111 !important;
+    font-size: 9.6pt !important;
+  }
+
+  code, .font-mono, pre, .resume-date, .resume-meta, .resume-timeline-year {
+    font-family: "JetBrains Mono", ui-monospace, monospace !important;
+  }
+
+  a {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8.5pt;
+  }
+  a[href^="mailto:"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8.5pt;
+  }
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after { content: none !important; }
+  .navbar a::after { content: none !important; }
+
+  .resume-header {
+    margin: 0 0 8pt !important;
+  }
+  .resume-header > a {
+    display: none !important;
+  }
+
+  /* Grid-to-page conversion for clean print flow */
+  .resume-timeline {
+    display: block !important;
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+  .resume-timeline-item {
+    display: block !important;
+    margin: 0 0 8pt !important;
+    gap: 0 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .resume-date {
+    margin: 0 0 2pt !important;
+    font-size: 8.5pt !important;
+    color: #444 !important;
+  }
+  .resume-institution,
+  .resume-degree,
+  .resume-meta,
+  .resume-desc {
+    margin-bottom: 2pt !important;
+  }
+
+  /* Keep entries intact */
+  .resume-timeline-dot-item,
+  .resume-project-card,
+  .pb-8,
+  .project-card-article,
+  .resume-skills-grid > div {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Technical skills — keep 2-col grid in print for density */
+  .resume-skills-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2pt 12pt !important;
+  }
+  .resume-skills-grid,
+  .resume-skills-grid > div,
+  .resume-skills-grid span,
+  .resume-skill-pills,
+  .resume-skill-pill {
+    font-size: 9pt !important;
+    line-height: 1.2 !important;
+  }
+  .resume-skills-grid > div {
+    margin-bottom: 1pt !important;
+    padding: 0 !important;
+  }
+  .resume-skill-pills {
+    gap: 3pt !important;
+  }
+
+  /* Resume section spacing — compress for single-page target */
+  .resume-container section,
+  .resume-container .mb-10 {
+    margin-bottom: 6pt !important;
+  }
+  .resume-container header.mb-10 {
+    margin-bottom: 4pt !important;
+    padding-bottom: 4pt !important;
+  }
+  .resume-container .mb-12 {
+    margin-bottom: 6pt !important;
+  }
+  .resume-container .mb-6 {
+    margin-bottom: 3pt !important;
+  }
+  .resume-container .mb-4 {
+    margin-bottom: 2pt !important;
+  }
+  .resume-container .mb-3 {
+    margin-bottom: 1pt !important;
+  }
+
+  /* Resume footer — hide in print */
+  .resume-container > footer {
+    display: none !important;
+  }
+
+  /* Vertical rhythm compression for single-page print */
+  .space-y-4 > * + * {
+    margin-top: 3pt !important;
+  }
+  .space-y-8 > * + * {
+    margin-top: 4pt !important;
+  }
+  .resume-project-card {
+    padding-bottom: 3pt !important;
+    margin-bottom: 3pt !important;
+  }
+  .resume-project-card .mb-4 {
+    margin-bottom: 2pt !important;
+  }
+  .resume-project-card .mb-2 {
+    margin-bottom: 1pt !important;
+  }
+  .resume-timeline-dot-item {
+    margin-bottom: 2pt !important;
+  }
+  .resume-timeline-detail span {
+    font-size: 9pt !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Project stack pills — compact in print */
+  .resume-project-card span[style*="border-radius"] {
+    font-size: 8pt !important;
+    padding: 1px 5px !important;
+    border: none !important;
+    color: #333 !important;
+    background: #eee !important;
+  }
+
+  /* Self-directed label — smaller in print */
+  .resume-project-card .text-\[10px\] {
+    font-size: 8pt !important;
+    color: #555 !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  @page {
+    margin: 0.4in 0.5in;
+    size: letter;
+  }
+}
+
+/* ── 8. RESUME PAGE (max-width: 768px) ─────────────────────────── */
+@media (max-width: 768px) {
+  .resume-container {
+    padding: 24px 20px 64px;
+  }
+  .resume-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .resume-header-actions {
+    width: 100%;
+  }
+  .resume-header-actions button,
+  .resume-header-actions a {
+    width: 100%;
+    min-height: 44px;
+    text-align: center;
+  }
+  .resume-skills-grid {
+    grid-template-columns: 1fr;
+  }
+  .resume-skill-pills {
+    gap: 4px;
+  }
+  .resume-skill-pill {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  .resume-project-card {
+    padding: 16px;
+  }
+  .resume-timeline-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .resume-timeline-year {
+    font-size: 11px;
+  }
+  .certs-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
+
+/* ── QA: Resume skill pills overflow (max-width: 480px) ──────────── */
+@media (max-width: 480px) {
+  .resume-skill-pill {
+    font-size: 10px;
+    padding: 2px 6px;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  .resume-skill-pills {
+    gap: 4px;
+  }
+}
+
+/* Resume mobile polish: keep desktop unchanged */
+@media (max-width: 768px) {
+  .resume-container {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .resume-container header h1 {
+    font-size: clamp(24px, 8vw, 42px) !important;
+    line-height: 1.08;
+  }
+
+  .resume-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .resume-header > a {
+    align-self: flex-start;
+  }
+
+  .resume-header-actions {
+    width: 100%;
+  }
+
+  .resume-header-actions button {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* Contact row in resume header: stack cleanly */
+  .resume-container header > div[style*="white-space:nowrap"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: flex-start !important;
+    white-space: normal !important;
+  }
+
+  /* Hide separator dots on mobile */
+  .resume-container header > div[style*="white-space:nowrap"] span[style*="padding:0 10px"] {
+    display: none !important;
+  }
+
+  /* Timeline: convert grid to stacked doc flow */
+  .resume-timeline-item {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .resume-date {
+    order: -1;
+    margin: 0 !important;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .resume-institution,
+  .resume-degree,
+  .resume-meta,
+  .resume-desc,
+  .resume-timeline-label,
+  .resume-timeline-detail,
+  .resume-container h2,
+  .resume-container h3 {
+    line-height: 1.4;
+  }
+}

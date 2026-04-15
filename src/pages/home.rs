@@ -1,227 +1,10 @@
 use leptos::*;
-use leptos::wasm_bindgen::JsCast;
 use leptos_meta::{Meta, Title};
-use leptos_router::{A, use_navigate};
+use leptos_router::A;
 use crate::data::{get_certifications, get_infrastructure_fleet, GITHUB_URL, LINKEDIN_URL, ProjectCardSignals, ProjectCategory, EMAIL, PROFESSIONAL_TITLE};
-use crate::components::ProjectCard;
-use std::sync::LazyLock;
+use crate::components::{ProjectCard, Terminal};
+use crate::GlobalAppState;
 
-fn init_boot_lines() -> Vec<String> {
-    vec![
-            "Mounting Enterprise Infrastructure Fabric...".into(),
-            "Verifying Active Directory Group Policies (GPO)...".into(),
-            "Executing User Onboarding Automation...".into(),
-            "Hardening Linux/Windows Production Baselines...".into(),
-            "richard@sysadmin-ops:~$".into(),
-        ]
-}
-
-static BOOT_LINES: LazyLock<Vec<String>> = LazyLock::new(init_boot_lines);
-
-#[component]
-fn Terminal() -> impl IntoView {
-    let navigate = store_value(use_navigate());
-    let boot_lines = store_value(BOOT_LINES.clone());
-    let (log_output, set_log_output) = create_signal(String::new());
-    let (user_input, set_user_input) = create_signal(String::new());
-    let initialized = store_value(false);
-
-    create_effect(move |_| {
-        if initialized.get_value() { return; }
-        initialized.set_value(true);
-        let lines = boot_lines.get_value();
-        for (i, line) in lines.into_iter().enumerate() {
-            let line = line.clone();
-            set_timeout(
-                move || {
-                    set_log_output.update(|output| {
-                        if !output.is_empty() { *output += "\n"; }
-                        *output += &line;
-                    });
-                },
-                std::time::Duration::from_millis(350 * (i as u64 + 1)),
-            );
-        }
-
-        // Prime the CLI for immediate command entry on load.
-        set_timeout(
-            move || {
-                if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
-                    if let Some(el) = doc.get_element_by_id("terminal-input") {
-                        if let Some(input) = el.dyn_ref::<web_sys::HtmlInputElement>() {
-                            let _ = input.focus();
-                        }
-                    }
-                }
-            },
-            std::time::Duration::from_millis(120),
-        );
-    });
-
-    let handle_keydown = move |ev: web_sys::KeyboardEvent| {
-        if ev.key() == "Enter" {
-            let raw = user_input.get();
-            let input = raw.trim()
-                .chars()
-                .filter(|c| !c.is_control())
-                .take(100)
-                .collect::<String>();
-            if !input.is_empty() {
-                let mut navigate_to: Option<String> = None;
-                let lower_input = input.to_lowercase();
-                let tokens: Vec<&str> = lower_input.split_whitespace().collect();
-                let response = match tokens.as_slice() {
-                    ["help"] => "> Commands: help, status, ls, cd [path], cat [file], clear".to_string(),
-                    ["status"] => "> Fleet: OPERATIONAL | Identity: Active Directory/Entra ID | Automation: PowerShell/GPO | Infrastructure: Windows Server 2022/Linux".to_string(),
-                    ["projects"] => {
-                        let project_lines = get_infrastructure_fleet()
-                            .iter()
-                            .map(|p| format!("  {} [{}] ● operational", p.slug, p.category.label()))
-                            .collect::<Vec<_>>()
-                            .join("\n");
-                        format!("> Projects:\n{project_lines}")
-                    }
-                    ["contact"] => format!("> Email: {} | LinkedIn: /in/richard-mussell | OKC, OK", EMAIL),
-                    ["ls"] => {
-                        let projects = get_infrastructure_fleet()
-                            .iter()
-                            .map(|p| format!("  {} [{}] ● operational", p.slug, p.category.label()))
-                            .collect::<Vec<_>>()
-                            .join("\n");
-                        format!(
-                            "> projects:\n{projects}\n> routes:\n  about\n  resume\n  contact\n  telemetry"
-                        )
-                    }
-                    ["cat", "resume"] => {
-                        navigate_to = Some("/resume".to_string());
-                        "> Opening resume spec...".to_string()
-                    }
-                    ["cat", "telemetry"] => {
-                        navigate_to = Some("/telemetry".to_string());
-                        "> Opening telemetry dashboard...".to_string()
-                    }
-                    ["cd", target] => {
-                        let maybe_project = get_infrastructure_fleet()
-                            .iter()
-                            .find(|p| p.slug.eq_ignore_ascii_case(target))
-                            .map(|p| format!("/project/{}", p.slug));
-                        let maybe_route = match *target {
-                            "about" => Some("/about".to_string()),
-                            "resume" => Some("/resume".to_string()),
-                            "contact" => Some("/contact".to_string()),
-                            "telemetry" => Some("/telemetry".to_string()),
-                            "writing" => Some("/writing".to_string()),
-                            "home" | "/" => Some("/".to_string()),
-                            _ => None,
-                        };
-                        if let Some(path) = maybe_project.or(maybe_route) {
-                            let path_hint = path.clone();
-                            navigate_to = Some(path);
-                            format!("> Navigating to path: {path_hint}...")
-                        } else {
-                            "> Error: Path not found.".to_string()
-                        }
-                    }
-                    ["clear"] => {
-                        set_log_output.set(String::new());
-                        set_user_input.set(String::new());
-                        return;
-                    }
-                    _ => format!("> Command not found: '{}' — type 'help' for available commands", input),
-                };
-                set_log_output.update(|output| {
-                    if !output.is_empty() { *output += "\n"; }
-                    *output += &format!("> {}\n{}", input, response);
-                });
-                set_user_input.set(String::new());
-
-                if let Some(path) = navigate_to {
-                    let nav = navigate.get_value();
-                    set_timeout(
-                        move || nav(&path, Default::default()),
-                        std::time::Duration::from_millis(300),
-                    );
-                }
-            }
-        }
-    };
-
-    view! {
-        <div class="terminal-glow bg-[var(--bg-base)] p-5 rounded-xl font-mono text-sm border border-[var(--border-subtle)]">
-            <div class="flex gap-2 mb-4">
-                <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div class="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
-                <span class="ml-2 text-xs text-[var(--text-muted)] font-mono">"richard@sys-admin-ops — zsh"</span>
-            </div>
-            <div role="region" aria-live="polite" aria-atomic="false" class="terminal-output space-y-1 min-h-[120px]">
-                {move || {
-                    let output = log_output.get();
-                    if output.is_empty() { return view! { <span></span> }.into_view(); }
-                    let lines: Vec<String> = output.lines().map(|s| s.to_string()).collect();
-                    view! {
-                        <For
-                            each=move || lines.clone()
-                            key=|line| line.clone()
-                            children=move |line_str: String| {
-                                let is_error = line_str.starts_with("> Command not found");
-                                view! {
-                                    <p class=format!("terminal-line text-xs {}", if is_error { "text-red-400" } else if line_str.starts_with(">") && !line_str.contains("richard@") { "text-[var(--text-primary)]" } else { "text-[var(--text-secondary)]" })>
-                                        {if line_str.starts_with(">") && !line_str.contains("$") {
-                                            view! {
-                                                <span>
-                                                    <span class="text-[#3b82f6]">"> "</span>
-                                                    <span class="text-[#3b82f6]">{line_str.chars().skip(2).collect::<String>()}</span>
-                                                </span>
-                                            }.into_view()
-                                        } else if line_str.contains("$") {
-                                            let mut parts = line_str.splitn(2, '$');
-                                            let before = parts.next().unwrap_or("").to_string();
-                                            let after  = parts.next().unwrap_or("").to_string();
-                                            view! {
-                                                <span>
-                                                    <span>{before}</span>
-                                                    <span class="text-[#3b82f6]">"$"</span>
-                                                    <span>{after}</span>
-                                                </span>
-                                            }.into_view()
-                                        } else if line_str.contains("● operational") {
-                                            let mut parts = line_str.splitn(2, "● operational");
-                                            let left = parts.next().unwrap_or("").to_string();
-                                            view! {
-                                                <span>
-                                                    <span class="text-[#3b82f6]">{left}</span>
-                                                    <span class="text-[#22c55e]">"● operational"</span>
-                                                </span>
-                                            }.into_view()
-                                        } else {
-                                            view! { <span>{line_str}</span> }.into_view()
-                                        }}
-                                    </p>
-                                }
-                            }
-                        />
-                    }.into_view()
-                }}
-            </div>
-            <div class="terminal-input-row flex items-center gap-2 mt-3 border-t border-[var(--border-subtle)] pt-3">
-                <span class="text-[#3b82f6] text-xs">"richard@it-systems-ops:~$"</span>
-                <input
-                    id="terminal-input"
-                    type="text"
-                    maxlength="100"
-                    aria-label="Interactive terminal. Type 'help' for commands."
-                    class="flex-1 bg-transparent text-[#3b82f6] text-xs outline-none caret-[#3b82f6] font-mono"
-                    placeholder="type 'help' for commands..."
-                    prop:value=move || user_input.get()
-                    on:input=move |ev| set_user_input.set(event_target_value(&ev))
-                    on:keydown=handle_keydown
-                />
-                <span class="cursor-blink w-2 h-4 bg-[#3b82f6] inline-block"></span>
-            </div>
-        </div>
-    }
-}
 
 // ============================================================
 //  HOME PAGE
@@ -234,7 +17,7 @@ fn CertificationsSection() -> impl IntoView {
     view! {
         <section class="certifications-section">
             <div class="cert-section-header">
-                <p class="cert-section-name">"Certifications & Development"</p>
+                <p class="cert-section-name">"Professional Development"</p>
                 <div class="cert-section-line"></div>
             </div>
             <div role="list" aria-label="Certifications" class="cert-list">
@@ -243,6 +26,7 @@ fn CertificationsSection() -> impl IntoView {
                         "Completed"  => "cert-status cert-status-completed",
                         "Pursuing"   => "cert-status cert-status-pursuing",
                         "Studying"   => "cert-status cert-status-studying",
+                        "Planned"    => "cert-status cert-status-interested",
                         "Interested" => "cert-status cert-status-interested",
                         _            => "cert-status cert-status-default",
                     };
@@ -276,14 +60,14 @@ pub fn HomePage() -> impl IntoView {
     });
 
     let ProjectCardSignals { expanded_slug, set_expanded_slug, did_drag } =
-        use_context::<ProjectCardSignals>().expect("App provides ProjectCardSignals");
+        use_context::<GlobalAppState>().expect("App provides GlobalAppState").project_cards;
 
     let drag_start_x = create_rw_signal(0.0_f64);
     let drag_start_y = create_rw_signal(0.0_f64);
 
     view! {
         <Title text=move || format!("Richard Mussell · {}", PROFESSIONAL_TITLE)/>
-        <Meta name="description" content="Information Technology & Systems Professional with lab projects spanning IaC, Linux automation, observability dashboards, and zero-trust networking."/>
+        <Meta name="description" content="Systems Administrator & DevOps Engineer with lab projects spanning IaC, Linux automation, observability, and zero-trust networking."/>
         <main id="main-content" role="main" class="home-main min-h-screen pt-24 page-enter">
             <div class="home-page-wrap">
 
@@ -292,9 +76,12 @@ pub fn HomePage() -> impl IntoView {
                     <div class="hero-grid">
                         <div class="hero-left">
                             <h1 id="hero-heading" class="hero-name">"Richard J. Mussell"</h1>
-                            <p class="hero-subtitle">"Systems Administrator | IT Operations"</p>
+                            <p class="hero-subtitle">"Systems Administrator & DevOps Engineer"</p>
                             <p class="hero-body">
-                                "Disciplined IT Systems Professional and BS in ITAM graduate. I specialize in the reliable administration of hybrid-cloud environments, from managing core Active Directory/Entra ID fabrics to automating system lifecycles via PowerShell and Terraform. Grounded in operational discipline and building toward modern platform operations."
+                                "SOC-trained infrastructure engineer. I build the automation, identity, and observability layers that keep hybrid-cloud environments running when nobody's looking. Oklahoma City — open to remote."
+                            </p>
+                            <p class="hero-body">
+                                "Monitored 13 municipal entities in an ELK-based SOC. Shipped zero-touch Windows deployment with Intune/Autopilot, WSUS patch automation, and 3-2-1 DR in lab. Running a 12-tool SOC homelab on bare metal."
                             </p>
                             <p class="hero-meta">
                                 <span class="text-[#64748b]">"Oklahoma City, OK"</span>
@@ -313,27 +100,32 @@ pub fn HomePage() -> impl IntoView {
                         </div>
                         <div class="hero-stats">
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Primary Focus"</span>
-                                <span class="hero-stat-value">"Systems Administration & IT Operations"</span>
+                                <span class="hero-stat-label">"PRIMARY_FOCUS"</span>
+                                <span class="hero-stat-value">"Systems Administration & DevOps Engineering"</span>
                             </div>
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Core Systems"</span>
-                                <span class="hero-stat-value">"Windows Server · Linux (RHEL) · Active Directory"</span>
+                                <span class="hero-stat-label">"CORE_INFRASTRUCTURE"</span>
+                                <span class="hero-stat-value">"Hybrid-Cloud Admin · Identity (AD/Entra ID) · Linux (RHEL)"</span>
                             </div>
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Foundations"</span>
-                                <span class="hero-stat-value">"Networking (CCNA) · Identity (IAM) · NIST"</span>
+                                <span class="hero-stat-label">"STANDARDS_&_SECURITY"</span>
+                                <span class="hero-stat-value">"Infrastructure as Code · NIST 800-53 · Network Security"</span>
                             </div>
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Automation"</span>
-                                <span class="hero-stat-value">"PowerShell · Bash · Terraform (IaC)"</span>
+                                <span class="hero-stat-label">"AUTOMATION_ENGINE"</span>
+                                <span class="hero-stat-value">"PowerShell Automation · Terraform · CI/CD Pipelines"</span>
                             </div>
                             <div class="hero-stat">
-                                <span class="hero-stat-label">"Status"</span>
-                                <span class="hero-stat-value">"Open to Entry-Level / Junior Roles"</span>
+                                <span class="hero-stat-label">"CURRENT_STATUS"</span>
+                                <span class="hero-stat-value">"Open to Systems & DevOps Engineering Roles"</span>
                             </div>
                         </div>
                     </div>
+                </section>
+
+                // ── INTERACTIVE TERMINAL ──────────────────────────────
+                <section class="terminal-section" aria-label="Interactive command terminal">
+                    <Terminal/>
                 </section>
 
                 // ── PROJECT GRID ──────────────────────────────────────
@@ -470,8 +262,11 @@ pub fn HomePage() -> impl IntoView {
                     <div class="home-footer-right home-footer-links">
                         <button
                             on:click=move |_| {
-                                let email = EMAIL;
-                                let _ = js_sys::eval(&format!("navigator.clipboard.writeText('{}').catch(function(){{}})", email));
+                                #[cfg(not(feature = "ssr"))]
+                                {
+                                    let email = EMAIL;
+                                    let _ = js_sys::eval(&format!("navigator.clipboard.writeText('{}').catch(function(){{}})", email));
+                                }
                                 set_email_copied.set(true);
                                 set_timeout(move || set_email_copied.set(false), std::time::Duration::from_millis(2000));
                             }

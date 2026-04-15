@@ -1,0 +1,470 @@
+
+/* Inline text links: do not force block / min-height */
+p a, li a, .writeup-detail-content a:not([class*="hero"]),
+.writeup-body a {
+  min-height: unset;
+  display: inline;
+}
+
+/* Writing page search input */
+.writing-search-input {
+  width: 100%;
+  margin-top: 1.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+}
+.writing-search-input::placeholder {
+  color: var(--text-muted);
+}
+.writing-search-input:focus {
+  border-color: var(--accent-cyan);
+  outline: none;
+}
+
+/* Writeup detail: TOC + article grid (desktop) */
+.writeup-detail-layout {
+  display: block;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 0;
+}
+@media (min-width: 1024px) {
+  .writeup-detail-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 64px;
+  }
+}
+.writeup-toc {
+  display: none;
+  position: sticky;
+  top: 80px;
+  padding-top: 0.5rem;
+}
+@media (min-width: 1024px) {
+  .writeup-toc {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+.writeup-toc-link {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.writeup-toc-link:hover {
+  color: var(--text-secondary);
+}
+.writeup-toc-link-active {
+  color: var(--accent-cyan);
+}
+.writeup-toc-progress {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-cyan);
+  text-align: center;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  margin-bottom: 0;
+}
+.writeup-detail-content {
+  min-width: 0;
+}
+.writeup-detail-content p {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ── MOBILE RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-title { 
+    font-size: 3rem !important; 
+  }
+  .writeup-detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .writeup-toc {
+    display: none;
+  }
+
+  .telemetry-bar {
+    flex-direction: column;
+    gap: 0.9375rem;
+    align-items: flex-start !important;
+  }
+
+  .telemetry-secure-link { 
+    display: none; 
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .comparison-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .detail-header h1 {
+    font-size: 2.5rem !important;
+  }
+}
+
+/* ── 6. WRITING PAGE (max-width: 768px) ─────────────────────────── */
+@media (max-width: 768px) {
+  .writing-page-container {
+    padding: 24px 20px;
+  }
+  .writing-page-container > section h1 {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+  .writing-page-container > section > p:last-child {
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .writing-search-input {
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+    margin-top: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .tag-pills-row {
+    display: flex;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 4px 0 12px;
+    gap: 10px;
+  }
+  .tag-pills-row::-webkit-scrollbar { display: none; }
+  .tag-pill {
+    white-space: nowrap;
+    min-height: 44px;
+    padding: 6px 12px;
+  }
+  .writeup-card {
+    padding: 20px 0;
+  }
+  .writeup-card + .writeup-card {
+    margin-top: 32px;
+  }
+  .writeup-card > div:first-child {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .writeup-card-tags {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+/* ── 7. WRITEUP DETAIL (1024px: hide TOC; 768px: content) ───────── */
+@media (max-width: 1024px) {
+  .writeup-detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .writeup-toc {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  .writeup-detail-content {
+    padding: 0 20px;
+  }
+  .writeup-detail-header {
+    padding: 32px 20px 24px;
+  }
+  .writeup-title {
+    font-size: clamp(22px, 6vw, 32px);
+  }
+  .writeup-subtitle {
+    font-size: 14px;
+  }
+  .writeup-meta-row {
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .writeup-section-heading {
+    font-size: 16px;
+  }
+  .writeup-detail-content .space-y-5 p,
+  .writeup-body p {
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .writeup-detail-content .code-block,
+  .writeup-detail-layout .code-block {
+    margin-left: -20px;
+    margin-right: -20px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+/* ── Prose typography ──────────────────────────────────────── */
+.wu-prose {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+
+.wu-prose p,
+.wu-prose .pd-body-text {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  margin: 0 0 20px;
+  max-width: 65ch;
+}
+
+.wu-prose h2,
+.wu-prose .pd-section-heading {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  margin: 48px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-body);
+  text-transform: uppercase;
+}
+
+.wu-prose h3,
+.wu-prose .pd-challenge-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  letter-spacing: 0;
+  margin: 32px 0 10px;
+}
+
+.wu-prose code,
+.wu-prose .pd-challenge-body code,
+.wu-prose .pd-lesson-item p code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #22d3ee;
+  background: color-mix(in srgb, #22d3ee 8%, var(--bg-base));
+  border: 1px solid color-mix(in srgb, #22d3ee 20%, transparent);
+  border-radius: 3px;
+  padding: 2px 6px;
+}
+
+.wu-prose .pd-challenge {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid #22d3ee;
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+
+.wu-prose .pd-challenge-title {
+  margin-top: 0;
+  color: var(--text-primary);
+}
+
+.wu-prose .pd-challenge-body {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  margin: 0;
+}
+
+.wu-prose .pd-lessons {
+  margin: 24px 0;
+}
+
+.wu-prose .pd-lesson-item {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.wu-prose .pd-lesson-item:last-child {
+  border-bottom: none;
+}
+
+.wu-prose .pd-lesson-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #22d3ee;
+  padding-top: 2px;
+  flex-shrink: 0;
+  width: 24px;
+}
+
+.wu-prose .pd-lesson-item p {
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0;
+  max-width: none;
+}
+
+.wu-prose .pd-section {
+  margin-top: 48px;
+}
+
+.wu-prose .manifesto-track-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+
+.wu-prose .manifesto-horizon {
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, #22d3ee 24%, var(--border));
+  margin: 40px 0 8px;
+}
+
+.wu-prose .manifesto-essay {
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.wu-prose .manifesto-essay-wide {
+  max-width: 680px;
+}
+
+.wu-prose .manifesto-essay p {
+  font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 70ch;
+  text-align: left;
+  hyphens: none;
+}
+
+.wu-prose .manifesto-subheading {
+  font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--text-primary);
+  margin: 30px 0 12px;
+}
+
+.wu-prose .manifesto-signature {
+  font-style: italic;
+  color: var(--text-primary);
+  text-shadow: 0 0 12px color-mix(in srgb, #22d3ee 16%, transparent);
+}
+
+.wu-prose .manifesto-journal-head {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.wu-prose .manifesto-journal-title {
+  margin: 0 0 8px;
+  font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.wu-prose .manifesto-journal-meta {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.wu-prose .manifesto-action-bar {
+  display: none;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.wu-prose .manifesto-inline-btn {
+  margin: 0;
+}
+
+.wu-prose .manifesto-pull-quote {
+  margin: 30px auto;
+  max-width: 70ch;
+  border: 0;
+  padding: 4px 0 4px 14px;
+}
+
+.wu-prose .manifesto-pull-quote p {
+  margin: 0;
+  text-align: left;
+  font-style: italic;
+  font-family: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.wu-prose .manifesto-seal {
+  margin-top: 30px;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  text-transform: none;
+}
+
+.wu-prose .narrative-bridge {
+  position: relative;
+  margin: 36px 0 26px;
+  border-top: 1px solid color-mix(in srgb, #22d3ee 18%, var(--border));
+  padding-top: 12px;
+}
+
+.wu-prose .narrative-bridge-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.wu-prose .builder-philosophy .pd-body-text {
+  margin-bottom: 26px;
+}
+
+.wu-prose .architect-signature {
+  font-weight: 700;
+  color: color-mix(in srgb, #22d3ee 68%, var(--text-primary));
+}
+
+html.light .wu-prose .pd-challenge {
+  background: var(--bg-surface);
+}

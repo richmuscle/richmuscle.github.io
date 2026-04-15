@@ -1,35 +1,10 @@
-//! Static data, types, and shared constants.
+//! Project index, detail, and category taxonomy.
 use std::sync::LazyLock;
 
-pub const EMAIL: &str = "Richard.Mussell@yahoo.com";
-pub const GITHUB_URL: &str = "https://github.com/richardmussell";
-pub const LINKEDIN_URL: &str = "https://www.linkedin.com/in/richard-mussell/";
-pub const PROFESSIONAL_TITLE: &str = "Information Technology & Systems Professional";
-#[allow(dead_code)] // reserved for canonical URLs and sitemap
-pub const SITE_URL: &str = "https://richardmussell.dev";
-
-// (Performance budget / Lighthouse metrics removed to align with the IT systems persona.)
 #[cfg_attr(debug_assertions, derive(Debug))]
 #[derive(Clone, PartialEq)]
 #[allow(dead_code)] // Degraded, Maintenance used for project status in data and UI
 pub enum SystemStatus { Operational, Degraded, Maintenance }
-
-#[derive(Clone, PartialEq)]
-#[allow(dead_code)]
-pub struct Challenge { pub title: String, pub detail: String }
-
-#[derive(Clone, PartialEq)]
-#[allow(dead_code)]
-pub struct Outcome { pub metric: String, pub value: String, pub unit: String }
-
-#[derive(Clone, PartialEq)]
-pub struct TimelineEntry { pub date: String, pub title: String, pub body: String }
-
-#[derive(Clone, PartialEq)]
-pub struct CodeSnippet { pub lang: String, pub label: String, pub code: String }
-
-#[derive(Clone, PartialEq)]
-pub struct BeforeAfter { pub label: String, pub before: String, pub after: String }
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum ProjectCategory {
@@ -98,119 +73,6 @@ pub struct ProjectDetail {
     #[serde(default)]
     pub demo_url: Option<String>,
 }
-
-#[derive(Clone, PartialEq)]
-pub struct Certification {
-    pub name: String,
-    pub issuer: String,
-    pub status: String,
-}
-
-fn init_certifications() -> Vec<Certification> {
-    vec![
-        Certification { name: "CKA — Certified Kubernetes Administrator".into(),        issuer: "CNCF".into(),     status: "Interested".into() },
-        Certification { name: "CKAD — Kubernetes Application Developer".into(),         issuer: "CNCF".into(),     status: "Interested".into() },
-        Certification { name: "CKS — Kubernetes Security Specialist".into(),            issuer: "CNCF".into(),     status: "Interested".into() },
-        Certification { name: "RHCSA — Red Hat Certified System Administrator".into(),  issuer: "Red Hat".into(),  status: "Pursuing".into() },
-        Certification { name: "AWS Certified Solutions Architect – Associate".into(),   issuer: "AWS".into(),      status: "Interested".into() },
-    ]
-}
-static CERTIFICATIONS: LazyLock<Vec<Certification>> = LazyLock::new(init_certifications);
-
-pub fn get_certifications() -> &'static Vec<Certification> {
-    &*CERTIFICATIONS
-}
-
-/// Write-up card and list — compiled into Wasm. No long-form content.
-#[derive(Clone, PartialEq)]
-pub struct WriteUpIndex {
-    pub slug: &'static str,
-    pub title: &'static str,
-    pub date: &'static str,
-    pub tags: &'static [&'static str],
-    pub summary: &'static str,
-    pub read_time: &'static str,
-}
-
-/// Fetched at runtime from /writeups/{slug}.json
-#[derive(Clone, serde::Deserialize, serde::Serialize)]
-pub struct WriteUpDetail {
-    pub slug: String,
-    pub content: String,
-}
-
-fn init_writeups_index() -> Vec<WriteUpIndex> {
-    vec![
-        WriteUpIndex {
-            slug: "hardening-linux-municipal-environments",
-            title: "Hardening Linux for Municipal Environments",
-            date: "2026",
-            tags: &["Cybersecurity", "Linux", "SOC"],
-            summary: "A fleet-ready hardening framework for municipal environments: CIS-aligned posture, idempotent enforcement, and audit-evidence that supports SOC operations.",
-            read_time: "12 min read",
-        },
-        WriteUpIndex {
-            slug: "automating-nist-800-53-compliance-with-terraform",
-            title: "Automating NIST 800-53 Compliance with Terraform",
-            date: "2026",
-            tags: &["IaC", "Compliance", "Terraform"],
-            summary: "Translate NIST 800-53 security control intent into deterministic Terraform module patterns with state safety, drift-aware reconciliation, and governance-ready outputs.",
-            read_time: "13 min read",
-        },
-        WriteUpIndex {
-            slug: "zero-trust-moving-beyond-bastion-hosts",
-            title: "Zero-Trust: Moving Beyond Bastion Hosts",
-            date: "2026",
-            tags: &["Networking", "ZeroTrust", "AWS"],
-            summary: "Operational patterns for zero-trust administrative access that replace shared bastion trust with identity-governed connectivity, revocation safety, and packet stability.",
-            read_time: "11 min read",
-        },
-        WriteUpIndex {
-            slug: "siem-alert-hygiene-reducing-noise-in-the-soc",
-            title: "SIEM Alert Hygiene: Reducing Noise in the SOC",
-            date: "2026",
-            tags: &["SOC", "SIEM", "Monitoring"],
-            summary: "Reduce SOC alert fatigue using enrichment, cardinality-aware signal design, and SLO/MTTR-aligned dispatch logic so analysts see fewer, better alerts.",
-            read_time: "10 min read",
-        },
-        WriteUpIndex {
-            slug: "kubernetes-controller-reconciliation-deep-dive",
-            title: "Why Your Kubernetes Controller Is Lying to You",
-            date: "2026",
-            tags: &["Kubernetes", "Go", "CloudNative"],
-            summary: "A systems-focused teardown of controller-runtime reconciliation pitfalls: informer cache staleness, optimistic locking behavior, and crash-safe convergence patterns.",
-            read_time: "11 min read",
-        },
-        WriteUpIndex {
-            slug: "otel-ebpf-tracing-without-instrumentation",
-            title: "Distributed Tracing Without Touching Your App Code",
-            date: "2026",
-            tags: &["OTel", "eBPF", "Tracing"],
-            summary: "How syscall-layer eBPF tracing can generate spans and propagate context into OTel-compatible pipelines—without SDK instrumentation or code changes.",
-            read_time: "9 min read",
-        },
-        WriteUpIndex {
-            slug: "rust-wasm-edge-runtime-internals",
-            title: "Building a Zero-Copy Wasm Edge Runtime in Rust",
-            date: "2026",
-            tags: &["Systems", "Rust", "Wasm"],
-            summary: "A deep dive into boundary-layer batching and deterministic execution for constrained Wasm edge environments—where latency is dominated by system crossings, not CPU.",
-            read_time: "14 min read",
-        },
-        WriteUpIndex {
-            slug: "ebpf-from-zero-to-prod",
-            title: "eBPF From Zero to Production",
-            date: "2026",
-            tags: &["eBPF", "Kernel", "Observability"],
-            summary: "A production-minded guide to verifier constraints, CO-RE portability, and ring-buffer operational tuning—focused on what breaks under real load.",
-            read_time: "10 min read",
-        },
-    ]
-}
-
-// Long-form writeup content lives in static/writeups/{slug}.json and is fetched at runtime.
-
-pub(crate) static WRITEUPS: LazyLock<Vec<WriteUpIndex>> = LazyLock::new(init_writeups_index);
 
 fn init_projects_index() -> Vec<ProjectIndex> {
     vec![
@@ -314,11 +176,3 @@ pub struct ProjectCardSignals {
     pub set_expanded_slug: leptos::WriteSignal<Option<String>>,
     pub did_drag: leptos::RwSignal<bool>,
 }
-
-#[derive(Clone)]
-pub struct ReadProgressSignals {
-    pub progress: leptos::ReadSignal<f64>,
-    pub set_progress: leptos::WriteSignal<f64>,
-}
-
-// (Old init_projects and writeup section content removed — see static/projects/*.json and static/writeups/*.json)

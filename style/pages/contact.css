@@ -1,0 +1,270 @@
+
+.contact-page {
+  min-height: calc(100vh - 56px);
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-header {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 40px 0 56px;
+}
+
+.contact-header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.contact-header-label {
+  font-size: 11px;
+  font-family: monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+
+.contact-heading {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+}
+
+.contact-subtext {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 520px;
+  margin: 0;
+  font-family: monospace;
+}
+
+.contact-body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 32px 64px;
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0 48px;
+  flex: 1;
+}
+
+.contact-left,
+.contact-right {
+  align-self: start;
+}
+
+.contact-divider {
+  background: var(--border-subtle);
+  width: 1px;
+  align-self: stretch;
+}
+
+.contact-section-label {
+  font-size: 10px;
+  font-family: monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.contact-row {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 0 16px;
+  align-items: start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.contact-row:first-of-type {
+  padding-top: 0;
+}
+
+.contact-row:last-of-type {
+  border-bottom: none;
+}
+
+.contact-row-glyph {
+  font-size: 14px;
+  color: var(--text-muted);
+  padding-top: 14px;
+  font-family: monospace;
+  text-align: center;
+}
+
+.contact-row-glyph.contact-glyph-in,
+.contact-row-glyph.contact-glyph-gh {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.contact-row-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 0;
+}
+
+.contact-row-label {
+  font-size: 10px;
+  font-family: monospace;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.contact-row-value {
+  font-size: 14px;
+  color: var(--accent-cyan);
+  font-family: monospace;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.contact-row-value:hover {
+  text-decoration: underline;
+}
+
+.contact-status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  margin-right: 6px;
+  animation: banner-pulse 2s infinite;
+  vertical-align: middle;
+}
+
+.contact-want-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.contact-want-item {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 0 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.contact-want-item:first-child {
+  padding-top: 0;
+}
+
+.contact-want-item:last-child {
+  border-bottom: none;
+}
+
+.contact-want-arrow {
+  color: var(--accent-cyan);
+  font-family: monospace;
+  font-size: 12px;
+  padding-top: 1px;
+}
+
+.contact-footer-band {
+  border-top: 1px solid var(--border-subtle);
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 11px;
+  font-family: monospace;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  background: var(--bg-surface);
+}
+
+@media (max-width: 768px) {
+  .contact-header {
+    padding: 40px 0 32px;
+  }
+
+  .contact-header-inner {
+    padding: 0 20px;
+  }
+
+  .contact-body {
+    grid-template-columns: 1fr;
+    padding: 32px 20px;
+    gap: 40px 0;
+  }
+
+  .contact-divider {
+    width: 100%;
+    height: 1px;
+    align-self: auto;
+  }
+
+  .contact-footer-band {
+    padding: 16px 20px;
+    text-align: left;
+  }
+
+  .contact-action-buttons {
+    flex-direction: column;
+  }
+
+  .contact-action-buttons a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* One-pager + legacy contact list (contact-wish-list still used there) */
+.contact-wish-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+}
+.contact-wish-list li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  padding-left: 0;
+}
+.contact-arrow {
+  color: var(--accent-cyan);
+  margin-right: 0.5rem;
+}
+
+/* ── QA: Contact row glyph alignment (max-width: 480px) ──────────── */
+@media (max-width: 480px) {
+  .contact-row {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 12px 0;
+  }
+  .contact-row-glyph {
+    padding-top: 2px;
+  }
+  .contact-row-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .contact-row-value {
+    word-break: break-all;
+  }
+}
+
+/* Emergency Slate Overrides: reduce motion + stabilize layout */
+.contact-status-dot,
+.skeleton-bar,
+.skeleton-block {
+  animation: none !important;
+}

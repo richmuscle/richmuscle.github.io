@@ -1,11 +1,16 @@
+#[cfg(not(feature = "ssr"))]
 use gloo_net::http::Request;
+#[cfg(not(feature = "ssr"))]
 use gloo_timers::callback::Interval;
 use leptos::*;
+#[cfg(not(feature = "ssr"))]
 use leptos::wasm_bindgen::JsCast;
 use leptos_meta::{Meta, Title};
 use std::collections::VecDeque;
+#[cfg(not(feature = "ssr"))]
 use crate::utils::wasm_start_time_ms;
 
+#[cfg(not(feature = "ssr"))]
 fn perf_now_ms() -> Option<f64> {
     let window = web_sys::window()?;
     let perf = js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
@@ -14,6 +19,7 @@ fn perf_now_ms() -> Option<f64> {
     now_fn.call0(&perf).ok()?.as_f64()
 }
 
+#[cfg(not(feature = "ssr"))]
 fn read_heap_bytes() -> Option<(f64, f64)> {
     let window = web_sys::window()?;
     let perf_js = js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
@@ -23,6 +29,7 @@ fn read_heap_bytes() -> Option<(f64, f64)> {
     Some((used, total))
 }
 
+#[cfg(not(feature = "ssr"))]
 fn read_ttfb_ms() -> Option<f64> {
     let window = web_sys::window()?;
     let perf = js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
@@ -57,6 +64,7 @@ fn push_log(logs: &WriteSignal<VecDeque<String>>, line: String) {
     });
 }
 
+#[cfg(not(feature = "ssr"))]
 async fn run_network_probe(set_network_rows: WriteSignal<Vec<String>>, set_logs: WriteSignal<VecDeque<String>>) {
     let probes = vec![
         "linux-admin-scripting",
@@ -106,98 +114,111 @@ pub fn TelemetryPage() -> impl IntoView {
     let (ua, set_ua) = create_signal(String::from("Unknown"));
     let (network_rows, set_network_rows) = create_signal(Vec::<String>::new());
     let (logs, set_logs) = create_signal(VecDeque::<String>::new());
-    let last_heap_used = create_rw_signal(None::<f64>);
+    // === Browser-only runtime instrumentation ===
+    // Under SSR this entire block is gated out; the view below renders with
+    // initial signal values (e.g. "Heap metrics unavailable", "Waiting for
+    // telemetry events..."), which matches the first client render before
+    // any effect fires — so SSR HTML hydrates cleanly.
+    #[cfg(not(feature = "ssr"))]
+    {
+        let last_heap_used = create_rw_signal(None::<f64>);
 
-    create_effect(move |_| {
-        if let Some(window) = web_sys::window() {
-            let nav = window.navigator();
-            set_ua.set(nav.user_agent().unwrap_or_else(|_| String::from("Unavailable")));
-        }
+        create_effect(move |_| {
+            if let Some(window) = web_sys::window() {
+                let nav = window.navigator();
+                set_ua.set(nav.user_agent().unwrap_or_else(|_| String::from("Unavailable")));
+            }
 
-        if let (Some(now), Some(start)) = (perf_now_ms(), wasm_start_time_ms()) {
-            let init = (now - start).max(0.0);
-            set_wasm_init_ms.set(init);
-            push_log(&set_logs, format!("[INFO] WASM initialized in {:.2}ms", init));
-        } else {
-            push_log(&set_logs, String::from("[WARN] WASM initialization timer unavailable"));
-        }
+            if let (Some(now), Some(start)) = (perf_now_ms(), wasm_start_time_ms()) {
+                let init = (now - start).max(0.0);
+                set_wasm_init_ms.set(init);
+                push_log(&set_logs, format!("[INFO] WASM initialized in {:.2}ms", init));
+            } else {
+                push_log(&set_logs, String::from("[WARN] WASM initialization timer unavailable"));
+            }
 
-        if let Some(ttfb) = read_ttfb_ms() {
-            set_ttfb_ms.set(Some(ttfb));
-            push_log(&set_logs, format!("[INFO] Navigation TTFB measured at {:.2}ms", ttfb));
-        } else {
-            push_log(&set_logs, String::from("[DEBUG] Navigation timing unavailable for TTFB"));
-        }
+            if let Some(ttfb) = read_ttfb_ms() {
+                set_ttfb_ms.set(Some(ttfb));
+                push_log(&set_logs, format!("[INFO] Navigation TTFB measured at {:.2}ms", ttfb));
+            } else {
+                push_log(&set_logs, String::from("[DEBUG] Navigation timing unavailable for TTFB"));
+            }
 
-        if let Some((used, total)) = read_heap_bytes() {
-            set_heap_used.set(Some(used));
-            set_heap_total.set(Some(total));
-            last_heap_used.set(Some(used));
-            push_log(
-                &set_logs,
-                format!(
-                    "[INFO] JS heap baseline: used={} total={}",
-                    fmt_bytes(used),
-                    fmt_bytes(total)
-                ),
-            );
-        } else {
-            push_log(
-                &set_logs,
-                String::from("[DEBUG] JS heap metrics unavailable in this browser"),
-            );
-        }
-    });
-
-    let heap_interval = {
-        let set_heap_used = set_heap_used;
-        let set_heap_total = set_heap_total;
-        let set_logs = set_logs;
-        Interval::new(2000, move || {
             if let Some((used, total)) = read_heap_bytes() {
                 set_heap_used.set(Some(used));
                 set_heap_total.set(Some(total));
-                if let Some(previous) = last_heap_used.get_untracked() {
-                    let delta = used - previous;
-                    if delta.abs() > 65536.0 {
-                        let sign = if delta >= 0.0 { "+" } else { "-" };
-                        push_log(
-                            &set_logs,
-                            format!(
-                                "[DEBUG] WASM Heap reallocated: {}{:.0}kb",
-                                sign,
-                                delta.abs() / 1024.0
-                            ),
-                        );
-                    }
-                }
                 last_heap_used.set(Some(used));
+                push_log(
+                    &set_logs,
+                    format!(
+                        "[INFO] JS heap baseline: used={} total={}",
+                        fmt_bytes(used),
+                        fmt_bytes(total)
+                    ),
+                );
+            } else {
+                push_log(
+                    &set_logs,
+                    String::from("[DEBUG] JS heap metrics unavailable in this browser"),
+                );
             }
-        })
-    };
-
-    {
-        let set_network_rows = set_network_rows;
-        let set_logs = set_logs;
-        spawn_local(async move {
-            run_network_probe(set_network_rows, set_logs).await;
         });
-    }
-    let network_interval = {
-        let set_network_rows = set_network_rows;
-        let set_logs = set_logs;
-        Interval::new(15000, move || {
+
+        let heap_interval = {
+            let set_heap_used = set_heap_used;
+            let set_heap_total = set_heap_total;
+            let set_logs = set_logs;
+            Interval::new(2000, move || {
+                if let Some((used, total)) = read_heap_bytes() {
+                    set_heap_used.set(Some(used));
+                    set_heap_total.set(Some(total));
+                    if let Some(previous) = last_heap_used.get_untracked() {
+                        let delta = used - previous;
+                        if delta.abs() > 65536.0 {
+                            let sign = if delta >= 0.0 { "+" } else { "-" };
+                            push_log(
+                                &set_logs,
+                                format!(
+                                    "[DEBUG] WASM Heap reallocated: {}{:.0}kb",
+                                    sign,
+                                    delta.abs() / 1024.0
+                                ),
+                            );
+                        }
+                    }
+                    last_heap_used.set(Some(used));
+                }
+            })
+        };
+
+        {
             let set_network_rows = set_network_rows;
             let set_logs = set_logs;
             spawn_local(async move {
                 run_network_probe(set_network_rows, set_logs).await;
             });
-        })
-    };
-    on_cleanup(move || {
-        drop(heap_interval);
-        drop(network_interval);
-    });
+        }
+        let network_interval = {
+            let set_network_rows = set_network_rows;
+            let set_logs = set_logs;
+            Interval::new(15000, move || {
+                let set_network_rows = set_network_rows;
+                let set_logs = set_logs;
+                spawn_local(async move {
+                    run_network_probe(set_network_rows, set_logs).await;
+                });
+            })
+        };
+        on_cleanup(move || {
+            drop(heap_interval);
+            drop(network_interval);
+        });
+    }
+
+    // Suppress unused-setter warnings under SSR (signals are written only
+    // from the gated block above; their getters are still read by the view).
+    #[cfg(feature = "ssr")]
+    let _ = (set_heap_used, set_heap_total, set_wasm_init_ms, set_ttfb_ms, set_ua, set_network_rows, set_logs);
 
     view! {
         <Title text="Telemetry | Richard J. Mussell" />

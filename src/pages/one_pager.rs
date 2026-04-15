@@ -15,17 +15,20 @@ pub fn OnePageSummary() -> impl IntoView {
             <div class="one-pager-inner">
                 <section class="one-pager-section">
                     <h1 class="one-pager-name">"Richard Mussell"</h1>
-                    <p class="one-pager-title">"Systems Engineering & Platform Operations"</p>
+                    <p class="one-pager-title">"Systems Administrator & DevOps Engineer"</p>
                     <p class="one-pager-meta">{format!("{} · Oklahoma City, OK (remote open)", EMAIL)}</p>
                     <div class="one-pager-actions one-pager-action-row">
                         <button
                             type="button"
                             class="hero-btn one-pager-print-btn"
                             on:click=move |_| {
-                                let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
-                                set_email_copied.set(true);
-                                track("email_copy", r#"{"source":"one-pager"}"#);
-                                let _ = gloo_timers::callback::Timeout::new(2000, move || set_email_copied.set(false));
+                                #[cfg(not(feature = "ssr"))]
+                                {
+                                    let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
+                                    set_email_copied.set(true);
+                                    track("email_copy", r#"{"source":"one-pager"}"#);
+                                    let _ = gloo_timers::callback::Timeout::new(2000, move || set_email_copied.set(false));
+                                }
                             }
                         >
                             {move || if email_copied.get() { "✓ Copied" } else { "Copy Email" }}
@@ -35,7 +38,7 @@ pub fn OnePageSummary() -> impl IntoView {
                 </section>
 
                 <section class="one-pager-section">
-                    <p class="one-pager-sentence">"I build the infrastructure layer between bare metal and the cloud-native control plane — in Rust, with zero JavaScript, and with eBPF tracing from day one."</p>
+                    <p class="one-pager-sentence">"I build repeatable infrastructure with Terraform, automate system administration with PowerShell and Bash, and manage identity and access through Active Directory. Looking for a team where infrastructure is code and operations run on automation, not ticket queues."</p>
                 </section>
 
                 <section class="one-pager-section">
@@ -90,19 +93,19 @@ pub fn OnePageSummary() -> impl IntoView {
                 </section>
 
                 <section class="one-pager-section">
-                    <h2 class="one-pager-h2">"Technical Depth"</h2>
+                    <h2 class="one-pager-h2">"Technical Focus Areas"</h2>
                     <div class="one-pager-three-col one-pager-tech-grid">
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"Core"</strong>
-                            <p>"Rust, WebAssembly/wasm-bindgen, Linux kernel/syscalls"</p>
+                            <strong class="one-pager-col-label">"Systems Administration"</strong>
+                            <p>"Linux (RHEL/Ubuntu) and Windows Server administration, Active Directory GPO management, user lifecycle automation, and CIS-standard system hardening."</p>
                         </div>
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"Orchestration"</strong>
-                            <p>"Kubernetes CRDs, controller-runtime, Helm"</p>
+                            <strong class="one-pager-col-label">"Infrastructure as Code"</strong>
+                            <p>"Terraform modules with remote state locking, reproducible cloud environments, drift detection, and policy-validated deployments on GCP and AWS."</p>
                         </div>
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"Observability"</strong>
-                            <p>"eBPF CO-RE, OpenTelemetry, Prometheus"</p>
+                            <strong class="one-pager-col-label">"Observability & Security"</strong>
+                            <p>"Prometheus metrics, ELK Stack log aggregation, Grafana dashboards, WireGuard VPN, and NIST-aligned security controls for hybrid environments."</p>
                         </div>
                     </div>
                 </section>
@@ -110,23 +113,50 @@ pub fn OnePageSummary() -> impl IntoView {
                 <section class="one-pager-section">
                     <h2 class="one-pager-h2">"What I am looking for"</h2>
                     <ul class="contact-wish-list">
-                        <li><span class="contact-arrow">"→"</span>" Junior Platform Engineer, DevOps Engineer, or Systems Engineer roles."</li>
-                        <li><span class="contact-arrow">"→"</span>" Teams utilizing Kubernetes (k8s) for container orchestration and cloud-native delivery."</li>
-                        <li><span class="contact-arrow">"→"</span>" Environments scaling through Infrastructure as Code (Terraform, Pulumi) and automated CI/CD pipelines."</li>
-                        <li><span class="contact-arrow">"→"</span>" Engineering-centric cultures focused on Linux internals, developer experience (DevEx), and system reliability."</li>
-                        <li><span class="contact-arrow">"→"</span>" Opportunities based in Oklahoma City or Remote-friendly organizations."</li>
+                        <li><span class="contact-arrow">"->"</span>" Teams that treat infrastructure as code and value reproducible, auditable deployments."</li>
+                        <li><span class="contact-arrow">"->"</span>" Environments where systems administration includes automation, not just ticket queues."</li>
+                        <li><span class="contact-arrow">"->"</span>" Organizations investing in observability and proactive monitoring over reactive firefighting."</li>
+                        <li><span class="contact-arrow">"->"</span>" Hybrid-cloud or on-prem environments with real security requirements (NIST, CIS, zero-trust)."</li>
+                        <li><span class="contact-arrow">"->"</span>" Remote-first or Oklahoma City-based. Open to relocation for the right role."</li>
                     </ul>
                 </section>
 
                 <section class="one-pager-section">
-                    <h2 class="one-pager-h2">"Education + Certs"</h2>
-                    <p>"BS Information Technology — Central Washington University"</p>
-                    <p class="one-pager-certs">"Pursuing: CKA · CKAD · RHCSA"</p>
+                    <h2 class="one-pager-h2">"Education"</h2>
+                    <div class="one-pager-edu-block">
+                        <p class="one-pager-edu-row">
+                            <span class="one-pager-edu-label">"Institution:"</span>
+                            "Central Washington University (2020 - 2024)"
+                        </p>
+                        <p class="one-pager-edu-row">
+                            <span class="one-pager-edu-label">"Degree:"</span>
+                            "Bachelor of Science (BS), Information Technology — "
+                            <span class="one-pager-edu-accent">"Cybersecurity Specialization"</span>
+                        </p>
+                        <p class="one-pager-edu-row one-pager-edu-focus">
+                            <span class="one-pager-edu-label">"Minors:"</span>
+                        </p>
+                        <ul class="one-pager-edu-list">
+                            <li>"Sustainable Practices in IT"</li>
+                            <li>"Project Management"</li>
+                        </ul>
+                        <p class="one-pager-edu-summary">
+                            "Coursework in network defense, NIST cybersecurity frameworks, and secure enterprise IT delivery. SOC internship monitoring 13 municipal entities with ELK Stack."
+                        </p>
+                    </div>
+                    <div class="one-pager-edu-divider" aria-hidden="true"></div>
+                    <p class="one-pager-h2">"Currently Studying"</p>
+                    <ul class="one-pager-edu-list one-pager-edu-list-certs">
+                        <li><span class="one-pager-edu-label">"RHCSA"</span>" — Red Hat Certified System Administrator"</li>
+                        <li><span class="one-pager-edu-label">"Google Cloud"</span>" — Professional Cloud Architect"</li>
+                        <li><span class="one-pager-edu-label">"CKA / CKAD"</span>" — Kubernetes Administrator & Application Developer (planned)"</li>
+                    </ul>
                 </section>
 
                 <section class="one-pager-section">
                     <button type="button" class="hero-btn one-pager-print-btn" on:click=move |_| {
                         track("print", r#"{"page":"one-pager"}"#);
+                        #[cfg(not(feature = "ssr"))]
                         if let Some(w) = web_sys::window() { let _ = w.print(); }
                     }>
                         "🖨 Print / Save as PDF"

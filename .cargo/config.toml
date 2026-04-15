@@ -7,4 +7,5 @@ rustflags = [
   "-C", "link-arg=--no-entry",
   "-C", "link-arg=-zstack-size=1048576",
   "-C", "link-arg=--import-memory",
+  "-C", "target-feature=+bulk-memory",
 ]

@@ -1,7 +1,9 @@
 use leptos::*;
 use leptos_meta::{Meta, Title};
 use leptos_router::{A, use_params_map};
+use crate::components::ComponentErrorFallback;
 use crate::data::{find_project, get_infrastructure_fleet};
+use crate::error::AppError;
 use crate::utils::sanitize_slug;
 #[component]
 pub fn ProjectDetailPage() -> impl IntoView {
@@ -12,17 +14,22 @@ pub fn ProjectDetailPage() -> impl IntoView {
     let detail = create_resource(
         slug,
         |s| async move {
-            if s.is_empty() {
-                return None;
+            #[cfg(feature = "ssr")]
+            { let _ = s; return Err::<crate::data::ProjectDetail, AppError>(AppError::logic("ssr build skips fetch")); }
+            #[cfg(not(feature = "ssr"))]
+            {
+                if s.is_empty() {
+                    return Err(AppError::logic("empty slug"));
+                }
+                let url = format!("/projects/{}.json", s);
+                let resp = gloo_net::http::Request::get(&url)
+                    .send()
+                    .await
+                    .map_err(|e| AppError::fetch(e.to_string()))?;
+                resp.json::<crate::data::ProjectDetail>()
+                    .await
+                    .map_err(|e| AppError::parse(e.to_string()))
             }
-            let url = format!("/projects/{}.json", s);
-            gloo_net::http::Request::get(&url)
-                .send()
-                .await
-                .ok()?
-                .json::<crate::data::ProjectDetail>()
-                .await
-                .ok()
         },
     );
 
@@ -91,19 +98,15 @@ pub fn ProjectDetailPage() -> impl IntoView {
                                 </div>
                             </header>
 
-                            <Suspense fallback=move || view! {
-                                <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
-                            }>
-                                {move || match detail.get() {
-                                    None => view! { <span></span> }.into_view(),
-                                    Some(None) => view! {
-                                        <div class="font-mono text-red-400 py-16 text-center">"Content not found."</div>
-                                    }.into_view(),
-                                    Some(Some(d)) => view! {
+                            <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
+                                <Suspense fallback=move || view! {
+                                    <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
+                                }>
+                                    {move || detail.get().map(|res| res.map(|d| view! {
                                         <article class="pd-body-text" inner_html=d.content></article>
-                                    }.into_view(),
-                                }}
-                            </Suspense>
+                                    }))}
+                                </Suspense>
+                            </ErrorBoundary>
 
                             <div class="pd-section flex items-center gap-3 flex-wrap mt-12">
                                 <A href=format!("/project/{}/docs", p.slug) class="pd-footer-btn">
@@ -161,17 +164,22 @@ pub fn ProjectDocsPage() -> impl IntoView {
     let docs = create_resource(
         slug,
         |s| async move {
-            if s.is_empty() {
-                return None;
+            #[cfg(feature = "ssr")]
+            { let _ = s; return Err::<crate::data::ProjectDetail, AppError>(AppError::logic("ssr build skips fetch")); }
+            #[cfg(not(feature = "ssr"))]
+            {
+                if s.is_empty() {
+                    return Err(AppError::logic("empty slug"));
+                }
+                let url = format!("/docs/{}.json", s);
+                let resp = gloo_net::http::Request::get(&url)
+                    .send()
+                    .await
+                    .map_err(|e| AppError::fetch(e.to_string()))?;
+                resp.json::<crate::data::ProjectDetail>()
+                    .await
+                    .map_err(|e| AppError::parse(e.to_string()))
             }
-            let url = format!("/docs/{}.json", s);
-            gloo_net::http::Request::get(&url)
-                .send()
-                .await
-                .ok()?
-                .json::<crate::data::ProjectDetail>()
-                .await
-                .ok()
         },
     );
 
@@ -204,18 +212,18 @@ pub fn ProjectDocsPage() -> impl IntoView {
                                     {p.tech_stack.iter().map(|tech| view! { <span>{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
-                            {move || match docs.get() {
-                                None => view! {
-                                    <p class="pd-body-text mb-8">"Loading…"</p>
-                                }.into_view(),
-                                Some(None) => view! {
-                                    <p class="pd-body-text mb-8">"Documentation not found."</p>
-                                }.into_view(),
-                                Some(Some(d)) => view! {
-                                    <article class="pd-body-text mb-8" inner_html=d.content></article>
-                                    <A href=format!("/project/{}", p.slug) class="text-[#22d3ee] font-mono text-[13px] hover:underline">"View case study →"</A>
-                                }.into_view(),
-                            }}
+                            <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
+                                {move || match docs.get() {
+                                    None => Ok(view! {
+                                        <p class="pd-body-text mb-8">"Loading…"</p>
+                                    }.into_view()),
+                                    Some(Ok(d)) => Ok(view! {
+                                        <article class="pd-body-text mb-8" inner_html=d.content></article>
+                                        <A href=format!("/project/{}", p.slug) class="text-[#22d3ee] font-mono text-[13px] hover:underline">"View case study →"</A>
+                                    }.into_view()),
+                                    Some(Err(e)) => Err::<leptos::View, AppError>(e),
+                                }}
+                            </ErrorBoundary>
                         </div>
                     </main>
                 }.into_view()
@@ -320,7 +328,7 @@ pub fn ProjectDemoPage() -> impl IntoView {
                                 </div>
                             </header>
                             <div class="pd-section" style="margin-top: 2.25rem;">
-                                <div class="video-placeholder">"Video Demo Coming Soon"</div>
+                                <div class="video-placeholder">"Documented operational scenario — walkthrough steps below."</div>
                             </div>
 
                             <div class="pd-section">

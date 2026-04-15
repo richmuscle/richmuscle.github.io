@@ -2,13 +2,16 @@
 
 #[cfg(debug_assertions)]
 use leptos::logging::log;
+#[cfg(not(feature = "ssr"))]
 use leptos::wasm_bindgen::{JsCast, JsValue};
 #[allow(unused_imports)] // used by track() in release builds only
+#[cfg(not(feature = "ssr"))]
 use js_sys;
 use std::sync::OnceLock;
 
 static WASM_START_TIME_MS: OnceLock<f64> = OnceLock::new();
 
+#[cfg(not(feature = "ssr"))]
 fn perf_now_ms() -> Option<f64> {
     let window = web_sys::window()?;
     let perf = js_sys::Reflect::get(&window, &JsValue::from_str("performance")).ok()?;
@@ -18,6 +21,7 @@ fn perf_now_ms() -> Option<f64> {
 }
 
 pub fn capture_wasm_start_time() {
+    #[cfg(not(feature = "ssr"))]
     if let Some(now) = perf_now_ms() {
         let _ = WASM_START_TIME_MS.set(now);
     }
@@ -41,7 +45,7 @@ pub fn sanitize_slug(slug: &str) -> String {
 
 #[allow(unused_variables)]
 pub fn track(event: &str, props: &str) {
-    #[cfg(not(debug_assertions))]
+    #[cfg(all(not(debug_assertions), not(feature = "ssr")))]
     let _ = js_sys::eval(&format!(
         "window.dispatchEvent(new CustomEvent('portfolio:{}', {{ detail: JSON.parse({:?}) }}))",
         event, props

@@ -1,0 +1,3 @@
+# Cloudflare Pages: static files win first; this rewrite applies when no file matches.
+# Pre-rendered SSG routes (e.g. /about/index.html) are served as static HTML; unknown paths get the SPA shell.
+/*    /index.html   200

@@ -19,7 +19,7 @@ pub fn ProjectCard(
     let project_title   = project.title;
     let cat_accent      = project.category.accent().to_string();
 
-    let handle_keydown = move |ev: web_sys::KeyboardEvent| {
+    let handle_keydown = move |ev: leptos::ev::KeyboardEvent| {
         if ev.key() == "Enter" || ev.key() == " " {
             ev.prevent_default();
             navigator(&format!("/project/{}", slug_for_nav), Default::default());
@@ -124,7 +124,10 @@ pub fn CodeBlock(snippet: CodeSnippet) -> impl IntoView {
                             other => vec![other],
                         }).collect();
                         let js = format!(r#"navigator.clipboard.writeText("{}").catch(function(){{}})"#, escaped);
-                        let _ = js_sys::eval(&js);
+                        #[cfg(not(feature = "ssr"))]
+                        { let _ = js_sys::eval(&js); }
+                        #[cfg(feature = "ssr")]
+                        let _ = js;
                         set_copied.set(true);
                         set_timeout(move || set_copied.set(false), std::time::Duration::from_millis(2000));
                     }
