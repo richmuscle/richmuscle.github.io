@@ -2,61 +2,53 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ["main"]
+  workflow_dispatch:
+
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      - name: Cache cargo
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
       - name: Install Trunk
         run: |
           wget -qO- https://github.com/trunk-rs/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
           sudo mv trunk /usr/local/bin/
-      - name: Build with Trunk (Release)
-        env:
-          RUSTFLAGS: "-C target-feature=+bulk-memory"
+      - name: Build with Trunk (release)
         run: trunk build --release
-      - name: Manual Asset Verification & Placement
+      - name: Place fonts, SPA fallback, disable Jekyll
         run: |
-          # Create the directory in the build output
-          mkdir -p dist/fonts
-
-          # Force a clean font placement into dist/fonts/ so it maps to /fonts/ on GitHub Pages
           rm -rf dist/fonts
           mkdir -p dist/fonts
-
-          # Copy physical fonts into the production folder
           cp -v static/fonts/*.woff2 dist/fonts/
-
-          # Verify expected filenames exist (case-sensitive)
-          test -f dist/fonts/inter-400.woff2
-          test -f dist/fonts/inter-500.woff2
+          test -f dist/fonts/geist-400.woff2
+          test -f dist/fonts/geist-500.woff2
           test -f dist/fonts/jbmono-400.woff2
-
-          # SPA Routing fixes
           cp dist/index.html dist/404.html
           touch dist/.nojekyll
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
-          folder: dist
-          branch: gh-pages
-          clean: true
-          commit-message: "Deployment: Production build updated via CI/CD pipeline"
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

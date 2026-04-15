@@ -1,12 +1,14 @@
+use crate::data::{get_infrastructure_fleet, EMAIL, PROFESSIONAL_TITLE};
+use crate::utils::track;
 use leptos::*;
 use leptos_meta::{Meta, Title};
 use leptos_router::A;
-use crate::data::{get_infrastructure_fleet, EMAIL, PROFESSIONAL_TITLE};
-use crate::utils::track;
 
 #[component]
 pub fn OnePageSummary() -> impl IntoView {
     let (email_copied, set_email_copied) = create_signal(false);
+    #[cfg(feature = "ssr")]
+    let _ = set_email_copied;
     let projects = get_infrastructure_fleet();
     view! {
         <Title text=move || format!("One-Pager · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
@@ -15,17 +17,20 @@ pub fn OnePageSummary() -> impl IntoView {
             <div class="one-pager-inner">
                 <section class="one-pager-section">
                     <h1 class="one-pager-name">"Richard Mussell"</h1>
-                    <p class="one-pager-title">"Systems Engineering & Platform Operations"</p>
+                    <p class="one-pager-title">"Systems Administrator & DevOps Engineer"</p>
                     <p class="one-pager-meta">{format!("{} · Oklahoma City, OK (remote open)", EMAIL)}</p>
                     <div class="one-pager-actions one-pager-action-row">
                         <button
                             type="button"
                             class="hero-btn one-pager-print-btn"
                             on:click=move |_| {
-                                let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
-                                set_email_copied.set(true);
-                                track("email_copy", r#"{"source":"one-pager"}"#);
-                                let _ = gloo_timers::callback::Timeout::new(2000, move || set_email_copied.set(false));
+                                #[cfg(not(feature = "ssr"))]
+                                {
+                                    let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
+                                    set_email_copied.set(true);
+                                    track("email_copy", r#"{"source":"one-pager"}"#);
+                                    let _ = gloo_timers::callback::Timeout::new(2000, move || set_email_copied.set(false));
+                                }
                             }
                         >
                             {move || if email_copied.get() { "✓ Copied" } else { "Copy Email" }}
@@ -35,7 +40,7 @@ pub fn OnePageSummary() -> impl IntoView {
                 </section>
 
                 <section class="one-pager-section">
-                    <p class="one-pager-sentence">"I orchestrate high-integrity ecosystems between the physical bedrock and the unified control plane — building deterministic environments where complexity is silenced to ensure a resilient, 50-year lookout."</p>
+                    <p class="one-pager-sentence">"I build repeatable infrastructure with Terraform, automate system administration with PowerShell and Bash, and manage identity and access through Active Directory. Looking for a team where infrastructure is code and operations run on automation, not ticket queues."</p>
                 </section>
 
                 <section class="one-pager-section">
@@ -90,19 +95,19 @@ pub fn OnePageSummary() -> impl IntoView {
                 </section>
 
                 <section class="one-pager-section">
-                    <h2 class="one-pager-h2">"Technical Depth"</h2>
+                    <h2 class="one-pager-h2">"Technical Focus Areas"</h2>
                     <div class="one-pager-three-col one-pager-tech-grid">
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"Bedrock Sovereignty"</strong>
-                            <p>"Deterministic Kernel-level enforcement, Bare-metal state reconciliation, and the orchestration of immutable system lifecycles."</p>
+                            <strong class="one-pager-col-label">"Systems Administration"</strong>
+                            <p>"Linux (RHEL/Ubuntu) and Windows Server administration, Active Directory GPO management, user lifecycle automation, and CIS-standard system hardening."</p>
                         </div>
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"Unified Control Planes"</strong>
-                            <p>"Declarative state enforcement through Crossplane compositions, CRD-based reconciliation loops, and self-healing infrastructure logic."</p>
+                            <strong class="one-pager-col-label">"Infrastructure as Code"</strong>
+                            <p>"Terraform modules with remote state locking, reproducible cloud environments, drift detection, and policy-validated deployments on GCP and AWS."</p>
                         </div>
                         <div class="one-pager-col">
-                            <strong class="one-pager-col-label">"High-Fidelity Signal"</strong>
-                            <p>"eBPF-driven telemetry at the syscall layer, semantic observability, and high-integrity temporal correlation of system events."</p>
+                            <strong class="one-pager-col-label">"Observability & Security"</strong>
+                            <p>"Prometheus metrics, ELK Stack log aggregation, Grafana dashboards, WireGuard VPN, and NIST-aligned security controls for hybrid environments."</p>
                         </div>
                     </div>
                 </section>
@@ -110,16 +115,16 @@ pub fn OnePageSummary() -> impl IntoView {
                 <section class="one-pager-section">
                     <h2 class="one-pager-h2">"What I am looking for"</h2>
                     <ul class="contact-wish-list">
-                        <li><span class="contact-arrow">"->"</span>" Designing deterministic environments where infrastructure complexity is silenced to serve organizational velocity."</li>
-                        <li><span class="contact-arrow">"->"</span>" Architecting Unified Control Planes (Crossplane) that orchestrate multi-cloud compositions beyond standard cluster management."</li>
-                        <li><span class="contact-arrow">"->"</span>" Refactoring 'Old Guard' static IaC into dynamic, self-healing landscapes driven by continuous, deterministic state reconciliation."</li>
-                        <li><span class="contact-arrow">"->"</span>" Scaling high-integrity ecosystems where identity, connectivity, and governance function as vital, self-governing organs."</li>
-                        <li><span class="contact-arrow">"->"</span>" Strategic partnerships with organizations focused on Pinnacle Orchestration (Remote-first or Oklahoma City-based)."</li>
+                        <li><span class="contact-arrow">"->"</span>" Teams that treat infrastructure as code and value reproducible, auditable deployments."</li>
+                        <li><span class="contact-arrow">"->"</span>" Environments where systems administration includes automation, not just ticket queues."</li>
+                        <li><span class="contact-arrow">"->"</span>" Organizations investing in observability and proactive monitoring over reactive firefighting."</li>
+                        <li><span class="contact-arrow">"->"</span>" Hybrid-cloud or on-prem environments with real security requirements (NIST, CIS, zero-trust)."</li>
+                        <li><span class="contact-arrow">"->"</span>" Remote-first or Oklahoma City-based. Open to relocation for the right role."</li>
                     </ul>
                 </section>
 
                 <section class="one-pager-section">
-                    <h2 class="one-pager-h2">"ACADEMIC_FOUNDATION_//_STRATEGIC_PURSUIT"</h2>
+                    <h2 class="one-pager-h2">"Education"</h2>
                     <div class="one-pager-edu-block">
                         <p class="one-pager-edu-row">
                             <span class="one-pager-edu-label">"Institution:"</span>
@@ -131,32 +136,29 @@ pub fn OnePageSummary() -> impl IntoView {
                             <span class="one-pager-edu-accent">"Cybersecurity Specialization"</span>
                         </p>
                         <p class="one-pager-edu-row one-pager-edu-focus">
-                            <span class="one-pager-edu-label">"Strategic Focus (Minors):"</span>
+                            <span class="one-pager-edu-label">"Minors:"</span>
                         </p>
                         <ul class="one-pager-edu-list">
-                            <li>"Sustainable Practices in IT "
-                                <span class="one-pager-edu-accent">"(The 50-Year Lookout)"</span>
-                            </li>
-                            <li>"Project Management "
-                                <span class="one-pager-edu-accent">"(The Builder's Ledger)"</span>
-                            </li>
+                            <li>"Sustainable Practices in IT"</li>
+                            <li>"Project Management"</li>
                         </ul>
                         <p class="one-pager-edu-summary">
-                            "Architectural foundation focused on the sovereignty of critical infrastructure. Trained in deterministic system hardening, high-fidelity incident response, and the logic of global network security. Specializing in the intersection of environmental sustainability and high-integrity technical governance."
+                            "Coursework in network defense, NIST cybersecurity frameworks, and secure enterprise IT delivery. SOC internship monitoring 13 municipal entities with ELK Stack."
                         </p>
                     </div>
                     <div class="one-pager-edu-divider" aria-hidden="true"></div>
-                    <p class="one-pager-h2">"STRATEGIC_REFINEMENT_//_IN_PROGRESS"</p>
+                    <p class="one-pager-h2">"Currently Studying"</p>
                     <ul class="one-pager-edu-list one-pager-edu-list-certs">
-                        <li><span class="one-pager-edu-label">"Google Cloud"</span>" — Professional Cloud Architect"</li>
                         <li><span class="one-pager-edu-label">"RHCSA"</span>" — Red Hat Certified System Administrator"</li>
-                        <li><span class="one-pager-edu-label">"CKA / CKAD"</span>" — Kubernetes Administrator & Application Developer"</li>
+                        <li><span class="one-pager-edu-label">"Google Cloud"</span>" — Professional Cloud Architect"</li>
+                        <li><span class="one-pager-edu-label">"CKA / CKAD"</span>" — Kubernetes Administrator & Application Developer (planned)"</li>
                     </ul>
                 </section>
 
                 <section class="one-pager-section">
                     <button type="button" class="hero-btn one-pager-print-btn" on:click=move |_| {
                         track("print", r#"{"page":"one-pager"}"#);
+                        #[cfg(not(feature = "ssr"))]
                         if let Some(w) = web_sys::window() { let _ = w.print(); }
                     }>
                         "🖨 Print / Save as PDF"

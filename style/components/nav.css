@@ -1,0 +1,358 @@
+
+html.light .navbar {
+  background: color-mix(in srgb, var(--bg-base) 95%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+html.light .nav-link        { color: var(--text-muted); }
+html.light .nav-link:hover  { color: var(--text-primary); }
+html.light .nav-link-active { color: var(--text-primary); border-bottom-color: var(--accent-cyan); }
+
+/* Mobile drawer in light mode */
+html.light .navbar-mobile-drawer {
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border);
+}
+html.light .navbar-mobile-drawer a {
+  color: var(--text-secondary);
+  border-bottom-color: var(--border);
+}
+html.light .navbar-mobile-drawer a.active {
+  color: var(--accent-cyan);
+}
+
+/* Shortcuts toggle button */
+html.light .shortcuts-toggle-btn {
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+html.light .shortcuts-toggle-btn:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+html.light .shortcuts-modal {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+html.light .shortcuts-modal-title {
+  color: var(--text-primary);
+}
+html.light .shortcuts-key {
+  background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+  color: var(--text-primary);
+}
+html.light .shortcuts-desc {
+  color: var(--text-secondary);
+}
+html.light .shortcuts-scrim {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Buttons and nav/CTA links: minimum 44px tap target */
+button:not(.theme-toggle-btn):not(.shortcuts-toggle-btn),
+.nav-link, .nav-link-active,
+.hero-btn, .contact-value-btn, .tag-pill {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+html.light .reading-progress-bar {
+  background: var(--border-subtle);
+}
+
+html.light .back-to-top {
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+  color: var(--text-muted);
+  box-shadow: var(--card-shadow);
+}
+
+html.light .theme-toggle-btn {
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+/* ── NAVBAR ────────────────────────────────────────────────── */
+/* === ARCHETYPE: NAV ====================================== */
+.navbar {
+  padding-left: max(var(--space-4), env(safe-area-inset-left));
+  padding-right: max(var(--space-4), env(safe-area-inset-right));
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-10);
+  background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+  border-bottom: var(--border-thin) solid var(--color-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: var(--z-nav);
+  transition: background-color var(--duration-base) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+
+.nav-link, .nav-link-active {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  padding: var(--space-2) 0;
+  white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.nav-link:hover { color: var(--color-text); }
+
+.nav-link-active {
+  color: var(--color-text);
+  border-bottom: var(--border-medium) solid var(--color-accent);
+}
+
+/* === ARCHETYPE: NAV — theme toggle button ================ */
+.theme-toggle-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: var(--border-thin) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  transition: background-color var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard);
+  min-height: unset;
+  min-width: unset;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--color-accent);
+}
+
+.theme-icon {
+  display: block;
+  color: var(--color-text-muted);
+  transition: color var(--duration-fast) var(--ease-standard),
+              opacity var(--duration-fast) var(--ease-standard),
+              transform var(--duration-fast) var(--ease-standard);
+}
+
+.theme-toggle-btn:hover .theme-icon {
+  color: var(--color-accent);
+  transform: rotate(15deg);
+}
+.theme-toggle-btn:hover .theme-icon-moon {
+  transform: rotate(-15deg);
+}
+
+.theme-toggle-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-surface);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+  z-index: -1;
+}
+.theme-toggle-btn:hover::before { opacity: 1; }
+.shortcuts-toggle-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+
+.shortcuts-toggle-btn:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+/* Keyboard shortcuts modal */
+.shortcuts-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 199;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.shortcuts-modal {
+  max-width: 480px;
+  width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 1.5rem;
+  z-index: 200;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+.shortcuts-modal-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+}
+.shortcuts-key {
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  background: rgba(34, 211, 238, 0.15);
+  padding: 4px 8px !important;
+  border-radius: 4px;
+  white-space: nowrap;
+  width: 1%;
+}
+.shortcuts-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.back-to-top {
+  position: absolute;
+  inset: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: unset;
+  min-width: unset;
+}
+.back-to-top:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+/* ── READING PROGRESS BAR ──────────────────────────────────── */
+.reading-progress-bar {
+  position: fixed;
+  top: env(safe-area-inset-top, 0px);
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border-subtle);
+  z-index: 100;
+}
+
+.reading-progress-fill {
+  height: 100%;
+  background: var(--accent-cyan);
+  transition: width 0.1s linear;
+  will-change: width;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE OPTIMIZATION — breakpoints: 480px, 768px, 1024px
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── QA: Navbar drawer scrim ────────────────────────────────────── */
+.navbar-drawer-scrim {
+  display: none;
+}
+@media (max-width: 768px) {
+  .navbar-drawer-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 97;
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ── 1. NAVBAR (max-width: 768px) ───────────────────────────────── */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 16px;
+    height: 52px;
+    justify-content: space-between;
+  }
+  .navbar-links {
+    display: none !important;
+  }
+  .navbar-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 18px;
+  }
+  .navbar-mobile-drawer {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(8, 12, 20, 0.98);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 8px 0 max(16px, env(safe-area-inset-bottom));
+    z-index: 150;
+  }
+  .navbar-mobile-drawer.nav-open {
+    display: flex;
+    flex-direction: column;
+  }
+  .navbar-mobile-drawer a {
+    display: flex;
+    align-items: center;
+    padding: 14px 24px;
+    min-height: 44px;
+    font-size: 15px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 120ms ease, color 120ms ease;
+    touch-action: manipulation;
+  }
+  .navbar-mobile-drawer a:last-child {
+    border-bottom: none;
+  }
+  .navbar-mobile-drawer a.active,
+  .navbar-mobile-drawer a:active {
+    color: var(--accent-cyan);
+    background: rgba(34, 211, 238, 0.06);
+  }
+}
+@media (min-width: 769px) {
+  .navbar-mobile-toggle { display: none; }
+  .navbar-mobile-drawer { display: none !important; }
+}
+
+/* ── QA: Shortcut modal width (max-width: 480px) ─────────────────── */
+@media (max-width: 480px) {
+  .shortcuts-modal {
+    max-width: calc(100vw - 32px);
+    margin: 0 16px;
+    padding: 20px 16px;
+  }
+  .shortcuts-modal td {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+  .shortcuts-key {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+}

@@ -1,8 +1,10 @@
+use crate::components::ComponentErrorFallback;
+use crate::data::{WriteUpDetail, WRITEUPS};
+use crate::error::AppError;
+use crate::utils::{sanitize_slug, track};
 use leptos::*;
 use leptos_meta::{Meta, Title};
 use leptos_router::use_params_map;
-use crate::data::{WriteUpDetail, WRITEUPS};
-use crate::utils::{sanitize_slug, track};
 
 #[component]
 pub fn WritingPage() -> impl IntoView {
@@ -29,7 +31,8 @@ pub fn WritingPage() -> impl IntoView {
     let filtered = create_memo(move |_| {
         let q = search_query.get().to_lowercase();
         let category_filter = active_category.get();
-        let mut list = WRITEUPS.iter()
+        let mut list = WRITEUPS
+            .iter()
             .filter(|w| {
                 let search_ok = q.is_empty()
                     || w.title.to_lowercase().contains(&q)
@@ -45,8 +48,14 @@ pub fn WritingPage() -> impl IntoView {
                 return b.is_core.cmp(&a.is_core);
             }
             if a.is_core {
-                let a_rank = core_order.iter().position(|slug| slug == &a.slug).unwrap_or(usize::MAX);
-                let b_rank = core_order.iter().position(|slug| slug == &b.slug).unwrap_or(usize::MAX);
+                let a_rank = core_order
+                    .iter()
+                    .position(|slug| slug == &a.slug)
+                    .unwrap_or(usize::MAX);
+                let b_rank = core_order
+                    .iter()
+                    .position(|slug| slug == &b.slug)
+                    .unwrap_or(usize::MAX);
                 return a_rank.cmp(&b_rank);
             }
             let a_year = a.date.parse::<i32>().unwrap_or(0);
@@ -177,22 +186,27 @@ pub fn WriteupDetailPage() -> impl IntoView {
         sanitize_slug(&raw)
     };
     let index = create_memo(move |_| WRITEUPS.iter().find(|w| w.slug == slug()).cloned());
-    let detail = create_resource(
-        slug,
-        |s| async move {
+    let detail = create_resource(slug, |s| async move {
+        #[cfg(feature = "ssr")]
+        {
+            let _ = s;
+            return Err::<WriteUpDetail, AppError>(AppError::logic("ssr build skips fetch"));
+        }
+        #[cfg(not(feature = "ssr"))]
+        {
             if s.is_empty() {
-                return None;
+                return Err(AppError::logic("empty slug"));
             }
             let url = format!("/writeups/{}.json", s);
-            gloo_net::http::Request::get(&url)
+            let resp = gloo_net::http::Request::get(&url)
                 .send()
                 .await
-                .ok()?
-                .json::<WriteUpDetail>()
+                .map_err(|e| AppError::fetch(e.to_string()))?;
+            resp.json::<WriteUpDetail>()
                 .await
-                .ok()
-        },
-    );
+                .map_err(|e| AppError::parse(e.to_string()))
+        }
+    });
 
     create_effect(move |_| {
         let s = slug();
@@ -257,15 +271,11 @@ pub fn WriteupDetailPage() -> impl IntoView {
 
                         <div class="wu-body-band">
                             <div class="wu-container">
-                                <Suspense fallback=move || view! {
-                                    <div class="wu-loading">"Loading…"</div>
-                                }>
-                                    {move || match detail.get() {
-                                        None => view! { <span></span> }.into_view(),
-                                        Some(None) => view! {
-                                            <p class="wu-error">"error[E0404]: writeup not found"</p>
-                                        }.into_view(),
-                                        Some(Some(d)) => {
+                                <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
+                                    <Suspense fallback=move || view! {
+                                        <div class="wu-loading">"Loading…"</div>
+                                    }>
+                                        {move || detail.get().map(|res| res.map(|d| {
                                             let content = d.content
                                                 .replace("SECTION_01: THE TACTICAL DASHBOARD", "TECHNICAL FOUNDATIONS")
                                                 .replace("EXECUTIVE_SUMMARY_//_TECHNICAL_PILLARS", "Executive Summary")
@@ -279,10 +289,10 @@ pub fn WriteupDetailPage() -> impl IntoView {
                                                 .replace("// ARCHITECT'S SEAL // Richard Mussell // PRINCIPAL ARCHITECT", "Richard Mussell — Principal Platform Architect");
                                             view! {
                                                 <article class="wu-prose" inner_html=content/>
-                                            }.into_view()
-                                        }
-                                    }}
-                                </Suspense>
+                                            }
+                                        }))}
+                                    </Suspense>
+                                </ErrorBoundary>
 
                                 <div class="wu-footer-nav">
                                     <a href="/writing" class="wu-footer-link">

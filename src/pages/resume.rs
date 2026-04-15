@@ -1,7 +1,7 @@
+use crate::data::{EMAIL, GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE};
+use crate::utils::track;
 use leptos::*;
 use leptos_meta::{Meta, Title};
-use crate::data::{GITHUB_URL, LINKEDIN_URL, EMAIL, PROFESSIONAL_TITLE};
-use crate::utils::track;
 
 #[component]
 pub fn ResumePage() -> impl IntoView {
@@ -12,30 +12,22 @@ pub fn ResumePage() -> impl IntoView {
 
     view! {
         <Title text=move || format!("Resume · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
-        <Meta name="description" content="Resume of Richard Mussell — Information Technology & Systems Professional with lab projects spanning IaC, Linux automation, observability, and zero-trust networking."/>
+        <Meta name="description" content="Resume of Richard Mussell — Systems Administrator & DevOps Engineer with lab projects spanning IaC, Linux automation, observability, and zero-trust networking."/>
         <main id="main-content" class="min-h-screen pt-16 pb-24 bg-[var(--bg-base)]">
             <div class="resume-container max-w-3xl mx-auto px-6 py-12">
 
                 <div class="resume-header flex items-center justify-between mb-12">
                     <a href="/" class="text-[13px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">"← Back"</a>
-                    <div class="resume-header-actions">
-                        <button class="inline-flex items-center gap-2 text-[12px] font-mono text-[var(--text-muted)] border border-[var(--border-subtle)] px-4 py-2 rounded-lg hover:border-[var(--border-active)] hover:text-[var(--accent-cyan)] transition-colors cursor-pointer bg-transparent"
-                            on:click=|_| {
-                            track("print", r#"{"page":"resume"}"#);
-                            web_sys::window().unwrap().print().unwrap();
-                        }>
-                            "↓ Download PDF"
-                        </button>
-                    </div>
                 </div>
 
                 <header class="mb-10 pb-8 border-b border-[var(--border-subtle)]">
                     <h1 class="text-4xl font-bold text-[var(--text-primary)] tracking-tight mb-1">"Richard J. Mussell"</h1>
-                    <p class="text-[16px] text-[var(--text-secondary)] mb-3">{PROFESSIONAL_TITLE}</p>
+                    <p class="text-[16px] text-[var(--text-secondary)] mb-3">"Systems Administrator & DevOps Engineer"</p>
                     <div style="white-space:nowrap;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);line-height:1.6;">
                         <span>"Oklahoma City, OK"</span>
                         <span style="color:var(--border-subtle);padding:0 10px;">"·"</span>
                         <button on:click=move |_| {
+                            #[cfg(not(feature = "ssr"))]
                             let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
                             set_email_copied.set(true);
                             set_timeout(move || set_email_copied.set(false), std::time::Duration::from_millis(2000));
@@ -49,13 +41,17 @@ pub fn ResumePage() -> impl IntoView {
                         // VERIFY: https://github.com/richardmussell — full URL, target=_blank, noopener.
                         <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" style="color:#22d3ee;text-decoration:none;vertical-align:baseline;">"GitHub"</a>
                     </div>
+                    <a href="/pdfs/resume.pdf" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 text-[12px] font-mono text-[var(--text-muted)] border border-[var(--border-subtle)] px-4 py-2 rounded-lg hover:border-[var(--border-active)] hover:text-[var(--accent-cyan)] transition-colors cursor-pointer bg-transparent mt-4 no-underline w-fit">
+                        "Download Resume (PDF)"
+                    </a>
                 </header>
 
                 // ── SUMMARY ──
                 <section class="mb-10">
                     <h2 class="text-[11px] font-mono font-semibold text-[var(--accent-cyan)] uppercase tracking-[0.15em] mb-4">"Summary"</h2>
                     <p class="text-[15px] text-[var(--text-secondary)] leading-7 max-w-2xl">
-                        "Disciplined IT Systems Professional and BS in ITAM graduate with a focus on Cybersecurity. Proven expertise in monitoring virtualized infrastructure, managing cloud identity fabrics, and executing real-time threat monitoring to deliver secure and scalable IT operations."
+                        "Systems Administrator and DevOps Engineer with a BS in IT & Administrative Management (Cybersecurity specialization). Hands-on experience in SOC monitoring, ELK Stack log analysis, and enterprise database systems. Lab projects spanning Terraform IaC, Linux hardening, SIEM observability pipelines, and WireGuard zero-trust networking."
                     </p>
                 </section>
 
@@ -95,9 +91,10 @@ pub fn ResumePage() -> impl IntoView {
                             <span class="resume-timeline-label">"PISCES Security Operations Center (SOC)"</span>
                             <p class="resume-timeline-detail">
                                 <span>"Role: Student SOC Analyst (Internship)"</span><br/>
-                                <span>"• Monitored telemetry for 13 municipal entities"</span><br/>
-                                <span>"• ELK Stack analysis"</span><br/>
-                                <span>"• Authored incident summaries/briefs"</span>
+                                <span>"• Monitored security telemetry across 13 municipal government entities using ELK Stack"</span><br/>
+                                <span>"• Triaged and escalated alerts from Elasticsearch/Kibana dashboards during shift rotations"</span><br/>
+                                <span>"• Authored incident summary briefs for SOC leadership and municipal stakeholders"</span><br/>
+                                <span>"• Performed KQL-based log analysis to identify anomalous network and endpoint activity"</span>
                             </p>
                         </div>
                         <div class="resume-timeline-dot-item">
@@ -106,9 +103,9 @@ pub fn ResumePage() -> impl IntoView {
                             <span class="resume-timeline-label">"Cox Communications"</span>
                             <p class="resume-timeline-detail">
                                 <span>"Role: Account Management & Retention Specialist"</span><br/>
-                                <span>"• Enterprise databases (ICOMS/Salesforce)"</span><br/>
-                                <span>"• Technical problem solving"</span><br/>
-                                <span>"• Conflict resolution/retention targets"</span>
+                                <span>"• Managed customer accounts using ICOMS and Salesforce enterprise database systems"</span><br/>
+                                <span>"• Diagnosed and resolved technical service issues across network and billing platforms"</span><br/>
+                                <span>"• Met retention targets through structured troubleshooting and service recovery workflows"</span>
                             </p>
                         </div>
                         <div class="resume-timeline-dot-item">
@@ -117,7 +114,8 @@ pub fn ResumePage() -> impl IntoView {
                             <span class="resume-timeline-label">"Club Demonstration Services"</span>
                             <p class="resume-timeline-detail">
                                 <span>"Role: Product Brand Ambassador"</span><br/>
-                                <span>"• 100% adherence to safety and organizational protocols"</span>
+                                <span>"• Maintained 100% adherence to safety and organizational protocols across daily operations"</span><br/>
+                                <span>"• Managed product demonstration logistics and customer engagement workflows"</span>
                             </p>
                         </div>
                     </div>
@@ -214,6 +212,7 @@ pub fn ResumePage() -> impl IntoView {
                 <footer class="pt-8 border-t border-[var(--border-subtle)] flex items-center justify-between">
                     <p class="text-[11px] font-mono text-[var(--text-muted)]">"Built with Leptos — compiled to WebAssembly"</p>
                     <button on:click=move |_| {
+                        #[cfg(not(feature = "ssr"))]
                         let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
                         set_email_copied.set(true);
                         set_timeout(move || set_email_copied.set(false), std::time::Duration::from_millis(2000));

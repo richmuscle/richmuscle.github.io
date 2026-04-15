@@ -1,0 +1,129 @@
+# richardmussell.github.io — Cursor AI rules
+
+Personal portfolio (Richard Mussell). **Goal:** market the owner to recruiters and hiring managers for senior platform / infrastructure roles. Prefer **content accuracy** (resume, titles, sitemap, measurable outcomes) over engineering chrome when tradeoffs appear.
+
+---
+
+## Tech stack
+
+| Layer | Choice |
+|--------|--------|
+| Language | Rust 2021 |
+| UI | **Leptos 0.6** |
+| Render mode | **SSG + hydrate** — CI merges Leptos SSR body fragments into the Trunk shell; WASM hydrates pre-rendered HTML |
+| Output | `wasm32-unknown-unknown` via **Trunk** |
+| Styling | `style/style.css` (bundled by Trunk); utility-oriented class names in views |
+| Data | Mostly `src/data.rs` (static); writeups/projects load JSON from `/writeups/`, `/projects/` at runtime (`gloo-net`) |
+| Host | **GitHub Pages** (static files; `404.html` from SSG not-found route; Cloudflare: `_headers` / `_redirects` in `public/`) |
+
+**Crates (see `Cargo.toml`):** `leptos`, `leptos_meta`, `leptos_router`, `serde`; WASM-only: `web-sys`, `js-sys`, `gloo-net`, `gloo-timers`, `getrandom` (with `js`).
+
+**Authoritative maps:** `INVENTORY.md`, `docs/ROADMAP.md`, `docs/DECISIONS.md`, `CLAUDE.md`.
+
+---
+
+## SSG + hydration — hard rules (read carefully)
+
+Production ships **pre-rendered HTML per route** (SSG binary + `scripts/assemble_dist.py`) plus **Trunk `hydrate` WASM**. Leptos **0.6** has no `hydrate_to_body`; **`mount_to_body`** is correct when `leptos/hydrate` is enabled.
+
+**You MUST:**
+
+- Keep Trunk on **`data-cargo-features="hydrate sqlite"`** (or equivalent) and **`Cargo.toml` `default = ["hydrate", "sqlite"]`** so **`csr` + `hydrate` never both apply** on wasm32.
+- Run **`ssg`** inside a Tokio **`LocalSet`** (see `src/bin/ssg.rs`); do not drop that — `create_resource` uses `spawn_local` on the host.
+- Preserve **structural parity** between SSR (`render_to_string`) and the hydrated client tree (no `#[cfg]` splitting `view!` layout).
+
+**CSR-only dev:** `--no-default-features --features csr` for experiments; do not ship that to CI without reverting defaults.
+
+**Note:** `#[cfg(not(feature = "ssr"))]` gates browser-only APIs (e.g. telemetry, theme DOM); SSR/SSG builds use the **`ssr`** feature via `--features ssg`.
+
+---
+
+## Pinnacle Engineering Tenets (The Standard)
+
+These are non-negotiable quality bars for new code and refactors.
+
+### Zero Panic Policy
+
+- Avoid **`.unwrap()`** and **`.expect()`** in application logic paths that can fail at runtime (I/O, parsing, DOM, navigation). Prefer **`Option` / `Result`**, early returns, and user-visible handling.
+- Use Leptos **`ErrorBoundary`** (already wrapping `<Routes>` in `App`) for subtree failures; extend with fallbacks where new failure-prone trees are added.
+- Use **`leptos::MaybeSignal`** (and related patterns) where optional or dynamic inputs avoid impossible states.
+- **Every** recoverable failure path should degrade to a **graceful UI** message or fallback content, not a blank screen or WASM panic. (The panic hook in `main.rs` is a last resort, not a strategy.)
+
+### Type-Safe Data Flow
+
+- **Static and fetched JSON** must deserialize into **strict Rust structs** with **`#[serde(deny_unknown_fields)]`** (and the usual `rename` / `rename_all` where JSON shape requires it) so schema drift fails fast at parse time.
+- Avoid **magic strings** for data keys in logic: use struct fields, enums, or `const` identifiers; JSON field names live in serde attributes, not scattered literals.
+
+### WASM Performance
+
+- **Minimize `.clone()`** inside closures (especially hot paths): prefer **`store_value`** / **`StoredValue`** for stable handles, and **`.with()` / `.update()`** on signals instead of cloning signal values into every closure when feasible.
+- Keep **release WASM lean**: default features off where possible; justify every new dependency against bundle size (see `Cargo.toml` `[profile.release]` and existing stack).
+
+### Semantic A11y
+
+- Every **interactive** control (buttons, links that act as buttons, custom toggles, palette rows, modals) needs appropriate **`aria-*`**, **`role`** where semantics aren’t implicit, and **accessible names** (visible text, `aria-label`, or labelled-by).
+- **Navigation** must remain usable with **keyboard** and **screen readers** (focus order, skip link, modal focus trap patterns, escape to dismiss). Do not regress existing patterns in `NavBar`, `CommandPalette`, or keyboard shortcuts UI.
+
+### Dependency Guardrail
+
+- New crates must be **`wasm32-unknown-unknown` compatible** (no unsupported `std` / native-only deps in the WASM graph without an explicit, reviewed split).
+- Prefer **`web-sys`** (and thin `js-sys` where needed) over heavy browser abstractions unless the win is clear and size is justified.
+
+---
+
+## Repository conventions (process)
+
+- **Scope:** Change only what the task requires; match existing style, imports, and abstraction level.
+- **Stack:** Stay on **Rust + Leptos + WASM**. No migrating to JS frameworks. Remain deployable to **GitHub Pages** unless a documented phase changes hosting.
+- **Browser APIs:** `web-sys` / `wasm_bindgen` calls belong behind **`#[cfg(not(feature = "ssr"))]`** where the crate is WASM-only, so optional native checks do not break.
+- **Git / attribution:** Do **not** add `Co-Authored-By:` trailers for AI tools. Prefer feature branches; see `CLAUDE.md` for branch/remotes (`revamp` vs `main`).
+
+---
+
+## Leptos component naming conventions (this repo)
+
+Follow existing patterns so routes and imports stay predictable:
+
+| Kind | Pattern | Examples |
+|------|---------|----------|
+| Root app | `App` | `src/lib.rs` |
+| Full pages (routed) | `…Page` or clear compound PascalCase | `HomePage`, `AboutPage`, `NotFoundPage`, `ResumePage`, `WritingPage`, `ContactPage`, `TelemetryPage` |
+| Detail / sub-route views | Descriptive PascalCase | `WriteupDetailPage`, `ProjectDetailPage`, `ProjectDocsPage`, `ProjectDemoPage` |
+| Special one-off views | Descriptive name | `OnePageSummary` |
+| Shared chrome | PascalCase, role-based | `NavBar`, `KeyboardNav`, `CommandPalette`, `BackToTop`, `ReadingProgress` |
+| Cards / content blocks | PascalCase | `ProjectCard` |
+| File layout | `src/pages/*.rs` for routes; `src/components/*.rs` for shared UI; re-export from `pages/mod.rs` and `components/mod.rs` |
+
+Use **`#[component]`** and **`view! { ... }`** consistently. Prefer **signals / contexts** already provided in `App` over ad-hoc global state.
+
+---
+
+## Deployment — GitHub Pages + Trunk
+
+**Local / manual**
+
+```bash
+trunk build --release
+# output: dist/
+trunk serve   # dev server; see Trunk.toml port (default 8080)
+```
+
+**Production (CI)** — `.github/workflows/deploy.yml` (on push to **`main`**):
+
+1. Install Rust stable + `wasm32-unknown-unknown`.
+2. Install **Trunk** from GitHub releases.
+3. **`trunk build --release`** (uses `index.html` + Trunk.toml; WASM built with **`csr`** feature via HTML directive).
+4. Post-steps: copy **`static/fonts/*.woff2`** → `dist/fonts/`, **`cp dist/index.html dist/404.html`**, **`touch dist/.nojekyll`** (Jekyll bypass + SPA deep links).
+5. Deploy **`dist/`** to branch **`gh-pages`** via `JamesIves/github-pages-deploy-action@v4`.
+
+**Also read:** `Trunk.toml` (`target = "index.html"`, `public` assets), `.cargo/config.toml` (WASM link flags). Nix users: `flake.nix` / `.envrc`.
+
+---
+
+## Where to look first
+
+- **Entry:** `src/main.rs` → `mount_to_body` → `App` in `src/lib.rs`.
+- **Routes:** `<Router>` / `<Routes>` / `<Route path=… view=…>` in `App`.
+- **AI-oriented overview:** `.cursor/PROJECT_LENS.md`.
+
+When starting a substantial session, skim `INVENTORY.md`, `docs/ROADMAP.md`, and `docs/DECISIONS.md`, and align with `CLAUDE.md` working agreements.

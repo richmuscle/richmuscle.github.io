@@ -1,54 +1,94 @@
+use crate::components::ComponentErrorFallback;
+use crate::data::{find_project, get_infrastructure_fleet};
+use crate::error::AppError;
+use crate::utils::sanitize_slug;
 use leptos::*;
 use leptos_meta::{Meta, Title};
-use leptos_router::{A, use_params_map};
-use crate::data::{find_project, get_infrastructure_fleet};
-use crate::utils::sanitize_slug;
+use leptos_router::{use_params_map, A};
 #[component]
 pub fn ProjectDetailPage() -> impl IntoView {
-    let params  = use_params_map();
-    let slug    = move || { let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default()); sanitize_slug(&raw) };
+    let params = use_params_map();
+    let slug = move || {
+        let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
+        sanitize_slug(&raw)
+    };
     let project = create_memo(move |_| find_project(&slug()));
 
-    let detail = create_resource(
-        slug,
-        |s| async move {
+    let detail = create_resource(slug, |s| async move {
+        #[cfg(feature = "ssr")]
+        {
+            let _ = s;
+            return Err::<crate::data::ProjectDetail, AppError>(AppError::logic(
+                "ssr build skips fetch",
+            ));
+        }
+        #[cfg(not(feature = "ssr"))]
+        {
             if s.is_empty() {
-                return None;
+                return Err(AppError::logic("empty slug"));
             }
             let url = format!("/projects/{}.json", s);
-            gloo_net::http::Request::get(&url)
+            let resp = gloo_net::http::Request::get(&url)
                 .send()
                 .await
-                .ok()?
-                .json::<crate::data::ProjectDetail>()
+                .map_err(|e| AppError::fetch(e.to_string()))?;
+            resp.json::<crate::data::ProjectDetail>()
                 .await
-                .ok()
-        },
-    );
+                .map_err(|e| AppError::parse(e.to_string()))
+        }
+    });
 
     let related_row = create_memo(move |_| {
         let current = slug();
         let all = get_infrastructure_fleet();
-        let cat = all.iter().find(|p| p.slug == current.as_str()).map(|p| p.category.clone());
-        let mut same_cat: Vec<(String, String, String)> = all.iter()
+        let cat = all
+            .iter()
+            .find(|p| p.slug == current.as_str())
+            .map(|p| p.category.clone());
+        let mut same_cat: Vec<(String, String, String)> = all
+            .iter()
             .filter(|p| p.slug != current.as_str() && Some(&p.category) == cat.as_ref())
             .take(2)
-            .map(|p| (p.slug.to_string(), p.title.to_string(), p.category.label().to_string()))
+            .map(|p| {
+                (
+                    p.slug.to_string(),
+                    p.title.to_string(),
+                    p.category.label().to_string(),
+                )
+            })
             .collect();
         if same_cat.len() < 2 {
-            let existing: std::collections::HashSet<String> = same_cat.iter().map(|(s, _, _)| s.clone()).collect();
-            let others: Vec<_> = all.iter()
+            let existing: std::collections::HashSet<String> =
+                same_cat.iter().map(|(s, _, _)| s.clone()).collect();
+            let others: Vec<_> = all
+                .iter()
                 .filter(|p| !existing.contains(p.slug))
                 .take(2 - same_cat.len())
-                .map(|p| (p.slug.to_string(), p.title.to_string(), p.category.label().to_string()))
+                .map(|p| {
+                    (
+                        p.slug.to_string(),
+                        p.title.to_string(),
+                        p.category.label().to_string(),
+                    )
+                })
                 .collect();
             same_cat.extend(others);
         }
         same_cat
     });
 
-    let title = move || format!("{} · Richard Mussell", project.get().map(|p| p.title).unwrap_or(""));
-    let desc = move || project.get().map(|p| p.subtitle.to_string()).unwrap_or_default();
+    let title = move || {
+        format!(
+            "{} · Richard Mussell",
+            project.get().map(|p| p.title).unwrap_or("")
+        )
+    };
+    let desc = move || {
+        project
+            .get()
+            .map(|p| p.subtitle.to_string())
+            .unwrap_or_default()
+    };
     view! {
         <Title text=title/>
         <Meta name="description" content=desc/>
@@ -91,19 +131,15 @@ pub fn ProjectDetailPage() -> impl IntoView {
                                 </div>
                             </header>
 
-                            <Suspense fallback=move || view! {
-                                <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
-                            }>
-                                {move || match detail.get() {
-                                    None => view! { <span></span> }.into_view(),
-                                    Some(None) => view! {
-                                        <div class="font-mono text-red-400 py-16 text-center">"Content not found."</div>
-                                    }.into_view(),
-                                    Some(Some(d)) => view! {
+                            <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
+                                <Suspense fallback=move || view! {
+                                    <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
+                                }>
+                                    {move || detail.get().map(|res| res.map(|d| view! {
                                         <article class="pd-body-text" inner_html=d.content></article>
-                                    }.into_view(),
-                                }}
-                            </Suspense>
+                                    }))}
+                                </Suspense>
+                            </ErrorBoundary>
 
                             <div class="pd-section flex items-center gap-3 flex-wrap mt-12">
                                 <A href=format!("/project/{}/docs", p.slug) class="pd-footer-btn">
@@ -151,29 +187,37 @@ pub fn ProjectDetailPage() -> impl IntoView {
 //  PROJECT DOCS PAGE  (structure preserved, content live)
 // ============================================================
 
-
-
 #[component]
 pub fn ProjectDocsPage() -> impl IntoView {
-    let params  = use_params_map();
-    let slug    = move || { let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default()); sanitize_slug(&raw) };
+    let params = use_params_map();
+    let slug = move || {
+        let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
+        sanitize_slug(&raw)
+    };
     let project = create_memo(move |_| find_project(&slug()));
-    let docs = create_resource(
-        slug,
-        |s| async move {
+    let docs = create_resource(slug, |s| async move {
+        #[cfg(feature = "ssr")]
+        {
+            let _ = s;
+            return Err::<crate::data::ProjectDetail, AppError>(AppError::logic(
+                "ssr build skips fetch",
+            ));
+        }
+        #[cfg(not(feature = "ssr"))]
+        {
             if s.is_empty() {
-                return None;
+                return Err(AppError::logic("empty slug"));
             }
             let url = format!("/docs/{}.json", s);
-            gloo_net::http::Request::get(&url)
+            let resp = gloo_net::http::Request::get(&url)
                 .send()
                 .await
-                .ok()?
-                .json::<crate::data::ProjectDetail>()
+                .map_err(|e| AppError::fetch(e.to_string()))?;
+            resp.json::<crate::data::ProjectDetail>()
                 .await
-                .ok()
-        },
-    );
+                .map_err(|e| AppError::parse(e.to_string()))
+        }
+    });
 
     view! {
         {move || match project.get() {
@@ -204,18 +248,18 @@ pub fn ProjectDocsPage() -> impl IntoView {
                                     {p.tech_stack.iter().map(|tech| view! { <span>{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
-                            {move || match docs.get() {
-                                None => view! {
-                                    <p class="pd-body-text mb-8">"Loading…"</p>
-                                }.into_view(),
-                                Some(None) => view! {
-                                    <p class="pd-body-text mb-8">"Documentation not found."</p>
-                                }.into_view(),
-                                Some(Some(d)) => view! {
-                                    <article class="pd-body-text mb-8" inner_html=d.content></article>
-                                    <A href=format!("/project/{}", p.slug) class="text-[#22d3ee] font-mono text-[13px] hover:underline">"View case study →"</A>
-                                }.into_view(),
-                            }}
+                            <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
+                                {move || match docs.get() {
+                                    None => Ok(view! {
+                                        <p class="pd-body-text mb-8">"Loading…"</p>
+                                    }.into_view()),
+                                    Some(Ok(d)) => Ok(view! {
+                                        <article class="pd-body-text mb-8" inner_html=d.content></article>
+                                        <A href=format!("/project/{}", p.slug) class="text-[#22d3ee] font-mono text-[13px] hover:underline">"View case study →"</A>
+                                    }.into_view()),
+                                    Some(Err(e)) => Err::<leptos::View, AppError>(e),
+                                }}
+                            </ErrorBoundary>
                         </div>
                     </main>
                 }.into_view()
@@ -227,11 +271,13 @@ pub fn ProjectDocsPage() -> impl IntoView {
 //  PROJECT DEMO PAGE
 // ============================================================
 
-
 #[component]
 pub fn ProjectDemoPage() -> impl IntoView {
-    let params  = use_params_map();
-    let slug    = move || { let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default()); sanitize_slug(&raw) };
+    let params = use_params_map();
+    let slug = move || {
+        let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
+        sanitize_slug(&raw)
+    };
     let project = create_memo(move |_| find_project(&slug()));
 
     view! {
@@ -320,7 +366,7 @@ pub fn ProjectDemoPage() -> impl IntoView {
                                 </div>
                             </header>
                             <div class="pd-section" style="margin-top: 2.25rem;">
-                                <div class="video-placeholder">"Video Demo Coming Soon"</div>
+                                <div class="video-placeholder">"Documented operational scenario — walkthrough steps below."</div>
                             </div>
 
                             <div class="pd-section">

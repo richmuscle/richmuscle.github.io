@@ -1,0 +1,263 @@
+html.light .cb-copy    { color: var(--text-muted); }
+html.light .cb-copy:hover { color: #1e293b; }
+html.light .cb-copy.copied { color: #166534; }
+
+html.light .filter-tab {
+  color: var(--text-muted);
+  border-color: var(--text-primary);
+}
+html.light .filter-tab-active {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  border-bottom: 2px solid var(--accent-cyan);
+}
+
+/* Writing page tag filter pills */
+.tag-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.tag-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 3px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  background: transparent;
+  margin: 2px;
+  transition: border-color 120ms, color 120ms, background 120ms;
+}
+.tag-pill:hover {
+  border-color: var(--text-muted);
+}
+.tag-pill-active {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  background: rgba(34, 211, 238, 0.08);
+}
+
+/* === ARCHETYPE: BUTTON — contact copy */
+.contact-copy-btn {
+  margin-top: var(--space-2);
+  font-size: var(--text-2xs);
+  font-family: var(--font-mono);
+  background: none;
+  border: var(--border-thin) solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  width: fit-content;
+  transition: border-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard);
+}
+.contact-copy-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.contact-action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* === ARCHETYPE: BUTTON — contact action */
+.contact-action-buttons a {
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  transition: border-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard),
+              background-color var(--duration-fast) var(--ease-standard);
+}
+/* === ARCHETYPE: BUTTON — code copy */
+.code-copy-btn {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  font-size: var(--text-2xs);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: var(--border-thin) solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+.code-copy-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+@media (max-width: 768px) {
+  .code-block {
+    display: flex;
+    flex-direction: column;
+  }
+  .code-copy-btn {
+    position: static;
+    display: block;
+    margin-left: auto;
+    margin-bottom: 8px;
+    width: fit-content;
+  }
+}
+.cb-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #636b78;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.cb-copy:hover  { color: #adbac7; background: rgba(255,255,255,0.05); }
+.cb-copy.copied { color: #7ec8a4; }
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+/* === ARCHETYPE: BUTTON — hero CTA */
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: var(--border-thin) solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-body);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard),
+              background-color var(--duration-fast) var(--ease-standard);
+}
+.hero-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+}
+
+/* Filter tabs — single row, no wrap */
+.filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  margin-bottom: 48px;
+  overflow-x: auto;
+}
+/* === ARCHETYPE: BUTTON — filter tab */
+.filter-tab {
+  flex-shrink: 0;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-3xs);
+  letter-spacing: var(--tracking-caps);
+  cursor: pointer;
+  white-space: nowrap;
+  border: var(--border-thin) solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  transition: border-color var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard),
+              background-color var(--duration-fast) var(--ease-standard);
+}
+.filter-tab:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-body);
+}
+.filter-tab-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+  border-bottom: var(--border-medium) solid var(--color-accent);
+}
+
+/* ── 4. FILTER TABS + PROJECT GRID (max-width: 768px) ────────────── */
+@media (max-width: 768px) {
+  .filter-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    gap: 4px;
+  }
+  .filter-tabs::-webkit-scrollbar { display: none; }
+  .filter-tab {
+    white-space: nowrap;
+    padding: 8px 14px;
+    font-size: 11px;
+    min-height: 36px;
+  }
+  .project-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 20px;
+  }
+  .project-card-article {
+    padding: 24px;
+  }
+}
+
+/* ── 9. CONTACT PAGE (max-width: 768px) ────────────────────────── */
+@media (max-width: 768px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 32px 20px 64px;
+  }
+  .contact-row {
+    min-height: 44px;
+    padding: 12px 0;
+  }
+  .contact-copy-btn,
+  .contact-value-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 14px;
+  }
+  .contact-wish-list {
+    gap: 10px;
+  }
+  .contact-action-buttons,
+  .contact-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .contact-action-buttons a,
+  .contact-action-buttons button,
+  .contact-buttons a,
+  .contact-buttons button {
+    width: 100%;
+    min-height: 44px;
+    text-align: center;
+  }
+}

@@ -1,29 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://richardmussell.dev/</loc>
+  <url><loc>https://richardmussell.github.io/</loc>
        <priority>1.0</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richardmussell.dev/project/rust-wasm-edge-runtime</loc>
-       <priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richardmussell.dev/project/kubernetes-custom-controller</loc>
-       <priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richardmussell.dev/project/ebpf-kernel-monitor</loc>
-       <priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richardmussell.dev/project/otel-tracing-pipeline</loc>
-       <priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richardmussell.dev/project/bare-metal-iac-provisioner</loc>
-       <priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richardmussell.dev/writing</loc>
+  <url><loc>https://richardmussell.github.io/about</loc>
        <priority>0.8</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richardmussell.dev/writing/rust-wasm-edge-runtime-internals</loc>
-       <priority>0.7</priority><changefreq>never</changefreq></url>
-  <url><loc>https://richardmussell.dev/writing/kubernetes-controller-reconciliation-deep-dive</loc>
-       <priority>0.7</priority><changefreq>never</changefreq></url>
-  <url><loc>https://richardmussell.dev/writing/ebpf-from-zero-to-prod</loc>
-       <priority>0.7</priority><changefreq>never</changefreq></url>
-  <url><loc>https://richardmussell.dev/writing/otel-ebpf-tracing-without-instrumentation</loc>
-       <priority>0.7</priority><changefreq>never</changefreq></url>
-  <url><loc>https://richardmussell.dev/resume</loc>
+  <url><loc>https://richardmussell.github.io/resume</loc>
        <priority>0.8</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richardmussell.dev/contact</loc>
+  <url><loc>https://richardmussell.github.io/one-pager</loc>
        <priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.github.io/contact</loc>
+       <priority>0.8</priority><changefreq>monthly</changefreq></url>
+
+  <url><loc>https://richardmussell.github.io/project/terraform-gcp</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.github.io/project/linux-admin-scripting</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.github.io/project/monitoring-observability</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://richardmussell.github.io/project/zero-trust-networking</loc>
+       <priority>0.9</priority><changefreq>monthly</changefreq></url>
+
+  <url><loc>https://richardmussell.github.io/writing</loc>
+       <priority>0.8</priority><changefreq>monthly</changefreq></url>
+
+  <url><loc>https://richardmussell.github.io/writing/hardening-linux-municipal-environments</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/the-orchestrator-of-intent-reflections-on-service-provisioning</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/the-architect-of-oceanic-visibility-soc-operations-at-universal-scale</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/the-orchestrated-landscape-building-a-high-integrity-ecosystem</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/the-mirror-universe-architecting-deterministic-enterprise-simulations</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/the-sustainable-architect-engineering-low-entropy-landscapes-for-the-50-year-lookout</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/the-builders-ledger-orchestrating-technical-outcomes-through-project-governance</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/universal-dialects-the-role-of-linux-and-shell-in-the-unified-control-plane</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/the-architect-of-the-prismatic-apex-orchestrating-equilibrium-in-a-holographic-landscape</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/automating-nist-800-53-compliance-with-terraform</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/zero-trust-moving-beyond-bastion-hosts</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/siem-alert-hygiene-reducing-noise-in-the-soc</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/kubernetes-controller-reconciliation-deep-dive</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/otel-ebpf-tracing-without-instrumentation</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/rust-wasm-edge-runtime-internals</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
+  <url><loc>https://richardmussell.github.io/writing/ebpf-from-zero-to-prod</loc>
+       <priority>0.7</priority><changefreq>never</changefreq></url>
 </urlset>

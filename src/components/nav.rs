@@ -1,18 +1,20 @@
 //! NavBar, KeyboardNav, BackToTop, ThemeToggle.
-use crate::data::{self, GITHUB_URL, ReadProgressSignals};
+use crate::data::{self, GITHUB_URL};
+#[cfg(not(feature = "ssr"))]
 use crate::utils::sanitize_slug;
-use leptos::*;
+use crate::GlobalAppState;
+#[cfg(not(feature = "ssr"))]
 use leptos::wasm_bindgen::JsCast;
-use leptos_router::{A, use_location, use_navigate};
+use leptos::*;
+use leptos_router::{use_location, use_navigate, A};
 
 #[component]
-pub fn NavBar(
-    is_dark: ReadSignal<bool>,
-    set_is_dark: WriteSignal<bool>,
-) -> impl IntoView {
+pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl IntoView {
     let location = use_location();
     let current_path = move || location.pathname.get();
-    let shortcuts_open = use_context::<RwSignal<bool>>().unwrap_or_else(|| create_rw_signal(false));
+    let shortcuts_open = use_context::<GlobalAppState>()
+        .map(|s| s.shortcuts_open)
+        .unwrap_or_else(|| create_rw_signal(false));
     let (nav_open, set_nav_open) = create_signal(false);
 
     // Close drawer when route changes (e.g. keyboard shortcut navigation)
@@ -161,20 +163,24 @@ pub fn ThemeToggle(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) ->
     }
 }
 
-
 #[component]
 pub fn BackToTop() -> impl IntoView {
     let (visible, set_visible) = create_signal(false);
-    let read_progress_ctx = use_context::<ReadProgressSignals>();
+    let read_progress_ctx = use_context::<GlobalAppState>().map(|s| s.read_progress);
+    #[cfg(not(feature = "ssr"))]
     create_effect(move |_| {
         let window = web_sys::window().unwrap();
         let closure = wasm_bindgen::closure::Closure::wrap(Box::new(move || {
             let scroll_y = web_sys::window().unwrap().scroll_y().unwrap_or(0.0);
             set_visible.set(scroll_y > 300.0);
         }) as Box<dyn FnMut()>);
-        window.add_event_listener_with_callback("scroll", closure.as_ref().unchecked_ref()).ok();
+        window
+            .add_event_listener_with_callback("scroll", closure.as_ref().unchecked_ref())
+            .ok();
         closure.forget();
     });
+    #[cfg(feature = "ssr")]
+    let _ = set_visible;
     view! {
         <div class=move || format!("back-to-top-wrap {}", if visible.get() { "btt-visible" } else { "" })>
             {read_progress_ctx.map(|ctx| {
@@ -195,7 +201,10 @@ pub fn BackToTop() -> impl IntoView {
                     </svg>
                 }.into_view()
             }).unwrap_or_else(|| view! { <span></span> }.into_view())}
-            <button on:click=move |_| { web_sys::window().unwrap().scroll_to_with_x_and_y(0.0, 0.0); } aria-label="Back to top"
+            <button on:click=move |_| {
+                #[cfg(not(feature = "ssr"))]
+                { web_sys::window().unwrap().scroll_to_with_x_and_y(0.0, 0.0); }
+            } aria-label="Back to top"
                 class="back-to-top">
                 <span class="back-to-top-glyph">"↑"</span>
             </button>
@@ -205,127 +214,166 @@ pub fn BackToTop() -> impl IntoView {
 
 #[component]
 pub fn KeyboardNav() -> impl IntoView {
+    #[cfg(not(feature = "ssr"))]
     use std::cell::RefCell;
+    #[cfg(not(feature = "ssr"))]
     use std::rc::Rc;
     let navigator = use_navigate();
-    let projects  = data::get_infrastructure_fleet();
-    let shortcuts_open = use_context::<RwSignal<bool>>().unwrap_or_else(|| create_rw_signal(false));
-    let palette_open = use_context::<RwSignal<bool>>().unwrap_or_else(|| create_rw_signal(false));
-    let project_card_signals = use_context::<data::ProjectCardSignals>();
+    let projects = data::get_infrastructure_fleet();
+    let shortcuts_open = use_context::<GlobalAppState>()
+        .map(|s| s.shortcuts_open)
+        .unwrap_or_else(|| create_rw_signal(false));
+    let palette_open = use_context::<GlobalAppState>()
+        .map(|s| s.palette_open)
+        .unwrap_or_else(|| create_rw_signal(false));
+    let project_card_signals = use_context::<GlobalAppState>().map(|s| s.project_cards);
+    #[cfg(feature = "ssr")]
+    let _ = (
+        navigator,
+        projects,
+        shortcuts_open,
+        palette_open,
+        project_card_signals,
+    );
+    #[cfg(not(feature = "ssr"))]
     create_effect(move |_| {
-        let window   = web_sys::window().expect("window");
+        let window = web_sys::window().expect("window");
         let document = window.document().expect("document");
         let project_card_signals_clone = project_card_signals.clone();
         let last_key: Rc<RefCell<String>> = Rc::new(RefCell::new(String::new()));
-        let timeout_handle: Rc<RefCell<Option<gloo_timers::callback::Timeout>>> = Rc::new(RefCell::new(None));
-        let last_key_clone       = last_key.clone();
+        let timeout_handle: Rc<RefCell<Option<gloo_timers::callback::Timeout>>> =
+            Rc::new(RefCell::new(None));
+        let last_key_clone = last_key.clone();
         let timeout_handle_clone = timeout_handle.clone();
-        let navigator_clone      = navigator.clone();
-        let projects_clone       = projects.clone();
-        let document_clone       = document.clone();
-        let palette_open_clone   = palette_open;
-        let closure = wasm_bindgen::closure::Closure::wrap(Box::new(move |ev: web_sys::KeyboardEvent| {
-            let key = ev.key();
+        let navigator_clone = navigator.clone();
+        let projects_clone = projects.clone();
+        let document_clone = document.clone();
+        let palette_open_clone = palette_open;
+        let closure =
+            wasm_bindgen::closure::Closure::wrap(Box::new(move |ev: web_sys::KeyboardEvent| {
+                let key = ev.key();
 
-            // Cmd/Ctrl + K opens global command palette and suppresses browser default.
-            if (ev.meta_key() || ev.ctrl_key()) && !ev.alt_key() && (key == "k" || key == "K") {
-                ev.prevent_default();
-                ev.stop_propagation();
-                palette_open_clone.update(|open| *open = !*open);
-                return;
-            }
-
-            // Escape is always handled: close modal, blur focus, close expanded overlays.
-            if key == "Escape" {
-                if palette_open_clone.get() {
-                    palette_open_clone.set(false);
+                // Cmd/Ctrl + K opens global command palette and suppresses browser default.
+                if (ev.meta_key() || ev.ctrl_key()) && !ev.alt_key() && (key == "k" || key == "K") {
+                    ev.prevent_default();
+                    ev.stop_propagation();
+                    palette_open_clone.update(|open| *open = !*open);
                     return;
                 }
-                shortcuts_open.set(false);
-                if let Some(t) = timeout_handle_clone.borrow_mut().take() { t.cancel(); }
-                *last_key_clone.borrow_mut() = String::new();
 
-                if let Some(signals) = project_card_signals_clone.as_ref() {
-                    signals.set_expanded_slug.set(None);
+                // Escape is always handled: close modal, blur focus, close expanded overlays.
+                if key == "Escape" {
+                    if palette_open_clone.get() {
+                        palette_open_clone.set(false);
+                        return;
+                    }
+                    shortcuts_open.set(false);
+                    if let Some(t) = timeout_handle_clone.borrow_mut().take() {
+                        t.cancel();
+                    }
+                    *last_key_clone.borrow_mut() = String::new();
+
+                    if let Some(signals) = project_card_signals_clone.as_ref() {
+                        signals.set_expanded_slug.set(None);
+                    }
+
+                    if let Some(active) = document_clone.active_element() {
+                        if let Some(el) = active.dyn_ref::<web_sys::HtmlElement>() {
+                            let _ = el.blur().ok();
+                        }
+                    }
+                    return;
                 }
 
-                if let Some(active) = document_clone.active_element() {
-                    if let Some(el) = active.dyn_ref::<web_sys::HtmlElement>() { let _ = el.blur().ok(); }
+                // Prevent conflicts with inputs/contenteditable before handling other shortcuts.
+                let interactive = document_clone
+                    .active_element()
+                    .map(|active| {
+                        let tag = active.tag_name();
+                        let is_form = tag == "INPUT" || tag == "TEXTAREA" || tag == "SELECT";
+                        let is_content_editable = active.get_attribute("contenteditable").is_some();
+                        is_form || is_content_editable
+                    })
+                    .unwrap_or(false);
+                if interactive {
+                    return;
                 }
-                return;
-            }
 
-            // Prevent conflicts with inputs/contenteditable before handling other shortcuts.
-            let interactive = document_clone.active_element().map(|active| {
-                let tag = active.tag_name();
-                let is_form = tag == "INPUT" || tag == "TEXTAREA" || tag == "SELECT";
-                let is_content_editable = active.get_attribute("contenteditable").is_some();
-                is_form || is_content_editable
-            }).unwrap_or(false);
-            if interactive {
-                return;
-            }
+                // Toggle shortcuts modal via '?' and move focus into the dialog for A11y.
+                if key == "?" {
+                    let currently_open = shortcuts_open.get();
+                    let next_open = !currently_open;
+                    shortcuts_open.set(next_open);
 
-            // Toggle shortcuts modal via '?' and move focus into the dialog for A11y.
-            if key == "?" {
-                let currently_open = shortcuts_open.get();
-                let next_open = !currently_open;
-                shortcuts_open.set(next_open);
+                    if next_open {
+                        let doc_for_focus = document_clone.clone();
+                        let t = gloo_timers::callback::Timeout::new(0, move || {
+                            if let Some(el) =
+                                doc_for_focus.get_element_by_id("keyboard-shortcuts-modal")
+                            {
+                                if let Some(html_el) = el.dyn_ref::<web_sys::HtmlElement>() {
+                                    let _ = html_el.focus().ok();
+                                }
+                            }
+                        });
+                        t.forget();
+                    }
+                    return;
+                }
 
-                if next_open {
-                    let doc_for_focus = document_clone.clone();
-                    let t = gloo_timers::callback::Timeout::new(0, move || {
-                        if let Some(el) = doc_for_focus.get_element_by_id("keyboard-shortcuts-modal") {
-                            if let Some(html_el) = el.dyn_ref::<web_sys::HtmlElement>() {
-                                let _ = html_el.focus().ok();
+                // Cancel pending 'g' timeout whenever another non-modifier key is pressed.
+                if let Some(t) = timeout_handle_clone.borrow_mut().take() {
+                    t.cancel();
+                }
+
+                // 'g' sequence: wait up to 1000ms for h/p/r.
+                if key == "g" || key == "G" {
+                    *last_key_clone.borrow_mut() = "g".to_string();
+                    let lk2 = last_key_clone.clone();
+                    let t = gloo_timers::callback::Timeout::new(1000, move || {
+                        *lk2.borrow_mut() = String::new();
+                    });
+                    *timeout_handle_clone.borrow_mut() = Some(t);
+                    return;
+                }
+
+                if *last_key_clone.borrow() == "g" {
+                    match key.as_str() {
+                        "h" | "H" => {
+                            navigator_clone("/", Default::default());
+                        }
+                        "p" | "P" => {
+                            if let Some(p) = projects_clone.first() {
+                                navigator_clone(
+                                    &format!("/project/{}", sanitize_slug(&p.slug)),
+                                    Default::default(),
+                                );
                             }
                         }
-                    });
-                    t.forget();
+                        "r" | "R" => {
+                            navigator_clone("/resume", Default::default());
+                        }
+                        _ => {}
+                    }
+                    *last_key_clone.borrow_mut() = String::new();
+                    return;
                 }
-                return;
-            }
 
-            // Cancel pending 'g' timeout whenever another non-modifier key is pressed.
-            if let Some(t) = timeout_handle_clone.borrow_mut().take() { t.cancel(); }
-
-            // 'g' sequence: wait up to 1000ms for h/p/r.
-            if key == "g" || key == "G" {
-                *last_key_clone.borrow_mut() = "g".to_string();
-                let lk2 = last_key_clone.clone();
-                let t = gloo_timers::callback::Timeout::new(1000, move || { *lk2.borrow_mut() = String::new(); });
-                *timeout_handle_clone.borrow_mut() = Some(t);
-                return;
-            }
-
-            if *last_key_clone.borrow() == "g" {
-                match key.as_str() {
-                    "h" | "H" => { navigator_clone("/", Default::default()); }
-                    "p" | "P" => {
-                        if let Some(p) = projects_clone.first() {
-                            navigator_clone(&format!("/project/{}", sanitize_slug(&p.slug)), Default::default());
+                // Focus terminal search with '/'
+                if key == "/" && !ev.ctrl_key() && !ev.meta_key() && !ev.alt_key() {
+                    if let Some(el) = document_clone.get_element_by_id("terminal-input") {
+                        ev.prevent_default();
+                        if let Some(input) = el.dyn_ref::<web_sys::HtmlInputElement>() {
+                            let _ = input.focus().ok();
+                        } else if let Some(html_el) = el.dyn_ref::<web_sys::HtmlElement>() {
+                            let _ = html_el.focus().ok();
                         }
                     }
-                    "r" | "R" => { navigator_clone("/resume", Default::default()); }
-                    _ => {}
                 }
-                *last_key_clone.borrow_mut() = String::new();
-                return;
-            }
-
-            // Focus terminal search with '/'
-            if key == "/" && !ev.ctrl_key() && !ev.meta_key() && !ev.alt_key() {
-                if let Some(el) = document_clone.get_element_by_id("terminal-input") {
-                    ev.prevent_default();
-                    if let Some(input) = el.dyn_ref::<web_sys::HtmlInputElement>() {
-                        let _ = input.focus().ok();
-                    } else if let Some(html_el) = el.dyn_ref::<web_sys::HtmlElement>() {
-                        let _ = html_el.focus().ok();
-                    }
-                }
-            }
-        }) as Box<dyn FnMut(_)>);
-        window.add_event_listener_with_callback("keydown", closure.as_ref().unchecked_ref()).ok();
+            }) as Box<dyn FnMut(_)>);
+        window
+            .add_event_listener_with_callback("keydown", closure.as_ref().unchecked_ref())
+            .ok();
         closure.forget();
     });
     view! { <span style="display:none;" aria-hidden="true"></span> }
