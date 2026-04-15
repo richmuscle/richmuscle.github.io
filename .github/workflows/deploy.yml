@@ -38,6 +38,8 @@ jobs:
           test -f dist/fonts/jbmono-400.woff2
           cp dist/index.html dist/404.html
           touch dist/.nojekyll
+          mkdir -p dist/pdfs
+          cp -v static/pdfs/*.pdf dist/pdfs/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
