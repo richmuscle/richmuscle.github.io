@@ -18,25 +18,8 @@ pub const EMAIL: &str = "Richard.Mussell@yahoo.com";
 pub const GITHUB_URL: &str = "https://github.com/richardmussell";
 pub const LINKEDIN_URL: &str = "https://www.linkedin.com/in/richard-mussell/";
 pub const PROFESSIONAL_TITLE: &str = "Systems Administrator & DevOps Engineer";
-#[allow(dead_code)] // reserved for canonical URLs and sitemap
-pub const SITE_URL: &str = "https://richardmussell.dev";
 
 // === Shared content types (used by project detail pages) ====
-#[derive(Clone, PartialEq)]
-#[allow(dead_code)]
-pub struct Challenge {
-    pub title: String,
-    pub detail: String,
-}
-
-#[derive(Clone, PartialEq)]
-#[allow(dead_code)]
-pub struct Outcome {
-    pub metric: String,
-    pub value: String,
-    pub unit: String,
-}
-
 #[derive(Clone, PartialEq)]
 pub struct TimelineEntry {
     pub date: String,
