@@ -117,8 +117,8 @@ html.light .theme-toggle-btn {
 /* === ARCHETYPE: NAV — theme toggle button ================ */
 .theme-toggle-btn {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,15 +186,15 @@ html.light .theme-toggle-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 13px;
 }
 .shortcuts-modal {
   max-width: 480px;
   width: 100%;
   background: var(--bg-base);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 13px;
+  padding: 21px;
   z-index: 200;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
@@ -202,10 +202,10 @@ html.light .theme-toggle-btn {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin: 0 0 1rem 0;
+  margin: 0 0 13px 0;
 }
 .shortcuts-key {
-  font-size: 12px;
+  font-size: 13px;
   font-family: 'JetBrains Mono', monospace;
   color: var(--text-primary);
   background: rgba(34, 211, 238, 0.15);
@@ -221,8 +221,8 @@ html.light .theme-toggle-btn {
 .back-to-top {
   position: absolute;
   inset: 0;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -279,8 +279,8 @@ html.light .theme-toggle-btn {
 /* ── 1. NAVBAR (max-width: 768px) ───────────────────────────────── */
 @media (max-width: 768px) {
   .navbar {
-    padding: 0 16px;
-    height: 52px;
+    padding: 0 13px;
+    height: 55px;
     justify-content: space-between;
   }
   .navbar-links {
@@ -294,10 +294,10 @@ html.light .theme-toggle-btn {
     height: 44px;
     background: none;
     border: 1px solid var(--border-subtle);
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     color: var(--text-secondary);
-    font-size: 18px;
+    font-size: 16px;
   }
   .navbar-mobile-drawer {
     display: none;
@@ -307,7 +307,7 @@ html.light .theme-toggle-btn {
     right: 0;
     background: rgba(8, 12, 20, 0.98);
     border-bottom: 1px solid var(--border-subtle);
-    padding: 8px 0 max(16px, env(safe-area-inset-bottom));
+    padding: 8px 0 max(13px, env(safe-area-inset-bottom));
     z-index: 150;
   }
   .navbar-mobile-drawer.nav-open {
@@ -317,9 +317,9 @@ html.light .theme-toggle-btn {
   .navbar-mobile-drawer a {
     display: flex;
     align-items: center;
-    padding: 14px 24px;
+    padding: 13px 21px;
     min-height: 44px;
-    font-size: 15px;
+    font-size: 16px;
     color: var(--text-secondary);
     text-decoration: none;
     border-bottom: 1px solid var(--border-subtle);
@@ -343,16 +343,16 @@ html.light .theme-toggle-btn {
 /* ── QA: Shortcut modal width (max-width: 480px) ─────────────────── */
 @media (max-width: 480px) {
   .shortcuts-modal {
-    max-width: calc(100vw - 32px);
-    margin: 0 16px;
-    padding: 20px 16px;
+    max-width: calc(100vw - 34px);
+    margin: 0 13px;
+    padding: 21px 13px;
   }
   .shortcuts-modal td {
-    padding: 8px 6px;
+    padding: 8px 8px;
     font-size: 11px;
   }
   .shortcuts-key {
-    font-size: 9px;
-    padding: 2px 4px;
+    font-size: 11px;
+    padding: 4px;
   }
 }

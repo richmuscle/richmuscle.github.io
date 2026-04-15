@@ -16,19 +16,19 @@ html.light .filter-tab-active {
 .tag-pills-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
+  gap: 4px;
 }
 .tag-pill {
   display: inline-block;
   font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
-  padding: 3px 10px;
-  border-radius: 999px;
+  padding: 4px 8px;
+  border-radius: 9999px;
   cursor: pointer;
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
   background: transparent;
-  margin: 2px;
+  margin: 4px;
   transition: border-color 120ms, color 120ms, background 120ms;
 }
 .tag-pill:hover {
@@ -62,10 +62,10 @@ html.light .filter-tab-active {
 
 .contact-action-buttons {
   display: flex;
-  gap: 12px;
+  gap: 13px;
   flex-wrap: wrap;
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 34px;
+  padding-top: 21px;
   border-top: 1px solid var(--border-subtle);
 }
 
@@ -76,7 +76,7 @@ html.light .filter-tab-active {
   font-family: var(--font-mono);
   border-radius: var(--radius-md);
   text-decoration: none;
-  min-height: 40px;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   transition: border-color var(--duration-fast) var(--ease-standard),
@@ -118,14 +118,14 @@ html.light .filter-tab-active {
 }
 .cb-copy {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   color: #636b78;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border-radius: 4px;
   transition: color 0.15s, background 0.15s;
   white-space: nowrap;
@@ -136,8 +136,8 @@ html.light .filter-tab-active {
 .hero-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 2rem;
+  gap: 13px;
+  margin-top: 21px; /* body → button (spec §7) */
 }
 /* === ARCHETYPE: BUTTON — hero CTA */
 .hero-btn {
@@ -170,7 +170,7 @@ html.light .filter-tab-active {
   align-items: center;
   gap: 8px;
   flex-wrap: nowrap;
-  margin-bottom: 48px;
+  margin-bottom: 55px;
   overflow-x: auto;
 }
 /* === ARCHETYPE: BUTTON — filter tab */
@@ -213,17 +213,17 @@ html.light .filter-tab-active {
   .filter-tabs::-webkit-scrollbar { display: none; }
   .filter-tab {
     white-space: nowrap;
-    padding: 8px 14px;
+    padding: 8px 13px;
     font-size: 11px;
-    min-height: 36px;
+    min-height: 34px;
   }
   .project-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 0 20px;
+    gap: 13px;
+    padding: 0 21px;
   }
   .project-card-article {
-    padding: 24px;
+    padding: 21px;
   }
 }
 
@@ -231,19 +231,19 @@ html.light .filter-tab-active {
 @media (max-width: 768px) {
   .contact-row {
     min-height: 44px;
-    padding: 12px 0;
+    padding: 13px 0;
   }
   .contact-copy-btn {
     min-height: 44px;
     min-width: 44px;
-    padding: 10px 14px;
+    padding: 8px 13px;
   }
   .contact-wish-list {
-    gap: 10px;
+    gap: 13px;
   }
   .contact-action-buttons {
     flex-direction: column;
-    gap: 10px;
+    gap: 13px;
   }
   .contact-action-buttons a,
   .contact-action-buttons button {

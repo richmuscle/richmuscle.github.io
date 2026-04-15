@@ -414,7 +414,7 @@ html.light .project-card-article:hover {
   }
   /* Typography: keep hero heading from awkward wraps */
   .hero-name {
-    font-size: clamp(26px, 8vw, 44px) !important;
+    font-size: clamp(26px, 8vw, 42px) !important;
   }
   h1:not(.hero-name) {
     font-size: clamp(26px, 7vw, 52px) !important;

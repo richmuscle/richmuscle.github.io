@@ -114,22 +114,23 @@
   --font-body:              'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono:              'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
-  /* Type scale — modular ~1.125 off 15px body */
-  --text-3xs:               0.5625rem;  /* 9px  — micro labels (filter tabs etc.) */
-  --text-2xs:               0.6875rem;  /* 11px — metadata */
-  --text-xs:                0.75rem;    /* 12px — eyebrows, small caps */
-  --text-sm:                0.8125rem;  /* 13px — nav, body small */
-  --text-base:              0.9375rem;  /* 15px — body default */
-  --text-lg:                1.0625rem;  /* 17px — emphasized body */
-  --text-xl:                1.25rem;    /* 20px — small headings */
-  --text-2xl:               1.5rem;     /* 24px — section heading */
-  --text-3xl:               1.875rem;   /* 30px — page title */
-  --text-4xl:               2.5rem;     /* 40px — hero */
+  /* Type scale — golden-ratio steps: 11 · 13 · 16 · 26 · 42 · 68 */
+  --text-3xs:               11px;  /* micro labels (was 9px) */
+  --text-2xs:               11px;  /* metadata */
+  --text-xs:                13px;  /* eyebrows, small caps (was 12px) */
+  --text-sm:                13px;  /* nav, body small */
+  --text-base:              16px;  /* body default (was 15px) */
+  --text-lg:                16px;  /* emphasized body (was 17px) */
+  --text-xl:                26px;  /* small headings (was 20px; hierarchy-preserving) */
+  --text-2xl:               26px;  /* section heading (was 24px) */
+  --text-3xl:               42px;  /* page title (was 30px; hierarchy-preserving) */
+  --text-4xl:               42px;  /* hero (was 40px) */
 
-  --leading-tight:          1.2;
-  --leading-snug:           1.35;
-  --leading-normal:         1.55;
-  --leading-relaxed:        1.7;
+  /* Line heights — φ-derived */
+  --leading-tight:          1.1;    /* hero/display */
+  --leading-snug:           1.272;  /* headings (√φ) */
+  --leading-normal:         1.4;    /* UI labels, nav */
+  --leading-relaxed:        1.618;  /* body paragraphs (φ) */
 
   --tracking-tight:         -0.01em;
   --tracking-normal:        0;
@@ -141,27 +142,27 @@
   --weight-semibold:        600;
   --weight-bold:            700;
 
-  /* Spacing — 4px base */
+  /* Spacing — Fibonacci sequence: 4 · 8 · 13 · 21 · 34 · 55 · 89 */
   --space-0:                0;
-  --space-1:                0.25rem;   /* 4px  */
-  --space-2:                0.5rem;    /* 8px  */
-  --space-3:                0.75rem;   /* 12px */
-  --space-4:                1rem;      /* 16px */
-  --space-5:                1.25rem;   /* 20px */
-  --space-6:                1.5rem;    /* 24px */
-  --space-8:                2rem;      /* 32px */
-  --space-10:               2.5rem;    /* 40px */
-  --space-12:               3rem;      /* 48px */
-  --space-16:               4rem;      /* 64px */
-  --space-20:               5rem;      /* 80px */
-  --space-24:               6rem;      /* 96px */
+  --space-1:                4px;
+  --space-2:                8px;
+  --space-3:                13px;  /* was 12 */
+  --space-4:                13px;  /* was 16 — collapses to 13 per spec */
+  --space-5:                21px;  /* was 20 */
+  --space-6:                21px;  /* was 24 */
+  --space-8:                34px;  /* was 32 */
+  --space-10:               34px;  /* was 40 */
+  --space-12:               55px;  /* was 48 */
+  --space-16:               55px;  /* was 64 */
+  --space-20:               89px;  /* was 80 */
+  --space-24:               89px;  /* was 96 */
 
-  /* Radii */
-  --radius-xs:              2px;
+  /* Radii — Fibonacci: 4 · 8 · 13 · 21 · full */
+  --radius-xs:              4px;   /* was 2 */
   --radius-sm:              4px;
-  --radius-md:              6px;
+  --radius-md:              8px;   /* was 6 */
   --radius-lg:              8px;
-  --radius-xl:              12px;
+  --radius-xl:              13px;  /* was 12 */
   --radius-full:            9999px;
 
   /* Shadows — tuned for dark base */
@@ -194,8 +195,8 @@
   /* Layout */
   --container-narrow:       56rem;
   --container-default:      72rem;
-  --container-wide:         80rem;
-  --nav-height:             56px;
+  --container-wide:         75rem;  /* was 80rem — snap to spec §7 1200px max */
+  --nav-height:             55px;   /* was 56 — Fibonacci snap */
 
   /* Border widths */
   --border-thin:            1px;
