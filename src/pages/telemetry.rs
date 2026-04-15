@@ -67,6 +67,51 @@ fn fmt_bytes(bytes: f64) -> String {
     format!("{mb:.2} MB")
 }
 
+fn classify_wasm_init(ms: f64) -> (&'static str, &'static str) {
+    if ms == 0.0 {
+        ("telemetry-dot", "PENDING")
+    } else if ms < 2000.0 {
+        ("telemetry-dot status-ok", "OPERATIONAL")
+    } else if ms < 5000.0 {
+        ("telemetry-dot status-warn", "DEGRADED")
+    } else {
+        ("telemetry-dot status-crit", "CRITICAL")
+    }
+}
+
+fn classify_ttfb(ms: f64) -> (&'static str, &'static str) {
+    if ms < 100.0 {
+        ("telemetry-dot status-ok", "OPERATIONAL")
+    } else if ms < 300.0 {
+        ("telemetry-dot status-warn", "DEGRADED")
+    } else {
+        ("telemetry-dot status-crit", "CRITICAL")
+    }
+}
+
+fn classify_network(rows: &[String]) -> (&'static str, &'static str) {
+    if rows.is_empty() {
+        ("telemetry-dot", "PENDING")
+    } else if rows
+        .iter()
+        .any(|r| r.contains("failed") || r.contains("WARN"))
+    {
+        ("telemetry-dot status-warn", "DEGRADED")
+    } else {
+        ("telemetry-dot status-ok", "OPERATIONAL")
+    }
+}
+
+fn classify_lcp(ms: f64) -> (&'static str, &'static str) {
+    if ms < 2500.0 {
+        ("telemetry-dot status-ok", "OPERATIONAL")
+    } else if ms < 4000.0 {
+        ("telemetry-dot status-warn", "DEGRADED")
+    } else {
+        ("telemetry-dot status-crit", "CRITICAL")
+    }
+}
+
 #[cfg(not(feature = "ssr"))]
 fn push_log(logs: &WriteSignal<VecDeque<String>>, line: String) {
     logs.update(|items| {
@@ -133,6 +178,7 @@ pub fn TelemetryPage() -> impl IntoView {
     let (heap_total, set_heap_total) = create_signal(None::<f64>);
     let (wasm_init_ms, set_wasm_init_ms) = create_signal(0.0_f64);
     let (ttfb_ms, set_ttfb_ms) = create_signal(None::<f64>);
+    let (lcp_ms, set_lcp_ms) = create_signal(None::<f64>);
     let (ua, set_ua) = create_signal(String::from("Unknown"));
     let (network_rows, set_network_rows) = create_signal(Vec::<String>::new());
     let (logs, set_logs) = create_signal(VecDeque::<String>::new());
@@ -201,6 +247,87 @@ pub fn TelemetryPage() -> impl IntoView {
             }
         });
 
+        // LCP via PerformanceObserver — entries list is a PerformanceObserverEntryList
+        // (not a plain Array), so we call getEntries() to obtain the real js_sys::Array.
+        {
+            use leptos::wasm_bindgen::closure::Closure;
+            use leptos::wasm_bindgen::JsValue;
+            let set_lcp_ms_inner = set_lcp_ms;
+            let set_logs_lcp = set_logs;
+            let observer_cb = Closure::wrap(Box::new(
+                move |entries: js_sys::Object, _observer: js_sys::Object| {
+                    let get_entries_val = match js_sys::Reflect::get(
+                        &entries,
+                        &JsValue::from_str("getEntries"),
+                    ) {
+                        Ok(v) => v,
+                        Err(_) => return,
+                    };
+                    let get_entries_fn = match get_entries_val.dyn_into::<js_sys::Function>() {
+                        Ok(f) => f,
+                        Err(_) => return,
+                    };
+                    let list_val = match get_entries_fn.call0(&entries) {
+                        Ok(v) => v,
+                        Err(_) => return,
+                    };
+                    let list = match list_val.dyn_into::<js_sys::Array>() {
+                        Ok(a) => a,
+                        Err(_) => return,
+                    };
+                    if let Some(last) = list.iter().last() {
+                        if let Ok(start_time) =
+                            js_sys::Reflect::get(&last, &JsValue::from_str("startTime"))
+                        {
+                            if let Some(v) = start_time.as_f64() {
+                                set_lcp_ms_inner.set(Some(v));
+                                push_log(
+                                    &set_logs_lcp,
+                                    format!("[INFO] LCP measured at {:.2}ms", v),
+                                );
+                            }
+                        }
+                    }
+                },
+            )
+                as Box<dyn FnMut(js_sys::Object, js_sys::Object)>);
+
+            let constructed = web_sys::window()
+                .and_then(|win| {
+                    let ctor =
+                        js_sys::Reflect::get(&win, &JsValue::from_str("PerformanceObserver"))
+                            .ok()?;
+                    if ctor.is_undefined() || ctor.is_null() {
+                        return None;
+                    }
+                    let ctor = ctor.dyn_into::<js_sys::Function>().ok()?;
+                    let args = js_sys::Array::of1(observer_cb.as_ref().unchecked_ref());
+                    let po = js_sys::Reflect::construct(&ctor, &args).ok()?;
+                    let init = js_sys::Object::new();
+                    js_sys::Reflect::set(
+                        &init,
+                        &JsValue::from_str("type"),
+                        &JsValue::from_str("largest-contentful-paint"),
+                    )
+                    .ok()?;
+                    js_sys::Reflect::set(&init, &JsValue::from_str("buffered"), &JsValue::TRUE)
+                        .ok()?;
+                    let observe = js_sys::Reflect::get(&po, &JsValue::from_str("observe")).ok()?;
+                    let observe = observe.dyn_into::<js_sys::Function>().ok()?;
+                    observe.call1(&po, &init).ok()?;
+                    Some(())
+                })
+                .is_some();
+            if constructed {
+                observer_cb.forget();
+            } else {
+                push_log(
+                    &set_logs,
+                    String::from("[DEBUG] PerformanceObserver unavailable; LCP skipped"),
+                );
+            }
+        }
+
         let heap_interval = {
             let set_heap_used = set_heap_used;
             let set_heap_total = set_heap_total;
@@ -260,6 +387,7 @@ pub fn TelemetryPage() -> impl IntoView {
         set_heap_total,
         set_wasm_init_ms,
         set_ttfb_ms,
+        set_lcp_ms,
         set_ua,
         set_network_rows,
         set_logs,
@@ -297,9 +425,9 @@ pub fn TelemetryPage() -> impl IntoView {
 
                     <article class="telemetry-card">
                         <div class="telemetry-card-head">
-                            <span class="telemetry-dot"></span>
+                            <span class=move || classify_wasm_init(wasm_init_ms.get()).0></span>
                             <span class="telemetry-label">"WASM Initialization"</span>
-                            <span class="telemetry-state">"OPERATIONAL"</span>
+                            <span class="telemetry-state">{move || classify_wasm_init(wasm_init_ms.get()).1}</span>
                         </div>
                         <p class="telemetry-value">{move || format!("{:.2}ms", wasm_init_ms.get())}</p>
                         <p class="telemetry-meta">"Measured from WASM execution start to app mount."</p>
@@ -307,9 +435,9 @@ pub fn TelemetryPage() -> impl IntoView {
 
                     <article class="telemetry-card">
                         <div class="telemetry-card-head">
-                            <span class="telemetry-dot"></span>
+                            <span class=move || { let rows = network_rows.get(); classify_network(&rows).0 }></span>
                             <span class="telemetry-label">"Network IO"</span>
-                            <span class="telemetry-state">"OPERATIONAL"</span>
+                            <span class="telemetry-state">{move || { let rows = network_rows.get(); classify_network(&rows).1 }}</span>
                         </div>
                         <ul class="telemetry-list">
                             <For
@@ -322,9 +450,9 @@ pub fn TelemetryPage() -> impl IntoView {
 
                     <article class="telemetry-card">
                         <div class="telemetry-card-head">
-                            <span class="telemetry-dot"></span>
+                            <span class=move || classify_ttfb(ttfb_ms.get().unwrap_or(0.0)).0></span>
                             <span class="telemetry-label">"TTFB"</span>
-                            <span class="telemetry-state">"OPERATIONAL"</span>
+                            <span class="telemetry-state">{move || classify_ttfb(ttfb_ms.get().unwrap_or(0.0)).1}</span>
                         </div>
                         <p class="telemetry-value">
                             {move || match ttfb_ms.get() {
@@ -333,6 +461,21 @@ pub fn TelemetryPage() -> impl IntoView {
                             }}
                         </p>
                         <p class="telemetry-meta">"Navigation Timing: requestStart to responseStart."</p>
+                    </article>
+
+                    <article class="telemetry-card">
+                        <div class="telemetry-card-head">
+                            <span class=move || match lcp_ms.get() { Some(v) => classify_lcp(v).0, None => "telemetry-dot" }></span>
+                            <span class="telemetry-label">"LCP"</span>
+                            <span class="telemetry-state">{move || match lcp_ms.get() { Some(v) => classify_lcp(v).1, None => "PENDING" }}</span>
+                        </div>
+                        <p class="telemetry-value">
+                            {move || match lcp_ms.get() {
+                                Some(v) => format!("{v:.2}ms"),
+                                None => String::from("Awaiting LCP event..."),
+                            }}
+                        </p>
+                        <p class="telemetry-meta">"PerformanceObserver: largest-contentful-paint entry."</p>
                     </article>
 
                     <article class="telemetry-card">
