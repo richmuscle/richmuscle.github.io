@@ -1,9 +1,9 @@
 # AUDIT_REPORT — richardmussell.github.io
 
-- **Date:** 2026-04-14 (second run, post-ebee7ec)
-- **Branch:** `revamp` @ ebee7ec (clean working tree)
-- **Pipeline:** 3-agent orchestration (audit · recon · inline-patch)
-- **Model:** Opus 4.6 (orchestrator) · Haiku (audit, recon) · Opus (inline patch after scope collapse)
+- **Date:** 2026-04-15 (fourth run, post-6aca76e)
+- **Branch:** `revamp` @ 6aca76e
+- **Pipeline:** delta-audit (2 commits since last audit; orchestrator-only synthesis, subagents not re-spawned — findings verified by direct filesystem/grep on commit diffs)
+- **Model:** Opus 4.6
 
 ---
 
@@ -11,127 +11,86 @@
 
 | | |
 |---|---|
-| **Composite score** | **7.4 / 10** |
-| **Hire signal** | **Borderline → Pass** on engineering; **No** until content P0s land |
-| **Best-fit role as framed today** | Systems Administrator / DevOps Engineer with Rust depth |
-| **Best-fit role after content P0s** | Senior Platform / Infrastructure Engineer (the stated goal) |
-| **One-sentence verdict** | Technically legitimate — SSR/CSR gating, consolidated state, idiomatic Rust, clean CI — but the recruiter-visible surface (title drift, zero completed certs, 5 KB placeholder resume PDF, sitemap pointing at the staging domain) is still dragging the hire signal down. |
+| **Composite score** | **6.7 / 10** (▼ 0.1 from 6.8 — delivery-discipline regression outweighs two small engineering wins) |
+| **Hire signal** | **Borderline** |
+| **Best-fit role today** | Mid-level DevOps Engineer with strong Rust side-project signal |
+| **Best-fit role post-content-P0s** | Senior Platform / Infrastructure Engineer |
+| **One-sentence verdict** | Two clean engineering commits landed (SSG compile gate + 10 passing unit tests), but commit `b3937cc` ("replace placeholder PDF with real LaTeX-compiled resume") is a **silent false-positive** — the 120 KB PDF was added to `static/pdfs/` which is not in the Trunk copy directive, so the deployed site still serves the 5,420-byte placeholder from `public/pdfs/`. A "fix" that doesn't ship is worse than an open P0: it closes the ticket while the user-visible bug remains. |
 
-**Dominant strength:** Disciplined Rust/Leptos architecture. `hydrate`/`ssr`/`ssg`/`sqlite` feature gating is clean, `GlobalAppState` consolidated, 80+ browser API call sites gated with `#[cfg(not(feature = "ssr"))]`, conventional-commit history, three build targets (CSR / SSR / hydrate wasm32) all green in CI.
+**Dominant strength (unchanged):** Feature-gated Rust/Leptos/WASM architecture; idiomatic unsafe FFI in `src/db.rs`; clean CI compile matrix now with 4 targets.
 
-**Root-cause gap:** Content substance lags engineering polish. The site reads as a platform engineer's portfolio but the profile content reads as a junior sysadmin's profile. That mismatch is the bottleneck to the stated "land senior platform/infra roles" goal.
+**Root-cause gap (new framing):** Delivery verification absent. The resume PDF commit demonstrates that content/deploy-path changes are not being smoke-tested before being marked done. The same failure mode produced the `index.html` canonical regression in `fc6d202` (sitemap fixed, HTML head untouched) and now the wrong-directory PDF in `b3937cc`. This is a **second instance of the same class of failure** in the same two-week window.
 
 ---
 
-## § 1. Five-lens scores
+## § 1. Delta since AUDIT_REPORT.md @ fc6d202
 
-| Lens | Score | Note |
-|---|---|---|
-| Architecture | 8 | Feature gating correct; GlobalAppState consolidation clean; SSG binary cleanly separates from lib via `ssg` feature |
-| CS depth | 7 | Fuzzy search scoring + SQLite WASM scaffolding show systems thinking; no novel algorithms |
-| Rust idiom | 9 | No `panic!` / `todo!` / `unimplemented!`; 16 `unwrap`/`expect` confined to DOM-access or unreachable-on-ssr paths; cfg gating idiomatic |
-| Content / marketing | 4 | Identity crisis: Systems-Admin title + aspirational Principal-Architect copy; zero completed certs; sitemap wrong domain (fixed, see §6); placeholder 5.4 KB resume PDF |
-| Engineering ops | 7 | CI gates three targets; deploy workflow sound; gaps: no live hydration validation, no WASM size budget, no pre-deploy checklist |
+### Resolved
+- ✅ SSG compile gate added to CI as 4th `cargo check` (`d6942be`).
+- ✅ `src/bin/ssg.rs` Leptos 0.6 wasm-bindgen limitation documented inline.
+- ✅ Unit test suite expanded 4 → 10: `writeups_index_not_empty`, `writeup_slugs_unique`, `find_writeup_returns_correct`, `find_writeup_unknown_slug_returns_none`, `cert_ids_unique` added (`6aca76e`). All pass under `cargo test --no-default-features --features ssr`.
+- ✅ New `pub fn find_writeup` at `src/data/writeups.rs:225` mirrors `find_project` — symmetry restored.
 
-**Composite (weighted 25/25/20/15/15):** **7.4 / 10**
+### Regressed / falsely closed
+- 🔴 **Commit `b3937cc` claims "replace placeholder PDF with real LaTeX-compiled resume" but added the 120,159-byte PDF to `static/pdfs/resume.pdf` — wrong directory.** Trunk copy-dir at `index.html:68` is `href="public/pdfs"`, and `public/pdfs/resume.pdf` is still the 5,420-byte placeholder (Apr 14 20:06, unchanged). `src/pages/resume.rs:44` links to `/pdfs/resume.pdf` which resolves to the placeholder. The fix compiled and committed but never reached production. Composite P0 status: **not fixed**.
+
+### Still unresolved (carry-forward)
+- 🔴 `index.html:16,20,26` og:image / og:url / canonical still point to `https://richmuscle.github.io/`.
+- 🔴 `src/data/mod.rs:22` `SITE_URL = "https://richardmussell.dev"` + JSON-LD at `index.html:84` still reference the non-deployed `.dev` domain. Three-domain confusion intact.
+- 🟡 `cargo test` still not gated in CI. The 10 passing tests never run on push/PR.
+- 🟡 `cargo clippy -- -D warnings` absent.
+- 🟡 `trunk build --release` only gates `main` in `deploy.yml`, not revamp CI.
+- 🟡 `src/db.rs:149` `MemVfsUtil` drop hazard.
+- 🟡 Zero completed certs in `src/data/certs.rs`.
 
 ---
 
 ## § 2. P0 — must-fix before any job application
 
-Tag legend: **[ENG]** patched this session · **[CONTENT]** flagged, owner to write.
-
-| # | Tag | Action | Files | Status |
-|---|---|---|---|---|
-| 1 | ENG | Fix sitemap domain: replace `richmuscle.github.io` → `richardmussell.github.io` across all 27 `<loc>` entries | `public/sitemap.xml` | **Patched** (see §6) |
-| 2 | ENG | Clean 7 SSR-build warnings (unused imports/vars, dead `push_log`) via `#[cfg(not(feature = "ssr"))]` gating | `src/pages/contact.rs`, `src/pages/one_pager.rs`, `src/components/nav.rs`, `src/pages/telemetry.rs` | **Patched** (see §6) |
-| 3 | CONTENT | Replace placeholder 5.4 KB `public/pdfs/resume.pdf` with real, current résumé | `public/pdfs/resume.pdf` | **Owner** |
-| 4 | CONTENT | Resolve title drift: either commit to "Systems Administrator & DevOps Engineer" everywhere and remove aspirational Principal-Architect framing, OR earn and document the senior framing with quantified wins | `src/data/mod.rs`, `src/pages/home.rs`, `src/pages/about.rs`, `src/pages/resume.rs`, `index.html` | **Owner** |
-| 5 | CONTENT | Certifications section: either ship one completed credential or restructure to "Completed / Active Study" so all five entries aren't "In Progress" | `src/data/certs.rs` | **Owner** |
-
-**Audit claims that did not survive verification** (flagged by audit-agent as P0, rejected):
-- "Missing Trunk `copy-dir` for `static/docs`" → already present at `index.html:67`.
-- "No resume PDF exists" → `public/pdfs/resume.pdf` exists. Separate concern: content quality of that PDF (5.4 KB, likely placeholder) — promoted to P0 #3.
+1. **Move `static/pdfs/resume.pdf` (120 KB) to `public/pdfs/resume.pdf` — overwrite the placeholder.** Verification: `stat -c%s public/pdfs/resume.pdf` returns > 100000; `trunk build --release && stat -c%s dist/pdfs/resume.pdf` returns the same size. Optionally delete `static/pdfs/` to remove the wrong-path trap. **Effort: S.** This is the single highest-leverage byte on the site — every recruiter who clicks "Download Resume (PDF)" currently gets an empty file.
+2. **Fix `index.html:16,20,26` canonical/OG URLs to `https://richardmussell.github.io/`.** Unchanged since last audit. **Effort: S** (3 lines).
+3. **Resolve three-domain canonical confusion.** `src/data/mod.rs:22` `SITE_URL` + `index.html:84` JSON-LD both point to `richardmussell.dev`. Pick one canonical and delete the others. **Effort: S.**
+4. **Add `cargo test --no-default-features --features ssr` and `cargo clippy --target wasm32-unknown-unknown -- -D warnings` to `.github/workflows/ci.yml`.** Tests now exist (10) and do not gate merges. **Effort: S** — two steps.
+5. **Add a deploy-path smoke assertion to CI or `deploy.yml`** to prevent a repeat of `b3937cc`. One line: `test $(stat -c%s dist/pdfs/resume.pdf) -gt 50000`. Catches the class-of-failure (silent wrong-path commits) that produced the current P0. **Effort: S.**
 
 ---
 
-## § 3. P1 — this week
+## § 3. P1 — queue for this week
 
-| Tag | Action |
-|---|---|
-| CONTENT | Quantify work experience on `resume.rs:50-100` and `about.rs:23-29` — dates, team sizes, measurable impact (the "13 municipal entities" line needs company name + date span). |
-| CONTENT | Ship one working demo per project, or remove the "demo" framing and call them "case studies" so "Coming Soon" text disappears. |
-| ENG | Validate hydration end-to-end on deployed `revamp-origin` URL. No hydration-mismatch console errors, markers present, interactive elements wire. ROADMAP Phase 1 close-out. |
-| ENG | Headless smoke test on ≥3 routes (home, resume, /project/terraform-gcp) as a CI job. |
-
-## § 4. P2 — this month
-
-| Tag | Action |
-|---|---|
-| ENG | Instrument real WASM gzip/brotli size on telemetry page; gate in CI (feeds ROADMAP Phase 2). |
-| ENG | Extract duplicated clipboard-copy pattern (7 call sites) into `utils::copy_to_clipboard` helper. |
-| ENG | Add `cargo test` pass: slug uniqueness, sitemap ↔ route parity, PROFESSIONAL_TITLE string consistency. |
-| ENG | Integration test for SQLite-search → in-memory-search fallback path. |
-| CONTENT | Tighten OG/meta descriptions toward concrete technical accomplishments ("ELK-based SOC, NIST 800-53") over generic phrasing. |
+Unchanged from prior audit: MemVfsUtil drop hazard (`src/db.rs:149`), complete one cert, quantify/reframe Cox Communications role at `src/pages/resume.rs:100-109`, data-integrity parity tests (sitemap ↔ route list, `PROFESSIONAL_TITLE` ↔ hero), close out Phase 1 hydration validation.
 
 ---
 
-## § 5. Adversarial critiques
+## § 4. P2 — queue for this month
 
-1. **"Senior/principal claims without quantified wins."** Hiring manager will ask why a Systems Administrator title appears next to Principal-Architect-tier writeup copy. *Neutralizing move:* pick one framing and commit; for the senior/staff framing, quantify the SOC work (scale, tools, findings) and ship one real outcome metric.
-
-2. **"Every cert is aspirational."** Five "In Progress" certs reads as incomplete follow-through. *Neutralizing move:* finish one (Sec+, GCP ACE, or AZ-900 are 2–3 week commitments), or restructure so "Active Study" is a distinct section from "Completed."
-
-3. **"Broken canonical URL + placeholder resume."** First impression = poor QA. *Neutralizing move:* sitemap fix shipped this session (see §6). Resume PDF replacement is P0 for the owner.
+Unchanged: extract `utils::copy_to_clipboard` to kill 7 `js_sys::eval` call sites; WASM bundle size on telemetry page; refresh `INVENTORY.md` for Phase 1; demote the "Prismatic Apex" / "Builder's Ledger" writeup titles in `src/data/writeups.rs:128`.
 
 ---
 
-## § 6. Patch Log — this session
+## § 5. Adversarial critique — new this cycle
 
-All changes are [ENG] only. [CONTENT] items listed in §2 are flagged, not touched.
+> *"Your last audit flagged a 5 KB placeholder resume PDF. You committed a fix titled 'replace placeholder PDF with real LaTeX-compiled resume.' The commit landed the PDF in `static/pdfs/` — a directory your Trunk config does not copy to `dist/`. The deployed site still serves the 5 KB placeholder. You closed the P0 without clicking the download link in a local `trunk build --release` preview. That's the same smoke-test failure that produced your sitemap-vs-index.html canonical regression two weeks ago. It is the single most repairable weakness in your engineering discipline."*
 
-### 6.1 `public/sitemap.xml` — canonical domain fix
-- **Before:** 27 × `https://richmuscle.github.io/...` (staging repo domain)
-- **After:** 27 × `https://richardmussell.github.io/...` (live site domain)
-- **Method:** `sed -i 's|https://richmuscle\.github\.io|https://richardmussell.github.io|g'`
-- **Verification:** `grep -c "richardmussell.github.io"` → 27; `grep -c "richmuscle.github.io"` (as non-substring) → 0.
-
-### 6.2 SSR-build warning cleanup (7 → 0)
-All four edits use `#[cfg(not(feature = "ssr"))]` to gate items only used on wasm32 paths, or `#[cfg(feature = "ssr")] let _ = x;` to consume a signal setter moved into non-SSR closures.
-
-| File | Change |
-|---|---|
-| `src/pages/contact.rs:5` | Gate `use crate::utils::track;` with `cfg(not(feature = "ssr"))`. |
-| `src/pages/contact.rs:9` | Add `#[cfg(feature = "ssr")] let _ = set_email_copied;` to consume the signal setter on SSR build. |
-| `src/pages/one_pager.rs:9` | Same `let _ = set_email_copied;` shim. (Left `use crate::utils::track;` ungated — `track("print", ...)` at line 161 is called unconditionally inside an `on:click` closure and needs the import on both builds.) |
-| `src/components/nav.rs:4` | Gate `use crate::utils::sanitize_slug;` with `cfg(not(feature = "ssr"))`. |
-| `src/components/nav.rs:216-217` | Gate `use std::cell::RefCell;` and `use std::rc::Rc;` with `cfg(not(feature = "ssr"))`. |
-| `src/pages/telemetry.rs:58` | Gate `fn push_log` with `cfg(not(feature = "ssr"))` — all 11 callers are inside non-SSR blocks. |
-
-### 6.3 Verification
-```
-cargo check --no-default-features --features ssr               → 0 errors, 0 warnings
-cargo check --features hydrate --target wasm32-unknown-unknown → 0 errors, 0 warnings
-cargo check                   --target wasm32-unknown-unknown  → 0 errors, 0 warnings
-```
+**Neutralizing move:** `mv static/pdfs/resume.pdf public/pdfs/resume.pdf && rmdir static/pdfs`, then add the CI size assertion from P0 #5. Commit as: "fix: move resume.pdf to public/ (Trunk copy-dir path) + CI size gate to prevent recurrence".
 
 ---
 
-## § 7. Recon appendix
+## § 6. Recon delta
 
-- **Deps:** Leptos 0.6 pinned, `sqlite-wasm-rs 0.5.2`, no loose pins. WASM-only deps correctly `cfg(target_arch = "wasm32")` gated; `tokio` gated behind `ssg` feature so SSR check doesn't pull it.
-- **Code smells:** 11 `unwrap` + 5 `expect`, all confined to DOM-access paths where `window()` / `document()` are infallibly present on wasm32, or unreachable-on-SSR. No `panic!`, `todo!`, `unimplemented!`, `dbg!`. No `TODO`/`FIXME` in source tree.
-- **cfg gating:** 8 `cfg(feature = ...)` uses, 1 `cfg(target_arch = ...)` use. Idiomatic.
-- **File sizes:** Largest Rust files all under 500 lines — healthy modularity.
-- **CI:** `ci.yml` checks CSR + SSR + hydrate wasm32 on push/PR to `revamp`. `deploy.yml` deploys `main` → GitHub Pages.
-- **Build status:** All three targets green after this session's patches.
-- **Git hygiene:** Conventional-commit style, descriptive messages, two meaningful commits (`7b88343` initial release, `ebee7ec` Phase 1 pinnacle). Good cadence, no churn.
-- **CSS:** 6,309 lines across modular design-tokens + components.
-- **WASM artifact:** 1.5 MB `dist/*.wasm` — reasonable for CSR + SQLite + design system. Phase 2 code-splitting will measure and budget this.
+- **Tests:** 1 file (src/data/tests.rs), 10 tests (was 4 last cycle); ratio 0.10 of 30 source files. Coverage still data-module-only.
+- **Unsafe blocks:** unchanged (11 in `src/db.rs`).
+- **Commit cadence:** 6 total commits on `revamp` (was 3). Two landed since last audit.
+- **Dependency surface:** unchanged.
+- **CI gates:** `cargo check` matrix now 4-way (csr/wasm32, ssr, hydrate+sqlite/wasm32, ssg bin). `cargo test`, `cargo clippy`, `trunk build --release`, bundle-size gate, deploy-path smoke: **all still absent.**
 
 ---
 
-## § 8. Next action
+## § 7. #1 recommended next action
 
-**#1 remaining action for the human owner:**
-Replace `public/pdfs/resume.pdf` (currently a 5.4 KB placeholder) with the real, current résumé PDF, and in the same pass decide on one framing — "Systems Administrator & DevOps Engineer" vs senior/staff — and make it consistent across `src/data/mod.rs`, home/about/resume pages, and `index.html` OG tags.
+**Move the real resume PDF from `static/pdfs/` to `public/pdfs/` and verify the download link works in a local `trunk build --release` preview before committing.** Then add a one-line CI size assertion to make the next wrong-path PDF commit fail loudly. This kills the P0, validates the commit, and installs the regression gate for the failure class — three wins in one S-effort change.
+
+---
+
+## § 8. Patch log
+
+**None.** Delta-audit only. Orchestrator will not auto-patch the PDF move: the wrong-path commit pattern indicates the owner should perform and verify the fix by hand to break the mute-closure habit. `/patch` is available on request.

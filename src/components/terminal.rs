@@ -1,19 +1,19 @@
 //! Interactive boot-and-command terminal mounted on the home page.
-use leptos::*;
+use crate::data::{get_infrastructure_fleet, EMAIL};
 #[cfg(not(feature = "ssr"))]
 use leptos::wasm_bindgen::JsCast;
+use leptos::*;
 use leptos_router::use_navigate;
-use crate::data::{get_infrastructure_fleet, EMAIL};
 use std::sync::LazyLock;
 
 fn init_boot_lines() -> Vec<String> {
     vec![
-            "Mounting Enterprise Infrastructure Fabric...".into(),
-            "Verifying Active Directory Group Policies (GPO)...".into(),
-            "Executing User Onboarding Automation...".into(),
-            "Hardening Linux/Windows Production Baselines...".into(),
-            "richard@sysadmin-ops:~$".into(),
-        ]
+        "Mounting Enterprise Infrastructure Fabric...".into(),
+        "Verifying Active Directory Group Policies (GPO)...".into(),
+        "Executing User Onboarding Automation...".into(),
+        "Hardening Linux/Windows Production Baselines...".into(),
+        "richard@sysadmin-ops:~$".into(),
+    ]
 }
 
 static BOOT_LINES: LazyLock<Vec<String>> = LazyLock::new(init_boot_lines);
@@ -27,7 +27,9 @@ pub fn Terminal() -> impl IntoView {
     let initialized = store_value(false);
 
     create_effect(move |_| {
-        if initialized.get_value() { return; }
+        if initialized.get_value() {
+            return;
+        }
         initialized.set_value(true);
         let lines = boot_lines.get_value();
         for (i, line) in lines.into_iter().enumerate() {
@@ -35,7 +37,9 @@ pub fn Terminal() -> impl IntoView {
             set_timeout(
                 move || {
                     set_log_output.update(|output| {
-                        if !output.is_empty() { *output += "\n"; }
+                        if !output.is_empty() {
+                            *output += "\n";
+                        }
                         *output += &line;
                     });
                 },
@@ -62,7 +66,8 @@ pub fn Terminal() -> impl IntoView {
     let handle_keydown = move |ev: leptos::ev::KeyboardEvent| {
         if ev.key() == "Enter" {
             let raw = user_input.get();
-            let input = raw.trim()
+            let input = raw
+                .trim()
                 .chars()
                 .filter(|c| !c.is_control())
                 .take(100)
@@ -131,7 +136,9 @@ pub fn Terminal() -> impl IntoView {
                     _ => format!("> Command not found: '{}' — type 'help' for available commands", input),
                 };
                 set_log_output.update(|output| {
-                    if !output.is_empty() { *output += "\n"; }
+                    if !output.is_empty() {
+                        *output += "\n";
+                    }
                     *output += &format!("> {}\n{}", input, response);
                 });
                 set_user_input.set(String::new());

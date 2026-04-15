@@ -27,7 +27,8 @@ fn main() {
                 "position:fixed;inset:0;background:#7f1d1d;color:#fca5a5;\
                  font-family:monospace;font-size:13px;padding:32px;\
                  z-index:999999;overflow:auto;white-space:pre-wrap;",
-            ).ok()?;
+            )
+            .ok()?;
             div.set_text_content(Some(&msg));
             body.prepend_with_node_1(&div).ok()
         })();
@@ -37,7 +38,10 @@ fn main() {
     mount_to_body(|| view! { <App /> });
 
     let _ = (|| -> Option<()> {
-        web_sys::window()?.document()?.get_element_by_id("wasm-init-indicator")?.remove();
+        web_sys::window()?
+            .document()?
+            .get_element_by_id("wasm-init-indicator")?
+            .remove();
         Some(())
     })();
 }

@@ -45,7 +45,9 @@ fn collect_paths() -> Vec<String> {
 fn render_path(path: &str) -> String {
     let url = format!("http://ssg.local{path}");
     render_to_string(|| {
-        provide_context(RouterIntegrationContext::new(ServerIntegration { path: url }));
+        provide_context(RouterIntegrationContext::new(ServerIntegration {
+            path: url,
+        }));
         view! { <App/> }
     })
     .to_string()
@@ -113,8 +115,10 @@ fn main() {
         .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
         .unwrap_or(false);
     let write_full = !fragments_only;
-    let write_fragment =
-        fragments_only || std::env::var("SSG_WRITE_FRAGMENTS").map(|v| v == "1" || v.eq_ignore_ascii_case("true")).unwrap_or(true);
+    let write_fragment = fragments_only
+        || std::env::var("SSG_WRITE_FRAGMENTS")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(true);
 
     let paths = collect_paths();
     // `create_resource` (project / writing pages) uses `spawn_local`; host SSG must run inside a

@@ -1,9 +1,9 @@
 //! In-browser portfolio index backed by SQLite (WASM + `sqlite` feature) with a structured fallback.
 //!
 //! Memory VFS from `sqlite-wasm-rs` does **not** require COOP/COEP; OPFS / SharedArrayBuffer paths do.
-use crate::data::{get_infrastructure_fleet, ProjectCategory, ProjectIndex};
 #[cfg(all(target_arch = "wasm32", feature = "sqlite"))]
 use crate::data::ProjectDetail;
+use crate::data::{get_infrastructure_fleet, ProjectCategory, ProjectIndex};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 static LAST_PORTFOLIO_QUERY_US: AtomicU64 = AtomicU64::new(0);
@@ -25,10 +25,7 @@ pub fn last_sample_search_micros() -> u64 {
     LAST_SAMPLE_SEARCH_US.load(Ordering::Relaxed)
 }
 
-#[cfg_attr(
-    not(all(target_arch = "wasm32", feature = "sqlite")),
-    allow(dead_code)
-)]
+#[cfg_attr(not(all(target_arch = "wasm32", feature = "sqlite")), allow(dead_code))]
 fn record_query_duration_us(start_ms: f64) {
     #[cfg(target_arch = "wasm32")]
     {
@@ -59,7 +56,10 @@ fn fallback_match_score(p: &ProjectIndex, q_lower: &str) -> i32 {
     if sub.contains(q_lower) {
         s += 65;
     }
-    if p.tech_stack.iter().any(|t| t.to_lowercase().contains(q_lower)) {
+    if p.tech_stack
+        .iter()
+        .any(|t| t.to_lowercase().contains(q_lower))
+    {
         s += 50;
     }
     if desc.contains(q_lower) {
@@ -78,8 +78,7 @@ fn search_fallback(q_lower: &str, category: Option<ProjectCategory>) -> Vec<Proj
                     || p.subtitle.to_lowercase().contains(q_lower)
                     || p.description.to_lowercase().contains(q_lower)
                     || p.slug.to_lowercase().contains(q_lower)
-                    || p
-                        .tech_stack
+                    || p.tech_stack
                         .iter()
                         .any(|t| t.to_lowercase().contains(q_lower)))
         })
@@ -100,9 +99,10 @@ mod sqlite_engine {
     use super::*;
     use core::ffi::{c_char, CStr};
     use sqlite_wasm_rs::{
-        MemVfsUtil, WasmOsCallback, SQLITE_DONE, SQLITE_OK, SQLITE_OPEN_CREATE, SQLITE_OPEN_READWRITE,
-        SQLITE_ROW, sqlite3, sqlite3_bind_int, sqlite3_bind_text, sqlite3_close, sqlite3_column_text,
-        sqlite3_exec, sqlite3_finalize, sqlite3_open_v2, sqlite3_prepare_v2, sqlite3_step, sqlite3_stmt,
+        sqlite3, sqlite3_bind_int, sqlite3_bind_text, sqlite3_close, sqlite3_column_text,
+        sqlite3_exec, sqlite3_finalize, sqlite3_open_v2, sqlite3_prepare_v2, sqlite3_step,
+        sqlite3_stmt, MemVfsUtil, WasmOsCallback, SQLITE_DONE, SQLITE_OK, SQLITE_OPEN_CREATE,
+        SQLITE_OPEN_READWRITE, SQLITE_ROW,
     };
     use std::ffi::CString;
     use std::sync::atomic::{AtomicUsize, Ordering};
@@ -137,7 +137,13 @@ mod sqlite_engine {
 
     unsafe fn run_ddl(db: *mut sqlite3, sql: &str) -> Result<(), String> {
         let c = CString::new(sql).map_err(|_| "invalid SQL CString".to_string())?;
-        let rc = sqlite3_exec(db, c.as_ptr(), None, core::ptr::null_mut(), core::ptr::null_mut());
+        let rc = sqlite3_exec(
+            db,
+            c.as_ptr(),
+            None,
+            core::ptr::null_mut(),
+            core::ptr::null_mut(),
+        );
         if rc == SQLITE_OK {
             Ok(())
         } else {
@@ -253,15 +259,8 @@ mod sqlite_engine {
         .ok()?;
 
         let mut stmt: *mut sqlite3_stmt = core::ptr::null_mut();
-        let rc = unsafe {
-            sqlite3_prepare_v2(
-                db,
-                sql.as_ptr(),
-                -1,
-                &mut stmt,
-                core::ptr::null_mut(),
-            )
-        };
+        let rc =
+            unsafe { sqlite3_prepare_v2(db, sql.as_ptr(), -1, &mut stmt, core::ptr::null_mut()) };
         if rc != SQLITE_OK || stmt.is_null() {
             record_query_duration_us(start);
             return None;
@@ -313,15 +312,8 @@ mod sqlite_engine {
         let sql = CString::new("UPDATE projects SET body_text = ?1 WHERE slug = ?2;")
             .map_err(|_| "update sql".to_string())?;
         let mut stmt: *mut sqlite3_stmt = core::ptr::null_mut();
-        let rc = unsafe {
-            sqlite3_prepare_v2(
-                db,
-                sql.as_ptr(),
-                -1,
-                &mut stmt,
-                core::ptr::null_mut(),
-            )
-        };
+        let rc =
+            unsafe { sqlite3_prepare_v2(db, sql.as_ptr(), -1, &mut stmt, core::ptr::null_mut()) };
         if rc != SQLITE_OK || stmt.is_null() {
             return Err(format!("prepare update: {rc}"));
         }

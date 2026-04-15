@@ -1,19 +1,20 @@
 #[cfg(not(feature = "ssr"))]
+use crate::utils::wasm_start_time_ms;
+#[cfg(not(feature = "ssr"))]
 use gloo_net::http::Request;
 #[cfg(not(feature = "ssr"))]
 use gloo_timers::callback::Interval;
-use leptos::*;
 #[cfg(not(feature = "ssr"))]
 use leptos::wasm_bindgen::JsCast;
+use leptos::*;
 use leptos_meta::{Meta, Title};
 use std::collections::VecDeque;
-#[cfg(not(feature = "ssr"))]
-use crate::utils::wasm_start_time_ms;
 
 #[cfg(not(feature = "ssr"))]
 fn perf_now_ms() -> Option<f64> {
     let window = web_sys::window()?;
-    let perf = js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
+    let perf =
+        js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
     let now_fn = js_sys::Reflect::get(&perf, &wasm_bindgen::JsValue::from_str("now")).ok()?;
     let now_fn = now_fn.dyn_into::<js_sys::Function>().ok()?;
     now_fn.call0(&perf).ok()?.as_f64()
@@ -22,18 +23,25 @@ fn perf_now_ms() -> Option<f64> {
 #[cfg(not(feature = "ssr"))]
 fn read_heap_bytes() -> Option<(f64, f64)> {
     let window = web_sys::window()?;
-    let perf_js = js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
+    let perf_js =
+        js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
     let memory = js_sys::Reflect::get(&perf_js, &wasm_bindgen::JsValue::from_str("memory")).ok()?;
-    let used = js_sys::Reflect::get(&memory, &wasm_bindgen::JsValue::from_str("usedJSHeapSize")).ok()?.as_f64()?;
-    let total = js_sys::Reflect::get(&memory, &wasm_bindgen::JsValue::from_str("totalJSHeapSize")).ok()?.as_f64()?;
+    let used = js_sys::Reflect::get(&memory, &wasm_bindgen::JsValue::from_str("usedJSHeapSize"))
+        .ok()?
+        .as_f64()?;
+    let total = js_sys::Reflect::get(&memory, &wasm_bindgen::JsValue::from_str("totalJSHeapSize"))
+        .ok()?
+        .as_f64()?;
     Some((used, total))
 }
 
 #[cfg(not(feature = "ssr"))]
 fn read_ttfb_ms() -> Option<f64> {
     let window = web_sys::window()?;
-    let perf = js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
-    let entries_fn = js_sys::Reflect::get(&perf, &wasm_bindgen::JsValue::from_str("getEntriesByType")).ok()?;
+    let perf =
+        js_sys::Reflect::get(&window, &wasm_bindgen::JsValue::from_str("performance")).ok()?;
+    let entries_fn =
+        js_sys::Reflect::get(&perf, &wasm_bindgen::JsValue::from_str("getEntriesByType")).ok()?;
     let entries_fn = entries_fn.dyn_into::<js_sys::Function>().ok()?;
     let entries = entries_fn
         .call1(&perf, &wasm_bindgen::JsValue::from_str("navigation"))
@@ -44,9 +52,13 @@ fn read_ttfb_ms() -> Option<f64> {
         return None;
     }
     let request_start =
-        js_sys::Reflect::get(&first, &wasm_bindgen::JsValue::from_str("requestStart")).ok()?.as_f64()?;
+        js_sys::Reflect::get(&first, &wasm_bindgen::JsValue::from_str("requestStart"))
+            .ok()?
+            .as_f64()?;
     let response_start =
-        js_sys::Reflect::get(&first, &wasm_bindgen::JsValue::from_str("responseStart")).ok()?.as_f64()?;
+        js_sys::Reflect::get(&first, &wasm_bindgen::JsValue::from_str("responseStart"))
+            .ok()?
+            .as_f64()?;
     Some((response_start - request_start).max(0.0))
 }
 
@@ -66,7 +78,10 @@ fn push_log(logs: &WriteSignal<VecDeque<String>>, line: String) {
 }
 
 #[cfg(not(feature = "ssr"))]
-async fn run_network_probe(set_network_rows: WriteSignal<Vec<String>>, set_logs: WriteSignal<VecDeque<String>>) {
+async fn run_network_probe(
+    set_network_rows: WriteSignal<Vec<String>>,
+    set_logs: WriteSignal<VecDeque<String>>,
+) {
     let probes = vec![
         "linux-admin-scripting",
         "monitoring-observability",
@@ -84,14 +99,20 @@ async fn run_network_probe(set_network_rows: WriteSignal<Vec<String>>, set_logs:
                 rows.push(format!("{path} — {:.2}ms", elapsed.max(0.0)));
                 push_log(
                     &set_logs,
-                    format!("[INFO] Resource '{slug}.json' fetched in {:.0}ms", elapsed.max(0.0)),
+                    format!(
+                        "[INFO] Resource '{slug}.json' fetched in {:.0}ms",
+                        elapsed.max(0.0)
+                    ),
                 );
             }
             Ok(resp) => {
                 rows.push(format!("{path} — HTTP {}", resp.status()));
                 push_log(
                     &set_logs,
-                    format!("[WARN] Resource '{slug}.json' returned HTTP {}", resp.status()),
+                    format!(
+                        "[WARN] Resource '{slug}.json' returned HTTP {}",
+                        resp.status()
+                    ),
                 );
             }
             Err(_) => {
@@ -127,22 +148,37 @@ pub fn TelemetryPage() -> impl IntoView {
         create_effect(move |_| {
             if let Some(window) = web_sys::window() {
                 let nav = window.navigator();
-                set_ua.set(nav.user_agent().unwrap_or_else(|_| String::from("Unavailable")));
+                set_ua.set(
+                    nav.user_agent()
+                        .unwrap_or_else(|_| String::from("Unavailable")),
+                );
             }
 
             if let (Some(now), Some(start)) = (perf_now_ms(), wasm_start_time_ms()) {
                 let init = (now - start).max(0.0);
                 set_wasm_init_ms.set(init);
-                push_log(&set_logs, format!("[INFO] WASM initialized in {:.2}ms", init));
+                push_log(
+                    &set_logs,
+                    format!("[INFO] WASM initialized in {:.2}ms", init),
+                );
             } else {
-                push_log(&set_logs, String::from("[WARN] WASM initialization timer unavailable"));
+                push_log(
+                    &set_logs,
+                    String::from("[WARN] WASM initialization timer unavailable"),
+                );
             }
 
             if let Some(ttfb) = read_ttfb_ms() {
                 set_ttfb_ms.set(Some(ttfb));
-                push_log(&set_logs, format!("[INFO] Navigation TTFB measured at {:.2}ms", ttfb));
+                push_log(
+                    &set_logs,
+                    format!("[INFO] Navigation TTFB measured at {:.2}ms", ttfb),
+                );
             } else {
-                push_log(&set_logs, String::from("[DEBUG] Navigation timing unavailable for TTFB"));
+                push_log(
+                    &set_logs,
+                    String::from("[DEBUG] Navigation timing unavailable for TTFB"),
+                );
             }
 
             if let Some((used, total)) = read_heap_bytes() {
@@ -219,7 +255,15 @@ pub fn TelemetryPage() -> impl IntoView {
     // Suppress unused-setter warnings under SSR (signals are written only
     // from the gated block above; their getters are still read by the view).
     #[cfg(feature = "ssr")]
-    let _ = (set_heap_used, set_heap_total, set_wasm_init_ms, set_ttfb_ms, set_ua, set_network_rows, set_logs);
+    let _ = (
+        set_heap_used,
+        set_heap_total,
+        set_wasm_init_ms,
+        set_ttfb_ms,
+        set_ua,
+        set_network_rows,
+        set_logs,
+    );
 
     view! {
         <Title text="Telemetry | Richard J. Mussell" />

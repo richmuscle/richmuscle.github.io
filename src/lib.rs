@@ -1,21 +1,20 @@
+pub mod components;
 pub mod data;
 pub mod db;
 pub mod error;
+pub mod pages;
 pub mod state;
 pub mod utils;
-pub mod components;
-pub mod pages;
 
-pub use db::{search_projects, search_portfolio_projects, sqlite_index_ready};
+pub use db::{search_portfolio_projects, search_projects, sqlite_index_ready};
 pub use error::AppError;
 pub use state::GlobalAppState;
 
-use crate::data::{ProjectCardSignals, ReadProgressSignals};
 use crate::components::{BackToTop, CommandPalette, KeyboardNav, NavBar, ReadingProgress};
+use crate::data::{ProjectCardSignals, ReadProgressSignals};
 use crate::pages::{
-    AboutPage, ContactPage, HomePage, NotFoundPage, OnePageSummary,
-    ProjectDemoPage, ProjectDetailPage, ProjectDocsPage, ResumePage,
-    TelemetryPage, WriteupDetailPage, WritingPage,
+    AboutPage, ContactPage, HomePage, NotFoundPage, OnePageSummary, ProjectDemoPage,
+    ProjectDetailPage, ProjectDocsPage, ResumePage, TelemetryPage, WriteupDetailPage, WritingPage,
 };
 use leptos::*;
 use leptos_meta::provide_meta_context;
@@ -40,8 +39,15 @@ pub fn App() -> impl IntoView {
         set_is_dark,
         shortcuts_open,
         palette_open,
-        read_progress: ReadProgressSignals { progress: read_progress, set_progress: set_read_progress },
-        project_cards: ProjectCardSignals { expanded_slug, set_expanded_slug, did_drag },
+        read_progress: ReadProgressSignals {
+            progress: read_progress,
+            set_progress: set_read_progress,
+        },
+        project_cards: ProjectCardSignals {
+            expanded_slug,
+            set_expanded_slug,
+            did_drag,
+        },
         portfolio_category: create_rw_signal(None::<crate::data::ProjectCategory>),
         portfolio_search: create_rw_signal(String::new()),
         portfolio_index_tick: create_rw_signal(0u32),
@@ -63,18 +69,28 @@ pub fn App() -> impl IntoView {
     create_effect(move |_| {
         #[cfg(not(feature = "ssr"))]
         {
-            let Some(window) = web_sys::window() else { return };
-            let Some(document) = window.document() else { return };
-            let Some(html) = document.document_element() else { return };
+            let Some(window) = web_sys::window() else {
+                return;
+            };
+            let Some(document) = window.document() else {
+                return;
+            };
+            let Some(html) = document.document_element() else {
+                return;
+            };
             let Some(body) = document.body() else { return };
             if is_dark.get() {
                 html.class_list().add_1("dark").ok();
                 html.class_list().remove_1("light").ok();
-                body.style().set_property("background-color", "#080d14").ok();
+                body.style()
+                    .set_property("background-color", "#080d14")
+                    .ok();
             } else {
                 html.class_list().add_1("light").ok();
                 html.class_list().remove_1("dark").ok();
-                body.style().set_property("background-color", "#f0f4f8").ok();
+                body.style()
+                    .set_property("background-color", "#f0f4f8")
+                    .ok();
             }
         }
     });

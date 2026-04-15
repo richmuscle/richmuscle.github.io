@@ -24,20 +24,39 @@ pub const SITE_URL: &str = "https://richardmussell.dev";
 // === Shared content types (used by project detail pages) ====
 #[derive(Clone, PartialEq)]
 #[allow(dead_code)]
-pub struct Challenge { pub title: String, pub detail: String }
+pub struct Challenge {
+    pub title: String,
+    pub detail: String,
+}
 
 #[derive(Clone, PartialEq)]
 #[allow(dead_code)]
-pub struct Outcome { pub metric: String, pub value: String, pub unit: String }
+pub struct Outcome {
+    pub metric: String,
+    pub value: String,
+    pub unit: String,
+}
 
 #[derive(Clone, PartialEq)]
-pub struct TimelineEntry { pub date: String, pub title: String, pub body: String }
+pub struct TimelineEntry {
+    pub date: String,
+    pub title: String,
+    pub body: String,
+}
 
 #[derive(Clone, PartialEq)]
-pub struct CodeSnippet { pub lang: String, pub label: String, pub code: String }
+pub struct CodeSnippet {
+    pub lang: String,
+    pub label: String,
+    pub code: String,
+}
 
 #[derive(Clone, PartialEq)]
-pub struct BeforeAfter { pub label: String, pub before: String, pub after: String }
+pub struct BeforeAfter {
+    pub label: String,
+    pub before: String,
+    pub after: String,
+}
 
 // === UI signals shared across components ====================
 #[derive(Clone)]

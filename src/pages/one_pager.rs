@@ -1,8 +1,8 @@
+use crate::data::{get_infrastructure_fleet, EMAIL, PROFESSIONAL_TITLE};
+use crate::utils::track;
 use leptos::*;
 use leptos_meta::{Meta, Title};
 use leptos_router::A;
-use crate::data::{get_infrastructure_fleet, EMAIL, PROFESSIONAL_TITLE};
-use crate::utils::track;
 
 #[component]
 pub fn OnePageSummary() -> impl IntoView {

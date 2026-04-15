@@ -1,6 +1,6 @@
+use crate::data::{EMAIL, GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE};
 use leptos::*;
 use leptos_meta::{Meta, Title};
-use crate::data::{EMAIL, GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE};
 
 #[component]
 pub fn AboutPage() -> impl IntoView {

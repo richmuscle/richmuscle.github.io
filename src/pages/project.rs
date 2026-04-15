@@ -1,61 +1,94 @@
-use leptos::*;
-use leptos_meta::{Meta, Title};
-use leptos_router::{A, use_params_map};
 use crate::components::ComponentErrorFallback;
 use crate::data::{find_project, get_infrastructure_fleet};
 use crate::error::AppError;
 use crate::utils::sanitize_slug;
+use leptos::*;
+use leptos_meta::{Meta, Title};
+use leptos_router::{use_params_map, A};
 #[component]
 pub fn ProjectDetailPage() -> impl IntoView {
-    let params  = use_params_map();
-    let slug    = move || { let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default()); sanitize_slug(&raw) };
+    let params = use_params_map();
+    let slug = move || {
+        let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
+        sanitize_slug(&raw)
+    };
     let project = create_memo(move |_| find_project(&slug()));
 
-    let detail = create_resource(
-        slug,
-        |s| async move {
-            #[cfg(feature = "ssr")]
-            { let _ = s; return Err::<crate::data::ProjectDetail, AppError>(AppError::logic("ssr build skips fetch")); }
-            #[cfg(not(feature = "ssr"))]
-            {
-                if s.is_empty() {
-                    return Err(AppError::logic("empty slug"));
-                }
-                let url = format!("/projects/{}.json", s);
-                let resp = gloo_net::http::Request::get(&url)
-                    .send()
-                    .await
-                    .map_err(|e| AppError::fetch(e.to_string()))?;
-                resp.json::<crate::data::ProjectDetail>()
-                    .await
-                    .map_err(|e| AppError::parse(e.to_string()))
+    let detail = create_resource(slug, |s| async move {
+        #[cfg(feature = "ssr")]
+        {
+            let _ = s;
+            return Err::<crate::data::ProjectDetail, AppError>(AppError::logic(
+                "ssr build skips fetch",
+            ));
+        }
+        #[cfg(not(feature = "ssr"))]
+        {
+            if s.is_empty() {
+                return Err(AppError::logic("empty slug"));
             }
-        },
-    );
+            let url = format!("/projects/{}.json", s);
+            let resp = gloo_net::http::Request::get(&url)
+                .send()
+                .await
+                .map_err(|e| AppError::fetch(e.to_string()))?;
+            resp.json::<crate::data::ProjectDetail>()
+                .await
+                .map_err(|e| AppError::parse(e.to_string()))
+        }
+    });
 
     let related_row = create_memo(move |_| {
         let current = slug();
         let all = get_infrastructure_fleet();
-        let cat = all.iter().find(|p| p.slug == current.as_str()).map(|p| p.category.clone());
-        let mut same_cat: Vec<(String, String, String)> = all.iter()
+        let cat = all
+            .iter()
+            .find(|p| p.slug == current.as_str())
+            .map(|p| p.category.clone());
+        let mut same_cat: Vec<(String, String, String)> = all
+            .iter()
             .filter(|p| p.slug != current.as_str() && Some(&p.category) == cat.as_ref())
             .take(2)
-            .map(|p| (p.slug.to_string(), p.title.to_string(), p.category.label().to_string()))
+            .map(|p| {
+                (
+                    p.slug.to_string(),
+                    p.title.to_string(),
+                    p.category.label().to_string(),
+                )
+            })
             .collect();
         if same_cat.len() < 2 {
-            let existing: std::collections::HashSet<String> = same_cat.iter().map(|(s, _, _)| s.clone()).collect();
-            let others: Vec<_> = all.iter()
+            let existing: std::collections::HashSet<String> =
+                same_cat.iter().map(|(s, _, _)| s.clone()).collect();
+            let others: Vec<_> = all
+                .iter()
                 .filter(|p| !existing.contains(p.slug))
                 .take(2 - same_cat.len())
-                .map(|p| (p.slug.to_string(), p.title.to_string(), p.category.label().to_string()))
+                .map(|p| {
+                    (
+                        p.slug.to_string(),
+                        p.title.to_string(),
+                        p.category.label().to_string(),
+                    )
+                })
                 .collect();
             same_cat.extend(others);
         }
         same_cat
     });
 
-    let title = move || format!("{} · Richard Mussell", project.get().map(|p| p.title).unwrap_or(""));
-    let desc = move || project.get().map(|p| p.subtitle.to_string()).unwrap_or_default();
+    let title = move || {
+        format!(
+            "{} · Richard Mussell",
+            project.get().map(|p| p.title).unwrap_or("")
+        )
+    };
+    let desc = move || {
+        project
+            .get()
+            .map(|p| p.subtitle.to_string())
+            .unwrap_or_default()
+    };
     view! {
         <Title text=title/>
         <Meta name="description" content=desc/>
@@ -154,34 +187,37 @@ pub fn ProjectDetailPage() -> impl IntoView {
 //  PROJECT DOCS PAGE  (structure preserved, content live)
 // ============================================================
 
-
-
 #[component]
 pub fn ProjectDocsPage() -> impl IntoView {
-    let params  = use_params_map();
-    let slug    = move || { let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default()); sanitize_slug(&raw) };
+    let params = use_params_map();
+    let slug = move || {
+        let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
+        sanitize_slug(&raw)
+    };
     let project = create_memo(move |_| find_project(&slug()));
-    let docs = create_resource(
-        slug,
-        |s| async move {
-            #[cfg(feature = "ssr")]
-            { let _ = s; return Err::<crate::data::ProjectDetail, AppError>(AppError::logic("ssr build skips fetch")); }
-            #[cfg(not(feature = "ssr"))]
-            {
-                if s.is_empty() {
-                    return Err(AppError::logic("empty slug"));
-                }
-                let url = format!("/docs/{}.json", s);
-                let resp = gloo_net::http::Request::get(&url)
-                    .send()
-                    .await
-                    .map_err(|e| AppError::fetch(e.to_string()))?;
-                resp.json::<crate::data::ProjectDetail>()
-                    .await
-                    .map_err(|e| AppError::parse(e.to_string()))
+    let docs = create_resource(slug, |s| async move {
+        #[cfg(feature = "ssr")]
+        {
+            let _ = s;
+            return Err::<crate::data::ProjectDetail, AppError>(AppError::logic(
+                "ssr build skips fetch",
+            ));
+        }
+        #[cfg(not(feature = "ssr"))]
+        {
+            if s.is_empty() {
+                return Err(AppError::logic("empty slug"));
             }
-        },
-    );
+            let url = format!("/docs/{}.json", s);
+            let resp = gloo_net::http::Request::get(&url)
+                .send()
+                .await
+                .map_err(|e| AppError::fetch(e.to_string()))?;
+            resp.json::<crate::data::ProjectDetail>()
+                .await
+                .map_err(|e| AppError::parse(e.to_string()))
+        }
+    });
 
     view! {
         {move || match project.get() {
@@ -235,11 +271,13 @@ pub fn ProjectDocsPage() -> impl IntoView {
 //  PROJECT DEMO PAGE
 // ============================================================
 
-
 #[component]
 pub fn ProjectDemoPage() -> impl IntoView {
-    let params  = use_params_map();
-    let slug    = move || { let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default()); sanitize_slug(&raw) };
+    let params = use_params_map();
+    let slug = move || {
+        let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
+        sanitize_slug(&raw)
+    };
     let project = create_memo(move |_| find_project(&slug()));
 
     view! {

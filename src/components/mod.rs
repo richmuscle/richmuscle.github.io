@@ -7,8 +7,8 @@ pub mod project;
 pub mod terminal;
 
 pub use error_fallback::ComponentErrorFallback;
-pub use palette::CommandPalette;
 pub use layout::ReadingProgress;
 pub use nav::{BackToTop, KeyboardNav, NavBar};
+pub use palette::CommandPalette;
 pub use project::ProjectCard;
 pub use terminal::Terminal;

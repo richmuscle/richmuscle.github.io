@@ -1,9 +1,9 @@
-use leptos::*;
-use leptos_meta::{Meta, Title};
-use leptos_router::A;
 use crate::data::{EMAIL, GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE};
 #[cfg(not(feature = "ssr"))]
 use crate::utils::track;
+use leptos::*;
+use leptos_meta::{Meta, Title};
+use leptos_router::A;
 
 #[component]
 pub fn ContactPage() -> impl IntoView {

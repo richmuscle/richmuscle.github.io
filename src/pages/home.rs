@@ -1,15 +1,16 @@
+use crate::components::{ProjectCard, Terminal};
+use crate::data::{
+    get_certifications, get_infrastructure_fleet, ProjectCardSignals, ProjectCategory, EMAIL,
+    GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE,
+};
+use crate::GlobalAppState;
 use leptos::*;
 use leptos_meta::{Meta, Title};
 use leptos_router::A;
-use crate::data::{get_certifications, get_infrastructure_fleet, GITHUB_URL, LINKEDIN_URL, ProjectCardSignals, ProjectCategory, EMAIL, PROFESSIONAL_TITLE};
-use crate::components::{ProjectCard, Terminal};
-use crate::GlobalAppState;
-
 
 // ============================================================
 //  HOME PAGE
 // ============================================================
-
 
 #[component]
 fn CertificationsSection() -> impl IntoView {
@@ -52,15 +53,32 @@ pub fn HomePage() -> impl IntoView {
     let counts = create_memo(move |_| {
         let all = get_infrastructure_fleet();
         let all_len = all.len();
-        let cyber = all.iter().filter(|p| p.category == ProjectCategory::CyberSecurity).count();
-        let cloud = all.iter().filter(|p| p.category == ProjectCategory::CloudInfrastructure).count();
-        let admin = all.iter().filter(|p| p.category == ProjectCategory::SystemsAdmin).count();
-        let net = all.iter().filter(|p| p.category == ProjectCategory::Networking).count();
+        let cyber = all
+            .iter()
+            .filter(|p| p.category == ProjectCategory::CyberSecurity)
+            .count();
+        let cloud = all
+            .iter()
+            .filter(|p| p.category == ProjectCategory::CloudInfrastructure)
+            .count();
+        let admin = all
+            .iter()
+            .filter(|p| p.category == ProjectCategory::SystemsAdmin)
+            .count();
+        let net = all
+            .iter()
+            .filter(|p| p.category == ProjectCategory::Networking)
+            .count();
         (all_len, cyber, cloud, admin, net)
     });
 
-    let ProjectCardSignals { expanded_slug, set_expanded_slug, did_drag } =
-        use_context::<GlobalAppState>().expect("App provides GlobalAppState").project_cards;
+    let ProjectCardSignals {
+        expanded_slug,
+        set_expanded_slug,
+        did_drag,
+    } = use_context::<GlobalAppState>()
+        .expect("App provides GlobalAppState")
+        .project_cards;
 
     let drag_start_x = create_rw_signal(0.0_f64);
     let drag_start_y = create_rw_signal(0.0_f64);

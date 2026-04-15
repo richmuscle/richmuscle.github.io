@@ -4,7 +4,11 @@ use std::sync::LazyLock;
 #[cfg_attr(debug_assertions, derive(Debug))]
 #[derive(Clone, PartialEq)]
 #[allow(dead_code)] // Degraded, Maintenance used for project status in data and UI
-pub enum SystemStatus { Operational, Degraded, Maintenance }
+pub enum SystemStatus {
+    Operational,
+    Degraded,
+    Maintenance,
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum ProjectCategory {
@@ -17,38 +21,46 @@ pub enum ProjectCategory {
 impl ProjectCategory {
     pub fn label(&self) -> &'static str {
         match self {
-            Self::CyberSecurity       => "Cyber Security",
+            Self::CyberSecurity => "Cyber Security",
             Self::CloudInfrastructure => "Cloud Infrastructure",
-            Self::SystemsAdmin        => "Systems Admin",
-            Self::Networking          => "Network Operations",
+            Self::SystemsAdmin => "Systems Admin",
+            Self::Networking => "Network Operations",
         }
     }
 
     pub fn description(&self) -> &'static str {
         match self {
-            Self::CyberSecurity => "Zero-trust architecture, encrypted administration, and security governance.",
-            Self::CloudInfrastructure => "Hardened cloud infrastructure delivered through infrastructure-as-code.",
-            Self::SystemsAdmin => "Linux administration automation via scripting and repeatable runbooks.",
-            Self::Networking => "Network-focused observability and resilient connectivity troubleshooting.",
+            Self::CyberSecurity => {
+                "Zero-trust architecture, encrypted administration, and security governance."
+            }
+            Self::CloudInfrastructure => {
+                "Hardened cloud infrastructure delivered through infrastructure-as-code."
+            }
+            Self::SystemsAdmin => {
+                "Linux administration automation via scripting and repeatable runbooks."
+            }
+            Self::Networking => {
+                "Network-focused observability and resilient connectivity troubleshooting."
+            }
         }
     }
 
     pub fn accent(&self) -> &'static str {
         match self {
-            Self::CyberSecurity       => "#f59e0b", // amber
+            Self::CyberSecurity => "#f59e0b",       // amber
             Self::CloudInfrastructure => "#3b82f6", // blue
-            Self::SystemsAdmin        => "#10b981", // emerald
-            Self::Networking          => "#22d3ee", // cyan
+            Self::SystemsAdmin => "#10b981",        // emerald
+            Self::Networking => "#22d3ee",          // cyan
         }
     }
 
     #[allow(dead_code)] // reserved for category ordering in UI
     pub fn order(&self) -> u8 {
         match self {
-            Self::CyberSecurity       => 1,
+            Self::CyberSecurity => 1,
             Self::CloudInfrastructure => 2,
-            Self::SystemsAdmin        => 3,
-            Self::Networking          => 4,
+            Self::SystemsAdmin => 3,
+            Self::Networking => 4,
         }
     }
 }

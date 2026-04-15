@@ -1,5 +1,7 @@
 //! ProjectCard, CodeBlock, TimelineSection, BeforeAfterSection, RelatedProjects, StatCard.
-use crate::data::{BeforeAfter, CodeSnippet, ProjectIndex, SystemStatus, TimelineEntry, get_infrastructure_fleet};
+use crate::data::{
+    get_infrastructure_fleet, BeforeAfter, CodeSnippet, ProjectIndex, SystemStatus, TimelineEntry,
+};
 use crate::utils::{highlight_code, sanitize_slug, track};
 use leptos::*;
 use leptos_router::use_navigate;
@@ -10,14 +12,19 @@ pub fn ProjectCard(
     set_expanded: WriteSignal<Option<String>>,
     did_drag: RwSignal<bool>,
 ) -> impl IntoView {
-    let slug            = sanitize_slug(project.slug);
-    let slug_for_nav    = slug.clone();
-    let slug_for_href   = slug.clone();
+    let slug = sanitize_slug(project.slug);
+    let slug_for_nav = slug.clone();
+    let slug_for_href = slug.clone();
     let slug_for_expand = slug.clone();
-    let tech_tags       = project.tech_stack.iter().take(3).map(|s| *s).collect::<Vec<_>>();
-    let navigator       = use_navigate();
-    let project_title   = project.title;
-    let cat_accent      = project.category.accent().to_string();
+    let tech_tags = project
+        .tech_stack
+        .iter()
+        .take(3)
+        .map(|s| *s)
+        .collect::<Vec<_>>();
+    let navigator = use_navigate();
+    let project_title = project.title;
+    let cat_accent = project.category.accent().to_string();
 
     let handle_keydown = move |ev: leptos::ev::KeyboardEvent| {
         if ev.key() == "Enter" || ev.key() == " " {
@@ -82,8 +89,8 @@ pub fn ProjectCard(
 #[component(transparent)]
 pub fn StatCard(metric: String, value: String, unit: String) -> impl IntoView {
     let metric_clone = metric.clone();
-    let value_clone  = value.clone();
-    let unit_clone   = unit.clone();
+    let value_clone = value.clone();
+    let unit_clone = unit.clone();
     view! {
         <div aria-label=format!("Metric: {} achieved {}{}", metric_clone, value_clone, unit_clone)
              class="metric-card bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-6 text-center hover:border-[var(--border-active)] transition-colors duration-150">
@@ -98,9 +105,9 @@ pub fn StatCard(metric: String, value: String, unit: String) -> impl IntoView {
 #[component]
 pub fn CodeBlock(snippet: CodeSnippet) -> impl IntoView {
     let (copied, set_copied) = create_signal(false);
-    let code_raw    = snippet.code.clone();
-    let lang        = snippet.lang.clone();
-    let label       = snippet.label.clone();
+    let code_raw = snippet.code.clone();
+    let lang = snippet.lang.clone();
+    let label = snippet.label.clone();
     let highlighted = highlight_code(&snippet.lang, &snippet.code);
 
     view! {
@@ -157,7 +164,6 @@ pub fn TimelineSection(entries: Vec<TimelineEntry>) -> impl IntoView {
     }
 }
 
-
 #[component(transparent)]
 pub fn BeforeAfterSection(items: Vec<BeforeAfter>) -> impl IntoView {
     view! {
@@ -181,15 +187,17 @@ pub fn BeforeAfterSection(items: Vec<BeforeAfter>) -> impl IntoView {
     }
 }
 
-
 #[component]
 pub fn RelatedProjects(slugs: Vec<String>) -> impl IntoView {
     let all = get_infrastructure_fleet();
-    let related: Vec<ProjectIndex> = slugs.iter()
+    let related: Vec<ProjectIndex> = slugs
+        .iter()
         .map(|s| sanitize_slug(s))
         .filter_map(|sanitized| all.iter().find(|p| p.slug == sanitized).cloned())
         .collect();
-    if related.is_empty() { return view! { <span></span> }.into_view(); }
+    if related.is_empty() {
+        return view! { <span></span> }.into_view();
+    }
     view! {
         <div class="skills-sidebar space-y-0">
             <h3 class="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">"RELATED"</h3>
@@ -211,4 +219,3 @@ pub fn RelatedProjects(slugs: Vec<String>) -> impl IntoView {
         </div>
     }.into_view()
 }
-

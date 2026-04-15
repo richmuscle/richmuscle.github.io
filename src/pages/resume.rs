@@ -1,7 +1,7 @@
+use crate::data::{EMAIL, GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE};
+use crate::utils::track;
 use leptos::*;
 use leptos_meta::{Meta, Title};
-use crate::data::{GITHUB_URL, LINKEDIN_URL, EMAIL, PROFESSIONAL_TITLE};
-use crate::utils::track;
 
 #[component]
 pub fn ResumePage() -> impl IntoView {
