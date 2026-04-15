@@ -105,7 +105,7 @@ cargo test
 
 ## Deployment
 
-Deploys automatically on push to `revamp` via GitHub Actions. The workflow:
+Deploys automatically on push to `main` via GitHub Actions. The workflow:
 
 1. Installs Rust stable + `wasm32-unknown-unknown` target
 2. Runs both `cargo check` gates
@@ -128,10 +128,16 @@ trunk build --release
 | CI/CD pipeline | ✅ Green |
 | WASM build | ✅ Passing |
 | SSR gate | ✅ Passing (0 errors) |
-| Resume PDF | ✅ Live at `/pdfs/resume.pdf` |
+| SSG compile gate | ✅ Passing (runtime blocked by Leptos 0.6 upstream) |
+| Resume PDF | ✅ Live at `/pdfs/resume.pdf` (120KB, LaTeX-compiled) |
 | Mobile (P0) | ✅ Fixed |
 | Security headers | ✅ CSP meta tag, frame-ancestors |
-| Unit tests | ✅ 5 passing (`src/data/tests.rs`) |
+| Unit tests | ✅ 10 passing (`src/data/tests.rs`) |
+| rust-toolchain.toml | ✅ Pinned stable + wasm32 target |
+| justfile | ✅ 7 recipes (serve, check, test, build, deploy, lint) |
+| SECURITY.md | ✅ 0 vulnerabilities (cargo audit clean) |
+| Telemetry dashboard | ✅ Threshold-based status + LCP metric |
+| cargo fmt | ✅ Clean |
 | SSG pipeline | 🔄 Wired, end-to-end validation pending |
 
 ---
