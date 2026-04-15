@@ -2,11 +2,14 @@ use leptos::*;
 use leptos_meta::{Meta, Title};
 use leptos_router::A;
 use crate::data::{EMAIL, GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE};
+#[cfg(not(feature = "ssr"))]
 use crate::utils::track;
 
 #[component]
 pub fn ContactPage() -> impl IntoView {
     let (email_copied, set_email_copied) = create_signal(false);
+    #[cfg(feature = "ssr")]
+    let _ = set_email_copied;
     view! {
         <Title text=move || format!("Contact · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
         <Meta name="description" content="Contact Richard Mussell — Systems Administrator & DevOps Engineer available for sysadmin, DevOps, and infrastructure roles."/>

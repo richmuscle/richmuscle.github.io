@@ -55,6 +55,7 @@ fn fmt_bytes(bytes: f64) -> String {
     format!("{mb:.2} MB")
 }
 
+#[cfg(not(feature = "ssr"))]
 fn push_log(logs: &WriteSignal<VecDeque<String>>, line: String) {
     logs.update(|items| {
         items.push_front(line);

@@ -1,6 +1,7 @@
 //! NavBar, KeyboardNav, BackToTop, ThemeToggle.
 use crate::data::{self, GITHUB_URL};
 use crate::GlobalAppState;
+#[cfg(not(feature = "ssr"))]
 use crate::utils::sanitize_slug;
 use leptos::*;
 #[cfg(not(feature = "ssr"))]
@@ -213,7 +214,9 @@ pub fn BackToTop() -> impl IntoView {
 
 #[component]
 pub fn KeyboardNav() -> impl IntoView {
+    #[cfg(not(feature = "ssr"))]
     use std::cell::RefCell;
+    #[cfg(not(feature = "ssr"))]
     use std::rc::Rc;
     let navigator = use_navigate();
     let projects  = data::get_infrastructure_fleet();

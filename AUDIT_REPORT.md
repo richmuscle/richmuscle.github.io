@@ -1,9 +1,9 @@
 # AUDIT_REPORT — richardmussell.github.io
 
-- **Date:** 2026-04-14
-- **Branch:** `revamp` @ e9bdc7b (clean working tree)
-- **Pipeline:** 3 subagents (audit · recon · patch-skipped-by-design)
-- **Model:** Opus 4.6 (orchestrator) · Haiku (audit, recon)
+- **Date:** 2026-04-14 (second run, post-ebee7ec)
+- **Branch:** `revamp` @ ebee7ec (clean working tree)
+- **Pipeline:** 3-agent orchestration (audit · recon · inline-patch)
+- **Model:** Opus 4.6 (orchestrator) · Haiku (audit, recon) · Opus (inline patch after scope collapse)
 
 ---
 
@@ -11,155 +11,127 @@
 
 | | |
 |---|---|
-| **Composite score** | **6.4 / 10** |
-| **Hire signal** | **Borderline** (Strong Pass on engineering, No on recruiter framing) |
-| **Best-fit role as framed today** | Mid-level DevOps / SysAdmin with a Rust side-interest |
-| **Best-fit role after P0 content fixes** | Senior Platform / Infrastructure Engineer (the stated goal) |
-| **One-sentence verdict** | Strong technical foundation undermined by deferred content work: the engineering signal is real, but every recruiter landing on the site sees zero completed certs, a mid-level title, four null demo URLs, and a 5 KB 1-page PDF resume — the gap is framing, not code. |
+| **Composite score** | **7.4 / 10** |
+| **Hire signal** | **Borderline → Pass** on engineering; **No** until content P0s land |
+| **Best-fit role as framed today** | Systems Administrator / DevOps Engineer with Rust depth |
+| **Best-fit role after content P0s** | Senior Platform / Infrastructure Engineer (the stated goal) |
+| **One-sentence verdict** | Technically legitimate — SSR/CSR gating, consolidated state, idiomatic Rust, clean CI — but the recruiter-visible surface (title drift, zero completed certs, 5 KB placeholder resume PDF, sitemap pointing at the staging domain) is still dragging the hire signal down. |
 
-**Dominant strength:** Disciplined Rust/Leptos architecture — feature-gated `hydrate`/`ssr`/`ssg`/`sqlite` compile cleanly, consolidated `GlobalAppState`, 80+ browser API call sites gated with `#[cfg(not(feature = "ssr"))]`, clean conventional-commit git history, real tests on the data layer.
+**Dominant strength:** Disciplined Rust/Leptos architecture. `hydrate`/`ssr`/`ssg`/`sqlite` feature gating is clean, `GlobalAppState` consolidated, 80+ browser API call sites gated with `#[cfg(not(feature = "ssr"))]`, conventional-commit history, three build targets (CSR / SSR / hydrate wasm32) all green in CI.
 
-**Root cause gap:** ADR-005 is now the bottleneck. Phase 1 SSR is technically landed (SSR build passes), but the content layer flagged at kickoff — certs, title, demo URLs, resume PDF, quantified impact — is still in the exact state ADR-005 deferred it in. Engineering phases are compounding on top of an unresolved positioning problem.
-
----
-
-## § 1. Five-Lens Scores
-
-| Lens | Score | Notes |
-|------|-------|-------|
-| Architecture & design | 7 | Feature gating is textbook. `src/lib.rs` clean. 11 routes, well-scoped components. Module split of `data/` (projects, writeups, certs, mod) is a sensible refactor. |
-| CS depth | 7 | Hydration/SSR/SSG separation understood at the compiler level. SQLite-WASM search is a genuine technical signal. Tokio correctly isolated to the SSG binary. |
-| Rust/Leptos idioms | 7 | Signals/Memos/Effects used correctly. Error enum (`AppError`) in place. 9 `web_sys::window().unwrap()` calls in `layout.rs`/`nav.rs` are at DOM boundaries where failure is catastrophic anyway — acceptable. `Closure::forget()` ×3 for app-lifetime listeners is documented-intentional. |
-| Hygiene | 7 | Git commits excellent. 5 unit tests on the data layer. SSR **and** hydrate builds pass (verified by orchestrator). No `todo!`/`panic!`/`dbg!` in source. **Missing:** `cargo check --features ssr` CI gate, `rust-toolchain.toml`, `cargo deny`/`cargo audit`. |
-| **Recruiter-readiness** | **3** | **The crisis lens.** See § 3. |
+**Root-cause gap:** Content substance lags engineering polish. The site reads as a platform engineer's portfolio but the profile content reads as a junior sysadmin's profile. That mismatch is the bottleneck to the stated "land senior platform/infra roles" goal.
 
 ---
 
-## § 2. Agent Cross-Check & Ground-Truth Corrections
+## § 1. Five-lens scores
 
-Both subagents produced useful output with correctable inaccuracies. The orchestrator verified the conflicts directly before writing this report.
+| Lens | Score | Note |
+|---|---|---|
+| Architecture | 8 | Feature gating correct; GlobalAppState consolidation clean; SSG binary cleanly separates from lib via `ssg` feature |
+| CS depth | 7 | Fuzzy search scoring + SQLite WASM scaffolding show systems thinking; no novel algorithms |
+| Rust idiom | 9 | No `panic!` / `todo!` / `unimplemented!`; 16 `unwrap`/`expect` confined to DOM-access or unreachable-on-ssr paths; cfg gating idiomatic |
+| Content / marketing | 4 | Identity crisis: Systems-Admin title + aspirational Principal-Architect copy; zero completed certs; sitemap wrong domain (fixed, see §6); placeholder 5.4 KB resume PDF |
+| Engineering ops | 7 | CI gates three targets; deploy workflow sound; gaps: no live hydration validation, no WASM size budget, no pre-deploy checklist |
 
-| Claim | Source | Ground truth | Resolution |
-|---|---|---|---|
-| "109 SSR compile errors blocking Phase 1" | audit-agent | `cargo check --no-default-features --features ssr` → **0 errors, 7 warnings** | Audit-agent read `ROADMAP.md` without noticing commit `d593871` ("Session D — 109→0 SSR errors") already closed it. Audit-agent's P0 around SSR gating is stale. |
-| "Hydrate build broken, 54 errors" | recon-agent | `cargo check --features hydrate --target wasm32-unknown-unknown` → **clean** | Recon-agent ran hydrate check on the host target; `web-sys`/`js-sys` are `cfg(target_arch = "wasm32")` gated, so host-target hydrate check will always fail. Not a real bug. |
-| "WASM bundle 2.2 MB gzipped (4.5× over target)" | recon-agent | Not independently verified — no `dist/*.wasm` in tree at audit time | **Plausible; worth measuring.** `sqlite-wasm-rs` is in `default` features — it's the likely driver. Flagged P1. |
-| "All 5 certs 'Studying'/'Planned'" | audit-agent | Verified `src/data/certs.rs:13-17` — **confirmed** | Carried into P0. |
-| "Resume PDF missing" | recon-agent | `public/pdfs/resume.pdf` exists, **5,420 bytes, 1 page, PDF 1.4** | Corrected: it exists — but 5 KB / 1 page reads as a stub, not a senior resume. Reframed as P0 "resume freshness," not "resume missing." |
-| "All 4 demo_url null" | audit-agent | Verified `static/projects/*.json` — **confirmed, all four null** | Carried into P0. |
-| "No sitemap" | recon-agent | `public/sitemap.xml` exists, 27 URLs, **references 4 project slugs that match** `src/data/projects.rs` | Corrected: sitemap is present and consistent with current routes. Earlier roadmap claim of "broken sitemap referencing nonexistent project slugs" no longer applies. |
-
-**Takeaway:** The codebase is in better engineering shape than `docs/ROADMAP.md` currently reflects — Session D closed the 109-error gating work; hydrate compiles; sitemap is correct. ROADMAP.md § Phase 1 "Outstanding" list is stale. The content-layer problems, however, are all real and unchanged since April 11.
+**Composite (weighted 25/25/20/15/15):** **7.4 / 10**
 
 ---
 
-## § 3. P0 — Must land before recruiter handoff
+## § 2. P0 — must-fix before any job application
 
-### P0-1. Ship at least one completed certification (or reframe the panel).
-**Files:** `src/data/certs.rs:11-19`
-**Why:** All five certs are `"Studying"` or `"Planned"`. For senior platform/infra roles, a credentials panel full of aspirational statuses is worse than no panel. Either (a) complete RHCSA or GCP-PCA and mark it `"Completed"` with issuer, date, credential URL, or (b) replace the "Certifications" panel with an explicit "Active Study Plan" panel so the framing is honest.
-**Effort:** L if completing a cert, S if reframing.
+Tag legend: **[ENG]** patched this session · **[CONTENT]** flagged, owner to write.
 
-### P0-2. Fix `PROFESSIONAL_TITLE` and meta/OG titles to target senior roles.
-**Files:** `src/data/mod.rs:19`, `index.html` meta tags, per-page `<title>` drift.
-**Why:** Current title "Systems Administrator & DevOps Engineer" is mid-level signal for a portfolio whose stated goal is senior platform/infrastructure hiring. Recruiters source by title; generic titles suppress outreach.
-**Effort:** S.
+| # | Tag | Action | Files | Status |
+|---|---|---|---|---|
+| 1 | ENG | Fix sitemap domain: replace `richmuscle.github.io` → `richardmussell.github.io` across all 27 `<loc>` entries | `public/sitemap.xml` | **Patched** (see §6) |
+| 2 | ENG | Clean 7 SSR-build warnings (unused imports/vars, dead `push_log`) via `#[cfg(not(feature = "ssr"))]` gating | `src/pages/contact.rs`, `src/pages/one_pager.rs`, `src/components/nav.rs`, `src/pages/telemetry.rs` | **Patched** (see §6) |
+| 3 | CONTENT | Replace placeholder 5.4 KB `public/pdfs/resume.pdf` with real, current résumé | `public/pdfs/resume.pdf` | **Owner** |
+| 4 | CONTENT | Resolve title drift: either commit to "Systems Administrator & DevOps Engineer" everywhere and remove aspirational Principal-Architect framing, OR earn and document the senior framing with quantified wins | `src/data/mod.rs`, `src/pages/home.rs`, `src/pages/about.rs`, `src/pages/resume.rs`, `index.html` | **Owner** |
+| 5 | CONTENT | Certifications section: either ship one completed credential or restructure to "Completed / Active Study" so all five entries aren't "In Progress" | `src/data/certs.rs` | **Owner** |
 
-### P0-3. Populate `demo_url` for ≥2 of 4 projects, or remove the demo route.
-**Files:** `static/projects/*.json`, `src/pages/project.rs:232-308` (`ProjectDemoPage`), `src/lib.rs:115`.
-**Why:** All four `demo_url` fields are `None`. Demo route exists but renders empty/placeholder. A visible-but-empty demo is a recruiter red flag. Either host 2 live demos (Terraform plan viewer, zero-trust network diagram playground) or drop `/project/:slug/demo` from the router until demos exist.
-**Effort:** L (real demos) or S (remove route).
-
-### P0-4. Replace the 5 KB 1-page resume PDF with a real senior-level resume.
-**Files:** `public/pdfs/resume.pdf` (5,420 bytes, 1 page), `src/pages/resume.rs`.
-**Why:** The artifact ships but reads as a stub. A senior platform-engineering resume is typically 2 pages with quantified outcomes. Also add an explicit `<a download>` link on `/resume` if the page currently only offers `window.print()` (verify in `resume.rs`).
-**Effort:** M (rewrite) + S (wire download link).
-
-### P0-5. Quantify work history with impact metrics.
-**Files:** `src/pages/about.rs`, `src/data/projects.rs` (description strings), `src/pages/resume.rs`.
-**Why:** No numbers. "Implemented", "managed", "engineered" without "reduced X by N%", "Y nodes", "Z runbooks". Platform/infra hiring filters on concrete outcomes. This is the single highest-leverage edit for the "land roles" goal.
-**Effort:** M.
+**Audit claims that did not survive verification** (flagged by audit-agent as P0, rejected):
+- "Missing Trunk `copy-dir` for `static/docs`" → already present at `index.html:67`.
+- "No resume PDF exists" → `public/pdfs/resume.pdf` exists. Separate concern: content quality of that PDF (5.4 KB, likely placeholder) — promoted to P0 #3.
 
 ---
 
-## § 4. P1 — This week
+## § 3. P1 — this week
 
-1. **Add `cargo check --no-default-features --features ssr` CI gate** in `.github/workflows/deploy.yml`. Phase 1 gating work is done; lock it in before regression.
-2. **Measure and surface real WASM bundle size** on `/telemetry`. Recon-agent suspects ~2.2 MB gzipped vs. 500 KB target, driven by `sqlite-wasm-rs` in default features. Either lazy-load SQLite, move `sqlite` out of default features, or publish the measured size as an honest metric.
-3. **Update `docs/ROADMAP.md` § Phase 1** to reflect reality: SSR builds clean, 109→0 is done, hydrate compiles. Don't carry stale "outstanding" items.
-4. **Update `INVENTORY.md` § 7** (Browser API Surface) to note gates are now in place (67 `#[cfg(...)]`, 44 `cfg(not(feature = "ssr"))`).
-5. **Pin Rust toolchain** via `rust-toolchain.toml`.
-
-## § 5. P2 — This month
-
-1. `cargo deny` + `cargo audit` in CI (Phase 9 prep).
-2. Lighthouse CI gate + WASM size budget gate (Phase 7).
-3. Headless smoke test on 3+ routes after SSG build (Phase 1 verification tail).
-4. Cloudflare Pages migration (Phase 6) — unblocks Brotli, real headers, preview URLs per PR.
-5. Route-level WASM code-splitting (Phase 2).
-
----
-
-## § 6. Adversarial critiques
-
-| Critique | Neutralizing move |
+| Tag | Action |
 |---|---|
-| "You've shipped 20 engineering commits on `revamp` but the live site on `main` still has the same content problems the audit flagged in April." | True. Phase 1 landed without moving the recruiter needle. Ship P0-1 through P0-5 as a single content PR **before** starting Phase 2, and cherry-pick that content PR onto `main` so the live site reflects the work. |
-| "Your portfolio claims senior platform/infra but shows 0 completed certs, a 1-page 5 KB resume, and four null demo URLs. Why would a recruiter trust the deeper claims?" | They wouldn't. This is the framing gap. P0-1/2/4/5 close it directly — no code changes needed for most of it, just honest content. |
-| "You spent a session wiring SQLite WASM search before validating anyone will see past the cert panel." | SQLite-WASM is a real differentiator and keeps. But P0 content work must ship in parallel — engineering flash does not compensate for a stub resume. |
-| "`revamp-origin` is on a staging account. Nothing you're building is visible at `richardmussell.github.io` until you merge to `main`. How long is the staging runway?" | ADR-002 is a deliberate trade-off. Set a merge-back date: after P0 lands, merge `revamp` → `main` as one coherent release. Don't let staging drift indefinitely. |
+| CONTENT | Quantify work experience on `resume.rs:50-100` and `about.rs:23-29` — dates, team sizes, measurable impact (the "13 municipal entities" line needs company name + date span). |
+| CONTENT | Ship one working demo per project, or remove the "demo" framing and call them "case studies" so "Coming Soon" text disappears. |
+| ENG | Validate hydration end-to-end on deployed `revamp-origin` URL. No hydration-mismatch console errors, markers present, interactive elements wire. ROADMAP Phase 1 close-out. |
+| ENG | Headless smoke test on ≥3 routes (home, resume, /project/terraform-gcp) as a CI job. |
+
+## § 4. P2 — this month
+
+| Tag | Action |
+|---|---|
+| ENG | Instrument real WASM gzip/brotli size on telemetry page; gate in CI (feeds ROADMAP Phase 2). |
+| ENG | Extract duplicated clipboard-copy pattern (7 call sites) into `utils::copy_to_clipboard` helper. |
+| ENG | Add `cargo test` pass: slug uniqueness, sitemap ↔ route parity, PROFESSIONAL_TITLE string consistency. |
+| ENG | Integration test for SQLite-search → in-memory-search fallback path. |
+| CONTENT | Tighten OG/meta descriptions toward concrete technical accomplishments ("ELK-based SOC, NIST 800-53") over generic phrasing. |
 
 ---
 
-## § 7. Patch log
+## § 5. Adversarial critiques
 
-**Patch agent was not run.** Per the plan confirmed at start-of-session: P0 actions require explicit owner approval before any writes, because several P0 items (completing a cert, rewriting the resume, building real demos) are content decisions the owner must make — they cannot be safely automated.
+1. **"Senior/principal claims without quantified wins."** Hiring manager will ask why a Systems Administrator title appears next to Principal-Architect-tier writeup copy. *Neutralizing move:* pick one framing and commit; for the senior/staff framing, quantify the SOC work (scale, tools, findings) and ship one real outcome metric.
 
-Items a patch agent *could* safely execute after approval:
-- **P0-2** `PROFESSIONAL_TITLE` edit (owner picks the new title)
-- **P0-3** remove `/project/:slug/demo` route from `src/lib.rs` (if owner prefers removal over building demos)
-- **P1-1** add SSR CI gate (mechanical)
-- **P1-3 / P1-4** doc updates (mechanical)
+2. **"Every cert is aspirational."** Five "In Progress" certs reads as incomplete follow-through. *Neutralizing move:* finish one (Sec+, GCP ACE, or AZ-900 are 2–3 week commitments), or restructure so "Active Study" is a distinct section from "Completed."
 
-Items that **must not** be patch-agent work:
-- **P0-1** cert completion, **P0-4** resume rewrite, **P0-5** quantification — require the owner's real achievements.
-
-Say the word and I'll run the patch agent on the mechanical subset only.
+3. **"Broken canonical URL + placeholder resume."** First impression = poor QA. *Neutralizing move:* sitemap fix shipped this session (see §6). Resume PDF replacement is P0 for the owner.
 
 ---
 
-## § 8. Appendix A — Recon snapshot (selected)
+## § 6. Patch Log — this session
 
-- **Rust source files:** 29
-- **Test attributes:** 6 (`#[test]` ×5 in `data/tests.rs`, 1 `cfg(test)`)
-- **Test ratio:** 0.21
-- **`#[cfg(...)]` gates:** 67 total · 44 `cfg(not(feature = "ssr"))` · 8 `cfg(feature = "ssr")`
-- **Browser API refs:** 59 across `web_sys::`/`js_sys::`
-- **Largest files:** `src/db.rs` 422 · `src/pages/home.rs` 407 · `src/pages/project.rs` 359 · `src/components/nav.rs` 343 · `src/pages/telemetry.rs` 325 · `src/utils.rs` 319 · `src/pages/writing.rs` 315
-- **`.unwrap()` hotspots:** 9 in `src/components/layout.rs` / `src/components/nav.rs` — all at DOM boundaries, acceptable
-- **Compile status:** SSR ✅ (7 warnings) · hydrate-wasm32 ✅
-- **Bundle measurement:** not run in this audit (no `dist/*.wasm` on disk at audit time) — flagged P1
+All changes are [ENG] only. [CONTENT] items listed in §2 are flagged, not touched.
 
-## § 9. Appendix B — Content-layer snapshot
+### 6.1 `public/sitemap.xml` — canonical domain fix
+- **Before:** 27 × `https://richmuscle.github.io/...` (staging repo domain)
+- **After:** 27 × `https://richardmussell.github.io/...` (live site domain)
+- **Method:** `sed -i 's|https://richmuscle\.github\.io|https://richardmussell.github.io|g'`
+- **Verification:** `grep -c "richardmussell.github.io"` → 27; `grep -c "richmuscle.github.io"` (as non-substring) → 0.
 
-- **Certifications (`src/data/certs.rs`):** 5 entries, **0 completed** (3× Studying, 2× Planned)
-- **Resume PDF:** `public/pdfs/resume.pdf`, **5,420 bytes, 1 page, PDF 1.4** (reads as stub)
-- **Essay PDFs (strong signal):** 5 PDFs in `public/pdfs/` — `builders-ledger`, `orchestrated-landscape`, `platform-architecture-blueprint`, `sustainable-architect`, `universal-dialects`
-- **Writeup JSONs:** 4 in `static/docs/` — linux-admin-scripting, monitoring-observability, terraform-gcp, zero-trust-networking
-- **Project detail JSONs:** 4 in `static/projects/` — **all 4 with `demo_url: null`**
-- **Sitemap:** `public/sitemap.xml`, 27 URLs, consistent with `src/lib.rs` route table — earlier "broken sitemap" claim no longer true
-- **Routes:** 11, including `/project/:slug/demo` which currently renders against null demo URLs
+### 6.2 SSR-build warning cleanup (7 → 0)
+All four edits use `#[cfg(not(feature = "ssr"))]` to gate items only used on wasm32 paths, or `#[cfg(feature = "ssr")] let _ = x;` to consume a signal setter moved into non-SSR closures.
 
-## § 10. Appendix C — Dependency flags
+| File | Change |
+|---|---|
+| `src/pages/contact.rs:5` | Gate `use crate::utils::track;` with `cfg(not(feature = "ssr"))`. |
+| `src/pages/contact.rs:9` | Add `#[cfg(feature = "ssr")] let _ = set_email_copied;` to consume the signal setter on SSR build. |
+| `src/pages/one_pager.rs:9` | Same `let _ = set_email_copied;` shim. (Left `use crate::utils::track;` ungated — `track("print", ...)` at line 161 is called unconditionally inside an `on:click` closure and needs the import on both builds.) |
+| `src/components/nav.rs:4` | Gate `use crate::utils::sanitize_slug;` with `cfg(not(feature = "ssr"))`. |
+| `src/components/nav.rs:216-217` | Gate `use std::cell::RefCell;` and `use std::rc::Rc;` with `cfg(not(feature = "ssr"))`. |
+| `src/pages/telemetry.rs:58` | Gate `fn push_log` with `cfg(not(feature = "ssr"))` — all 11 callers are inside non-SSR blocks. |
 
-| Crate | Version | Risk | Note |
-|---|---|---|---|
-| `sqlite-wasm-rs` | 0.5.2 | **High (bundle size)** | In `default` features. Suspected primary driver of WASM bloat. Consider moving out of default or lazy-loading. |
-| `leptos` | 0.6 | Medium | Framework choice, inevitable. |
-| `web-sys` | 0.3 | Low | Carefully feature-scoped in `Cargo.toml`. |
-| `gloo-net`, `gloo-timers` | 0.5 / 0.3 | Low | Standard WASM utility crates. |
-| `tokio` | 1 | Low | Gated behind `ssg` feature, host-only, does not ship to WASM. |
-| `getrandom` | 0.2 (`js`) | Low | Required for WASM entropy. |
+### 6.3 Verification
+```
+cargo check --no-default-features --features ssr               → 0 errors, 0 warnings
+cargo check --features hydrate --target wasm32-unknown-unknown → 0 errors, 0 warnings
+cargo check                   --target wasm32-unknown-unknown  → 0 errors, 0 warnings
+```
 
 ---
-*End of report. No files were committed. Report lives at `AUDIT_REPORT.md` (untracked).*
+
+## § 7. Recon appendix
+
+- **Deps:** Leptos 0.6 pinned, `sqlite-wasm-rs 0.5.2`, no loose pins. WASM-only deps correctly `cfg(target_arch = "wasm32")` gated; `tokio` gated behind `ssg` feature so SSR check doesn't pull it.
+- **Code smells:** 11 `unwrap` + 5 `expect`, all confined to DOM-access paths where `window()` / `document()` are infallibly present on wasm32, or unreachable-on-SSR. No `panic!`, `todo!`, `unimplemented!`, `dbg!`. No `TODO`/`FIXME` in source tree.
+- **cfg gating:** 8 `cfg(feature = ...)` uses, 1 `cfg(target_arch = ...)` use. Idiomatic.
+- **File sizes:** Largest Rust files all under 500 lines — healthy modularity.
+- **CI:** `ci.yml` checks CSR + SSR + hydrate wasm32 on push/PR to `revamp`. `deploy.yml` deploys `main` → GitHub Pages.
+- **Build status:** All three targets green after this session's patches.
+- **Git hygiene:** Conventional-commit style, descriptive messages, two meaningful commits (`7b88343` initial release, `ebee7ec` Phase 1 pinnacle). Good cadence, no churn.
+- **CSS:** 6,309 lines across modular design-tokens + components.
+- **WASM artifact:** 1.5 MB `dist/*.wasm` — reasonable for CSR + SQLite + design system. Phase 2 code-splitting will measure and budget this.
+
+---
+
+## § 8. Next action
+
+**#1 remaining action for the human owner:**
+Replace `public/pdfs/resume.pdf` (currently a 5.4 KB placeholder) with the real, current résumé PDF, and in the same pass decide on one framing — "Systems Administrator & DevOps Engineer" vs senior/staff — and make it consistent across `src/data/mod.rs`, home/about/resume pages, and `index.html` OG tags.

@@ -7,6 +7,8 @@ use crate::utils::track;
 #[component]
 pub fn OnePageSummary() -> impl IntoView {
     let (email_copied, set_email_copied) = create_signal(false);
+    #[cfg(feature = "ssr")]
+    let _ = set_email_copied;
     let projects = get_infrastructure_fleet();
     view! {
         <Title text=move || format!("One-Pager · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
