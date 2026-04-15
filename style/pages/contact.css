@@ -132,17 +132,6 @@
   text-decoration: underline;
 }
 
-.contact-status-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
-  margin-right: 6px;
-  animation: banner-pulse 2s infinite;
-  vertical-align: middle;
-}
-
 .contact-want-list {
   display: flex;
   flex-direction: column;
@@ -263,7 +252,6 @@
 }
 
 /* Emergency Slate Overrides: reduce motion + stabilize layout */
-.contact-status-dot,
 .skeleton-bar,
 .skeleton-block {
   animation: none !important;

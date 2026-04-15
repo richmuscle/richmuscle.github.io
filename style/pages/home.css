@@ -7,35 +7,6 @@ html.light .category-desc {
   color: var(--text-muted);
 }
 
-/* ── CERTIFICATIONS ─────────────────────────────────────────── */
-.cert-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.9375rem;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 0.5rem;
-  padding: 1.25rem;
-  transition: border-color 150ms ease;
-}
-
-.cert-badge:hover {
-  border-color: var(--border-active);
-}
-
-.cert-icon {
-  width: 50px; 
-  height: 50px;
-  border-radius: 0.5rem;
-  background: var(--bg-base);
-  border: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
 /* ── HOME PAGE REDESIGN (enterprise / Linear-style) ───────────── */
 .home-main { background: var(--bg-base); }
 .home-page-wrap {

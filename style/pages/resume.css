@@ -360,10 +360,6 @@
   .resume-timeline-year {
     font-size: 11px;
   }
-  .certs-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
 }
 
 /* ── QA: Resume skill pills overflow (max-width: 480px) ──────────── */

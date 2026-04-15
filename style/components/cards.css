@@ -482,8 +482,4 @@ html.light .project-card-article:hover {
     margin: 0 !important;
   }
 
-  /* Docs code blocks: iOS horizontal momentum scroll */
-  .edocs-code-body {
-    -webkit-overflow-scrolling: touch !important;
-  }
 }

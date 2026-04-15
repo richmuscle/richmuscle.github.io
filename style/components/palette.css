@@ -9,8 +9,7 @@ a, button, [role="button"],
   touch-action: manipulation;
 }
 .po-panel,
-.navbar-mobile-drawer,
-.edocs-code-body {
+.navbar-mobile-drawer {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }

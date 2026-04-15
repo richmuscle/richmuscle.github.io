@@ -229,17 +229,11 @@ html.light .filter-tab-active {
 
 /* ── 9. CONTACT PAGE (max-width: 768px) ────────────────────────── */
 @media (max-width: 768px) {
-  .contact-layout {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    padding: 32px 20px 64px;
-  }
   .contact-row {
     min-height: 44px;
     padding: 12px 0;
   }
-  .contact-copy-btn,
-  .contact-value-btn {
+  .contact-copy-btn {
     min-height: 44px;
     min-width: 44px;
     padding: 10px 14px;
@@ -247,15 +241,12 @@ html.light .filter-tab-active {
   .contact-wish-list {
     gap: 10px;
   }
-  .contact-action-buttons,
-  .contact-buttons {
+  .contact-action-buttons {
     flex-direction: column;
     gap: 10px;
   }
   .contact-action-buttons a,
-  .contact-action-buttons button,
-  .contact-buttons a,
-  .contact-buttons button {
+  .contact-action-buttons button {
     width: 100%;
     min-height: 44px;
     text-align: center;

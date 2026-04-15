@@ -52,7 +52,7 @@ html.light .shortcuts-scrim {
 /* Buttons and nav/CTA links: minimum 44px tap target */
 button:not(.theme-toggle-btn):not(.shortcuts-toggle-btn),
 .nav-link, .nav-link-active,
-.hero-btn, .contact-value-btn, .tag-pill {
+.hero-btn, .tag-pill {
   min-height: 44px;
   display: inline-flex;
   align-items: center;
