@@ -3,6 +3,27 @@
    so the at-a-glance stack fits in the first mobile viewport without forcing
    long scroll-past-whitespace on phones. */
 
+/* Email-copy button: render as inline text, not a default UA button.
+   Keeps the visual equivalent to the prior role=button div it replaced. */
+.about-email-copy {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  /* Opt-out of the 44px min-height rule for this inline-text control.
+     Keyboard + touch activation still work natively on the <button>. */
+  min-height: unset;
+}
+.about-email-copy:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 @media (max-width: 768px) {
   /* Top clearance: 80px → 48px (just clears the fixed nav). */
   .about-main {

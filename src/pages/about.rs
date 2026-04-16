@@ -117,7 +117,11 @@ pub fn AboutPage() -> impl IntoView {
 
                 <section style="border-top:1px solid #1a2540;padding-top:40px;">
                     <div style="display:flex;align-items:center;gap:40px;font-size:13px;color:#22d3ee;flex-wrap:wrap;">
-                        <div class="cursor-pointer hover:opacity-80 transition-opacity" role="button" tabindex="0" aria-label="Copy email"
+                        <button
+                            type="button"
+                            class="about-email-copy cursor-pointer hover:opacity-80 transition-opacity"
+                            aria-label="Copy email address to clipboard"
+                            aria-live="polite"
                             on:click=move |_| {
                                 #[cfg(not(feature = "ssr"))]
                                 let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
@@ -126,7 +130,7 @@ pub fn AboutPage() -> impl IntoView {
                             }
                         >
                             {move || if email_copied.get() { "Copied!" } else { EMAIL }}
-                        </div>
+                        </button>
                         // VERIFY: https://www.linkedin.com/in/richard-mussell/ — full URL, target=_blank, noopener.
                         <a href=LINKEDIN_URL target="_blank" rel="noopener noreferrer" class="no-underline hover:opacity-80 transition-opacity" style="color:#22d3ee;">"LinkedIn"</a>
                         <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" class="no-underline hover:opacity-80 transition-opacity" style="color:#22d3ee;">"GitHub"</a>
