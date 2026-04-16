@@ -15,7 +15,7 @@ pub use writeups::*;
 
 // === Profile constants ======================================
 pub const EMAIL: &str = "Richard.Mussell@yahoo.com";
-pub const GITHUB_URL: &str = "https://github.com/richardmussell";
+pub const GITHUB_URL: &str = "https://github.com/richmuscle";
 pub const LINKEDIN_URL: &str = "https://www.linkedin.com/in/richard-mussell/";
 pub const PROFESSIONAL_TITLE: &str = "Systems Administrator & DevOps Engineer";
 
