@@ -1,6 +1,6 @@
-# AUDIT REPORT — 2026-04-15 (second pass)
+# AUDIT REPORT — 2026-04-16 (three-agent parallel run)
 
-Six-agent parallel swarm + four-agent narrative sweep + six-agent recruiter-persona battery. Orchestrated on Opus 4.6 in Fast mode, 16 total subagents, isolated contexts, JSON-structured handoffs. Supersedes `AUDIT_REPORT_2026-04-15.md` from the morning run.
+Three-agent parallel swarm (`audit-agent` + `recon-agent` + `security-agent`) running on Opus 4.6 Fast mode. Read-only. Portfolio-scoped per `~/.claude/projects/portfolio/agents/*.md` and `~/.claude/projects/portfolio/DECISIONS.md`. Supersedes `AUDIT_REPORT.md` dated 2026-04-15 (second pass / 16-agent swarm).
 
 ---
 
@@ -8,173 +8,160 @@ Six-agent parallel swarm + four-agent narrative sweep + six-agent recruiter-pers
 
 | Dimension | Value |
 |---|---|
-| **Composite score** | **6.8 / 10** (−0.3 vs morning audit; bundle P0 + verified content gap weighted in) |
-| **Hire signal** | **Defer for senior. Land-ready for Associate/Junior platform or Junior FDE.** |
-| **Best-fit role (calibrated)** | **Associate Platform Engineer** ($85–115K) or **FDE I / Junior Deployment Engineer** at a defense-adjacent shop ($90–115K). Senior platform/infra is a 2-year conversation, not a 2026 one. |
-| **Dominant strength** | Unusual-for-a-portfolio Rust/WASM systems-programming substrate: SQLite FFI (12 unsafe blocks, correct lifecycle), AtomicU64 telemetry, feature-gated architecture. 5,705 Rust LOC solo-built. |
-| **Root-cause gap** | Paid-production absence + content mis-calibration. Current live-resume role is "Product Brand Ambassador" at Costco. 18-month gap from any technical employment. Every project is self-reported homelab with no repo links, no CI evidence, no benchmarks. About page carries 6 aspirational phrases ("building toward", "studying for") that self-declare junior tier. |
+| **Composite score** | **7.6 / 10** (+0.8 vs 2026-04-15 / 6.8) — recomputed from lens weights (20/15/20/15/30); audit-agent's self-reported 7.8 does not match its own weights, corrected here |
+| **Hire signal** | **Associate Platform / FDE I pass; senior platform still a deferred conversation.** Recruiter-persona battery from 2026-04-15 remains unsuperseded — today's three-agent run surfaces engineering regressions, not a narrative shift |
+| **Dominant strength** | Engineering substrate held or improved across 4 of 5 lenses: SQLite FFI (12 `unsafe`, all `src/db.rs`, all ADR-004-justified), correct feature gating (0 ungated browser APIs — SSR/hydrate gates hold), consolidated `GlobalAppState`, `AppError` taxonomy, 3 working CI workflows |
+| **Root-cause gap** | **WASM bundle regressed catastrophically** after `wasm-opt` was removed (commit `6814214`, 2026-04-14). Measured today: **2.4 MB gzipped vs. 618 KB on 2026-04-15** — 4× regression, ~5× over the 500 KB target. Content P0s (sitemap slugs, cert honesty, demo "Coming Soon" pages, domain stitching) remain mostly unchanged per ADR-005 |
 
-**One-sentence verdict:** The engineering substrate reads senior-capable but the career artifacts (role history, certs, verified output) read junior-present — six independent recruiter personas converged on "defer for senior, hireable at associate tier after 2-3 unblocking moves."
+**One-sentence verdict:** Engineering floor lifted (composite 6.8 → 7.6) but the bundle silently regressed 4× when `wasm-opt` was pulled to unstick CI — the single finding that actually matters in this audit supersedes everything else on the list.
 
 ---
 
-## § Five-lens Scores (rolled up from six-agent swarm)
+## § Five-lens scores (weighted composite 7.6)
 
-| Lens | Score | Δ | Owner (lane) |
+| Lens | Score | Weight | Δ vs 2026-04-15 | Evidence |
+|---|---:|---:|---:|---|
+| architecture | **8** | 20 | 0 | Module split clean (29 files / 7,132 LOC), `GlobalAppState` consolidation holds, no ungated browser APIs, feature gates honored across csr/hydrate/ssr/ssg/sqlite |
+| cs_depth | **8** | 15 | +1 | 12 `unsafe` blocks all in `src/db.rs` with scoped lifetime handling, `AtomicU64` perf counters, four hand-rolled syntax highlighters still shipping |
+| rust_idiom | **8** | 20 | +1 | Unwraps down 9 → 7 overall (5 in `src/components/layout.rs` scroll closures, 2 in `src/data/tests.rs`). 0 TODO/FIXME/HACK/XXX anywhere |
+| testing | **5** | 15 | 0 | 11 test markers across 2 files (10 in `src/data/tests.rs`, 1 in `src/data/mod.rs`). No hydration smoke, no integration/E2E. CI gate is present but test set is thin |
+| ops_product | **8** | 30 | +2 | 3 workflows green (`ci.yml`, `deploy.yml`, `weekly-audit.yml`). Recent CI fixes land (fmt, trunk URL, pull-rebase). **wasm-opt removed** — the structural regression |
+
+Composite = (8·20 + 8·15 + 8·20 + 5·15 + 8·30) / 100 = **7.55 ≈ 7.6**
+
+---
+
+## § Delta vs 2026-04-15 baseline
+
+### What resolved / closed (no longer findings)
+
+- **`inner_html` sanitization P0 (4 sites)** — security-agent refutes. All 4 sinks (`writing.rs:262`, `project.rs:480`, `project.rs:940`, `components/project.rs:148`) render same-origin static JSON the owner authors, never user input. Downgrade: accepted architectural pattern, not a vulnerability.
+- **GitHub handle wrong account** — `src/data/mod.rs` now correctly points to `github.com/richmuscle`. Residue persists in comments + anchor text (see P1).
+- **LinkedIn URL wrong** — fixed (commit `9ffbbca`).
+- **CI workflow breakage** — fixed across 3 workflows (commits `42faebc`, `c8b7bc3`).
+- **Rust unwrap cluster in `src/components/nav.rs`** — resolved; unwraps moved out or cleaned up (baseline said 9, now 0 in nav.rs).
+
+### What regressed (new P0 territory)
+
+- **WASM bundle 4× larger**. 2026-04-15 measured 618 KB gzipped. 2026-04-16 measures **2,442,387 bytes gzipped (10,122,467 bytes raw)** from `dist/richardmussell-5d79fa1f55561945_bg.wasm`. The commit that caused it (`6814214`) says *"remove wasm-opt step — apt binaryen 108 corrupts wasm-bindgen output"* — the mitigation killed post-processing entirely instead of swapping to a working toolchain. `index.html:68` still has `data-wasm-opt="0"` so Trunk's built-in opt is also disabled. **This is now the single most damaging finding in the audit.**
+
+### What is unchanged from baseline (ADR-005 content P0s)
+
+Per portfolio ADR-005, content work is deferred by owner choice. These remain open and the 2026-04-15 audit still names them. Not re-detailed here — consult the prior report's § Content P0s block.
+
+---
+
+## § P0 Actions
+
+### P0-1 — Restore `wasm-opt` post-build with a working binaryen source  `[ENG]`
+
+**Evidence:** `dist/…_bg.wasm` measures 10.1 MB raw / 2.4 MB gzipped. 2026-04-15 measured 618 KB gzipped with wasm-opt active. Delta +1.8 MB gzipped. `index.html:68` `data-wasm-opt="0"`. `.github/workflows/deploy.yml` has no `wasm-opt` step after commit `6814214`. Commit `6814214` rationale (apt `binaryen 108` corrupts wasm-bindgen output) was correct — but the response removed the step entirely instead of sourcing a working `wasm-opt`.
+
+**Fix (preferred — use Nix flake):**
+`flake.nix` already declares `binaryen`. Add a Nix step to the deploy workflow, or install `binaryen` from a release tarball pinned to a known-good version (≥116) and run `wasm-opt -Oz -o dist/<name>_bg.wasm.opt dist/<name>_bg.wasm && mv dist/<name>_bg.wasm.opt dist/<name>_bg.wasm`.
+
+**Fix (alternative):** Re-enable Trunk's built-in opt by setting `data-wasm-opt="z"` in `index.html:68`; Trunk pulls its own vendored `wasm-opt`, sidestepping the apt package version.
+
+**Verify:** `stat -c%s dist/*.wasm` should return ≤ ~600,000 (raw) or verify `gzip -c dist/*.wasm | wc -c` ≤ 512,000.
+
+### P0-2 — Resolve dual resume-PDF source-of-truth  `[CONTENT + ENG]`
+
+**Evidence:** `public/pdfs/resume.pdf` and `static/pdfs/` both present; `index.html:79` has `copy-dir public/pdfs` so Trunk uses `public/`. The stale `static/pdfs/` path still exists and invites drift. `.github/workflows/deploy.yml:42` gates on size > 100 KB so current state does not break deploy — but leaves the orphan.
+
+**Fix:** Delete `static/pdfs/` entirely. Add `ls static/pdfs/ 2>/dev/null && exit 1` to deploy verification so the directory cannot silently re-appear. Confirm `curl -sI https://richmuscle.github.io/pdfs/resume.pdf | grep content-length` returns the real file post-deploy.
+
+---
+
+## § P1 Actions
+
+### P1-1 — `contact.rs:64` anchor text reads "richardmussell" while link target is `richmuscle`  `[CONTENT]`
+
+**Evidence:** `src/pages/contact.rs:64` — `<a href=GITHUB_URL …>"richardmussell"</a>`. `GITHUB_URL` resolves correctly to `github.com/richmuscle`, but the visible anchor label shows the old handle. User sees "richardmussell" → lands on "richmuscle"'s profile. Same issue in comment form at `src/components/nav.rs:99`, `src/pages/resume.rs:41`, `src/pages/home.rs:111` (comments only; not user-visible but signal drift).
+
+**Fix:** Update anchor text in `contact.rs:64` to `"richmuscle"` or `"@richmuscle"`. Update the three VERIFY comments to match the actual URL. One-line edits, no behavior change.
+
+### P1-2 — Weekly audit workflow collects metrics but does not enforce thresholds  `[OPS]`
+
+**Evidence:** `.github/workflows/weekly-audit.yml` runs `cargo audit`, `cargo deny check`, `cargo outdated` — all with `continue-on-error: true`. Appends to `docs/AUDIT_SCORE_HISTORY.md` (currently header-only, no rows). No gate on bundle-size creep, no gate on new advisories.
+
+**Fix:** Two steps. (a) Remove `continue-on-error` from `cargo audit` and `cargo deny check` for direct-dep vulns only (keep transitive-warning tolerance). (b) Add a bundle gate: `gzip -c dist/*_bg.wasm | wc -c` and fail if > 550,000 bytes. Surface all metrics in a job summary. P0-1 must land first or this gate will immediately fail.
+
+### P1-3 — Test surface thin, not zero (contra audit-agent finding)  `[TEST]`
+
+**Evidence:** `grep '#\[test\]\|#\[cfg(test)\]' src/` returns 11 matches across 2 files: 10 in `src/data/tests.rs`, 1 in `src/data/mod.rs`. audit-agent reported "zero tests found" — a false negative; recon-agent's `test_ratio: 0.3448` is correct. INVENTORY.md §18 corroborates (5 tests in `data/tests.rs`). But: tests concentrate in the data layer only. Zero hydration / integration / route-render coverage. Phase 1 close-out roadmap item "headless smoke test on 3+ routes" still open.
+
+**Fix:** Add one `wasm-bindgen-test` target that mounts `<App/>` and asserts at least one route renders without panic. Keeps CI honest about what's actually verified. Do not block on this for P0-1.
+
+---
+
+## § P2 Actions
+
+| # | Tag | Title | Citation |
 |---|---|---|---|
-| Architecture & code organization | 8 | +1 | rust-quality confirms module split clean, GlobalAppState correct, prior P1 drop-order hazard **refuted** |
-| CS depth signals | 7 | 0 | 12 unsafe blocks justified; AtomicU64 perf counters correct; pure-Rust fallback mirrors SQLite weights |
-| Rust idioms & type discipline | 7 | 0 | AppError propagation clean, but unwrap clusters in layout.rs / nav.rs closures still panic-on-abort the WASM module |
-| Deploy & build rigor | 6 | 0 | 3× cargo check + trunk build all pass; **bundle 24% over target**; CI still missing test/clippy/audit/deny |
-| Content / marketing fit | 4 | 0 | Live resume PDF is now real (120K); **every other P0 unchanged** — domain collision actually widened when 404.html + robots.txt surfaces were checked |
-
-Composite = 6.8 / 10 (mean of the five).
+| P2-1 | ENG | Reserved but unused `GlobalAppState` fields (`portfolio_category`, `portfolio_search`, `portfolio_index_tick`) — forward-compat scaffolding w/ no consumer | `src/lib.rs:53–55`, `src/state.rs` |
+| P2-2 | ENG | Command palette allocates `Vec<PaletteItem>` per keystroke (~88 Strings/keypress) — perf not user-visible today | `src/components/palette.rs` |
+| P2-3 | SECURITY | CSP `unsafe-inline` retained — documented exception per portfolio ADR-006, not a finding, included only for completeness | `index.html:16`, portfolio ADR-006 |
+| P2-4 | ENG | Geist font-weight 800 requested by CSS but not bundled → synthetic bold fallback | `style/base.css` (ratio-hero rules), `index.html:36–37` |
+| P2-5 | ENG | `.pd-stat-bar` CSS selector declared 3× in `style/components/cards.css` — cascade masks, still technical debt | `style/components/cards.css` |
+| P2-6 | ENG | 5 `unwrap()` calls in `src/components/layout.rs` scroll closures — `panic=abort` kills the WASM module on reentry | `src/components/layout.rs` |
+| P2-7 | SECURITY | Missing `Referrer-Policy` and `Permissions-Policy` meta headers (X-Frame-Options + CSP present) | `index.html` |
+| P2-8 | OPS | 4 `cargo audit` warnings on unmaintained transitives (`instant 0.1.13`, `paste 1.0.15`, `proc-macro-error 1.0.4`, `lru 0.11.1`) — all via Leptos 0.6.15 / rstml 0.11.2; resolves when Leptos 0.7 lands | `Cargo.lock`, `cargo audit` |
 
 ---
 
-## § Delta vs 2026-04-15 morning audit (six commits since)
+## § Recon snapshot (appendix)
 
-**What moved:**
-- Six commits: pyramid/fibonacci/φ style refactor + hero-stat panel removal.
-- Rust-quality score lifted from 7→8 after the prior P1 drop-order hazard in `src/db.rs` was investigated in depth and refuted: `_mem` stack-drop is safe because `sqlite3_open_v2` pins VFS reference to the connection, not to `MemVfsUtil`.
-- Hero panel removal is clean — no orphan CSS selectors, no dead rules.
+```json
+{
+  "timestamp": "2026-04-16T23:11:05Z",
+  "file_count": 29,
+  "total_lines": 7132,
+  "over_400_lines": [
+    {"file": "src/pages/project.rs",     "lines": 1278},
+    {"file": "src/utils.rs",              "lines": 1006},
+    {"file": "src/pages/telemetry.rs",    "lines": 500},
+    {"file": "src/data/projects.rs",      "lines": 496},
+    {"file": "src/components/nav.rs",     "lines": 469},
+    {"file": "src/db.rs",                 "lines": 414}
+  ],
+  "unwrap_count": 7,
+  "todo_count": 0,
+  "test_ratio": 0.3448,
+  "git_hygiene": {"uncommitted": 0, "untracked": 0}
+}
+```
 
-**What did NOT move (morning audit P0s, status today):**
+**Extras:** dist bundle 12 MB total (incl. fonts/PDFs), raw WASM 10,122,467 bytes, **gzipped WASM 2,500,605 bytes** (measured 2026-04-16 post-baseline). 3 CI workflows present. 37 direct Cargo deps.
 
-| Morning P0 | Today's state |
+---
+
+## § Security scan (appendix)
+
+| Check | Result |
 |---|---|
-| Live resume PDF | ✅ Live file is 120,159 B (real) — confirmed via curl |
-| Public/static PDF pipeline ambiguity | ❌ `public/pdfs/resume.pdf` still the 5,420 B placeholder; two sources of truth remain |
-| Canonical/OG/SITE_URL unification | ❌ `index.html` clean, but `404.html` JSON-LD points to `richardmussell.dev`, **both** `robots.txt` files point sitemap to `richardmussell.dev` (unprovisioned), `og-image-template.html` branded `richardmussell.dev`. Collision widened, not narrowed. |
-| `cargo test` + `clippy` CI gate | ❌ Not added |
-
-**What regressed:**
-- Style refactor introduces mathematical overclaim: tokens.css comment says "golden-ratio steps: 11·13·16·26·42·68" but only 5 distinct values ship. 10 spacing tokens collapse to 7 distinct values. Geist @font-face declarations cover 400-700, but `base.css:321` and `:1152` still apply `font-weight: 800` → synthetic bold fallback on two hero-level typographic moments.
-- `style.scss` drops the `pages/contact` import entirely.
-
-**What is newly flagged (not in morning audit):**
-- **WASM bundle 1,485,823 bytes / 618 KB gzipped = 24% over 500 KB target.** Morning audit noted bundle unoptimized but did not measure. Now measured.
-- **9 unwrap() calls** in `src/components/nav.rs` and `src/components/layout.rs` closure callbacks — in `panic=abort` WASM builds these terminate the module.
-- **7 `js_sys::eval()` clipboard call sites** despite `Clipboard` feature already declared in `web-sys` features.
-- **palette.rs hot path**: `index.get_value()` clones entire `Vec<PaletteItem>` per keypress (~88 String allocations per keystroke).
-- **`deny.toml` schema-broken** — `cargo deny check` fails to parse. Supply-chain enforcement is theater.
-- **CSP `unsafe-inline`** in index.html + **4 `inner_html` sites without sanitizer** in writing.rs / project.rs.
-- **GitHub handle points to wrong account**: `src/data/mod.rs:18` links `github.com/richardmussell` — the old account with no push access. Live deploy is from `github.com/richmuscle`. Any visitor clicking "GitHub" lands on a stale/empty profile.
-- **Resume surface divergence**: on-site resume page suppresses the two in-progress certs (GCP ACE, CKA) that the PDF discloses. On-site lists 22 skills; PDF lists 34. The in-progress certs hidden on-site is the highest-impact self-own in the content layer.
+| CSP / X-Frame-Options | **Present** in `index.html` meta (X-Frame-Options `SAMEORIGIN`) |
+| Referrer-Policy / Permissions-Policy | Missing (P2-7) |
+| `cargo audit` | **0 vulnerabilities**; 4 unmaintained transitive warnings (P2-8) |
+| Ungated browser APIs under SSR feature | **0** — Phase 1 gating holds |
+| Secrets grep | **0 hits** |
+| Dynamic sinks | 7 `js_sys::eval` (all compile-time literal clipboard payloads, safe), 4 `inner_html` (all same-origin static JSON, safe) |
+| `unsafe` blocks | **12 total, all in `src/db.rs`** — every block is ADR-004-justified SQLite FFI |
+| External origin loads | **0** — fully self-hosted |
 
 ---
 
-## § P0 Actions (block senior outcomes — even more importantly, block associate-tier outcomes)
+## § Methodology notes (orchestrator record)
 
-### Engineering P0s (safe to auto-apply after test gate)
-
-1. **Collapse PDF pipeline to one source** (`public/pdfs/resume.pdf` ← replace 5,420 B placeholder with 120,159 B real; delete `static/pdfs/`; remove the `cp` workaround from `deploy.yml`; add `test $(stat -c%s dist/pdfs/resume.pdf) -gt 100000 || exit 1`).
-2. **Add `cargo test` + `cargo clippy -- -D warnings` + `cargo fmt --check` to `.github/workflows/ci.yml`** (10 existing tests currently not gated).
-3. **Fix `deny.toml` schema**: remove `unmaintained = "warn"`, rename `[source]` → `[sources]`, regenerate if easier. Add `cargo deny check` + `cargo audit` to CI.
-4. **Bundle reduction**: verify `wasm-opt -Oz` pass, audit `sqlite-wasm-rs` feature surface, target ≤400 KB gzipped. Current 618 KB is the single largest engineering P0.
-5. **Remove CSP `unsafe-inline`**; nonce or hash the two inline `<script>` blocks in `index.html`.
-
-### Content P0s (require human approval per CONTEXT.md — NOT auto-applied)
-
-6. **Unify canonical domain to `https://richmuscle.github.io/`** across every machine-readable surface:
-   - `404.html:78` JSON-LD `url` field (currently `richardmussell.dev`)
-   - `robots.txt` (root) + `public/robots.txt` Sitemap directive (currently `richardmussell.dev`)
-   - `public/og-image-template.html:92` (currently `richardmussell.dev`)
-   - `public/sitemap.xml` (currently `richardmussell.github.io` — also wrong; change all entries)
-   - Any remaining `richardmussell.dev` hardcodes in source.
-
-7. **Correct the GitHub handle** in `src/data/mod.rs:18`: change `github.com/richardmussell` → `github.com/richmuscle` (the active account). Same fix needed in `index.html`, `404.html`. Unless the owner explicitly wants visitors to land on the old account — confirm before changing.
-
-8. **Reframe current role on the site**: two options — (A) remove "Product Brand Ambassador / Club Demonstration Services" from the on-site resume, keep it on the PDF only; or (B) reframe the current-position block to lead with "Self-directed Platform Engineering / Homelab (Sept 2025–Present)" and link the 12-tool SOC homelab + GCP ACE/CKA study progress, with CDS disclosed beneath as "concurrent income source." Option B is more honest and still fixes the first-30-seconds recruiter signal.
-
-9. **Surface the in-progress certs on the on-site resume**. The PDF discloses GCP ACE + CKA as "pursuing" — the on-site version hides them. Show them honestly with a concrete study plan or target exam date.
-
-10. **Fix the About page stale CSR claim** (`src/pages/about.rs:27`): "This portfolio is a Rust + Leptos CSR application compiled to wasm32-unknown-unknown..." — update to "Rust + Leptos application compiled to wasm32-unknown-unknown, deployed in CSR mode; SSR/hydrate/SSG feature-gated for Phase 2." The repo HAS all four gates; the on-site copy pretends it's CSR-only.
-
-11. **Publish at least one of the claimed labs as a public GitHub repo** with CI evidence:
-    - Terraform GCP landing zone is the highest-leverage. Real `terraform plan` output, `tfsec` / `checkov` scan artifacts, a README with architecture diagram.
-    - Every persona independently cited the unverified "100% CIS compliance" as a red flag — it flips from negative to positive the moment a scan-output file is linked.
+1. **Agent artifacts.** Each subagent was instructed to write `/tmp/{audit,recon,security}.json`. All three returned valid JSON in their final message; none successfully wrote to `/tmp/` (tool permissions). Orchestrator used the returned JSON directly — findings are citable via the JSONL transcripts under `/tmp/claude-1000/.../tasks/`.
+2. **audit-agent's composite of 7.8 does not satisfy its own declared weights** (20/15/20/15/30). Recomputed to 7.55 (rounded 7.6). Authoritative value here.
+3. **audit-agent's "zero tests" P1 is a false negative.** recon-agent's `test_ratio: 0.3448` and direct `grep` of `#[test]|#[cfg(test)]` return 11 matches across `src/data/tests.rs` (10) and `src/data/mod.rs` (1). Reframed as P1-3 "test surface thin, not zero".
+4. **security-agent correctly respects portfolio ADR-004 and ADR-006** — all 12 `unsafe` blocks and the CSP `unsafe-inline` are tagged as documented exceptions, not P0/P1 findings.
+5. **No patch-agent run.** Per portfolio `skills/audit.md`: "patch-agent on standby — not activated unless P0s found and confirmed." Use `/orchestrate` for the patch gate, or `/patch` on an explicitly approved P0 list.
 
 ---
 
-## § P1 Actions (fix this week, unblock associate tier)
+## § Next-phase recommendation
 
-### Engineering
-- Replace unwrap/expect guards in `src/components/layout.rs:25-31`, `src/components/nav.rs:172-206,240-241` with `let Some(win) = web_sys::window() else { return; }` — match the pattern `main.rs` / `telemetry.rs` / `palette.rs` already use.
-- Replace 7 `js_sys::eval()` clipboard call sites with `navigator.clipboard.write_text()` via `web-sys` (Clipboard feature already in Cargo.toml). Eliminates eval + allocation hot-path + XSS surface.
-- Remove dead `GlobalAppState.portfolio_category / portfolio_search / portfolio_index_tick` fields (declared, never read) — either wire to `home.rs` or delete.
-- Palette hot-path: wrap `index` in `store_value(Arc<Vec<PaletteItem>>)`, pre-lowercase haystacks at build time. Current: ~88 String allocations per keystroke.
-- Fix `BackToTop` closure leak (`nav.rs:180`): use the `RefCell<Option<Closure>>` + `on_cleanup` pattern from `layout.rs`.
-- Sanitize 4 `inner_html` sites (`writing.rs:291`, `project.rs:139`, `:257`, `components/project.rs:145`) via `ammonia` or equivalent.
-- Fix Geist weight-800 gap: either add `geist-800.woff2` or change `base.css:321` + `:1152` to `font-weight: 700`.
-- Fix `style.scss` missing `pages/contact` import.
-- Collapse duplicate `.pd-stat-bar` declarations in `cards.css` (lines 242, 317, 357).
+**Single next action: fix P0-1 (`wasm-opt` restoration) before any Phase 2+ work.** Phase 2 in `docs/ROADMAP.md` is literally "WASM code-splitting + size budget" — it starts from an honest bundle measurement, and today's measurement is 5× the target. Re-enabling `wasm-opt` via the Nix flake or a pinned binaryen release likely recovers 1.5–2 MB of the regression immediately, restoring the 2026-04-15 baseline (~618 KB gzipped) as the starting point for Phase 2's budget work.
 
-### Content
-- Replace the eight "The [Noun] of [Abstract]: [Metaphor]" writeup titles with technical slugs — or demote them below the four slug-titled technical writeups (`automating-nist-800-53`, `zero-trust-moving-beyond-bastion-hosts`, `ebpf-from-zero-to-prod`, `siem-alert-hygiene`). Sort order in both `writeups.rs` and `sitemap.xml`.
-- Rewrite About page blockquote (`about.rs:77-80`) from "the range I am building toward" → "the range I operate in" with a specific shipped artifact.
-- Rewrite About "How I Think About Systems" (`about.rs:88-96`) — tie each principle to a named project artifact, not generic philosophy.
-- Quantify SOC internship bullets (`resume.rs:93-98`): alert volume, triage time, incident escalation rate.
-- Align `one_pager.rs:153-155` cert list with `certs.rs` (currently lists RHCSA + "Professional Cloud Architect"; `certs.rs` lists ACE + CKA).
-- Remove "enterprise database systems" from resume summary (`resume.rs:54-55`) — ICOMS/Salesforce is enterprise CRM/telco billing, not DB engineering.
-
----
-
-## § P2 Actions (queued, do not block merges)
-
-- 10+ items from individual-lane outputs. Full JSON appendix below. Highlights: collapse fibonacci/φ token duplication (10 tokens → 7 distinct values), replace skeleton `@media prefers-color-scheme` with `html.light` class selector, resolve `lru` RUSTSEC advisory post Leptos 0.7 upgrade, document SSR/CSR/hydrate trade-offs in ADR.
-
----
-
-## § Recruiter-Persona Consensus (details in RECRUITER_FIT.md)
-
-Six independent personas evaluated the candidate. **None advanced for senior.** The consensus table:
-
-| Persona | Verdict | Phone screen pass | Best-fit |
-|---|---|---|---|
-| FAANG SRE | reject | 0.04 | no match |
-| SaaS Platform | reject | 0.08 | Associate PE |
-| Rust Shop (Oxide/Fermyon) | defer | 0.15 | Jr dev-tools |
-| Fintech Infra | defer | 0.22 | Associate / Jr SecOps |
-| Defense FDE (Palantir/Anduril) | **defer (highest fit)** | **0.28** | FDE I |
-| Startup CTO (A/B) | defer | 0.22 | Jr Platform |
-
-**Three items cited by ALL six personas as disqualifying or concerning:**
-1. Current role: Product Brand Ambassador on live resume
-2. Zero completed professional certs (CKA + GCP ACE in-progress, suppressed on-site)
-3. Every lab project unverifiable (no repos, no CI, no benchmarks)
-
-**Best segment fit:** Defense / FDE. The public-sector municipal SOC experience and homelab tooling (Wazuh/Suricata/Falco/MISP/n8n SOAR) overlap tightly with what Palantir/Anduril deploy into gov customers. Clearance-eligibility assumed (US citizen, Oklahoma City).
-
-**Recommended target re-scope:** Stop applying to senior platform at FAANG/Stripe-class. Apply to:
-- FDE I / Junior Deployment Engineer at Palantir, Anduril, Shield AI, Primer, Scale AI Defense
-- Associate Platform / Junior SRE at Series A/B startups in gov-tech or cyber
-- Junior Cloud Security / SecOps at GCP-primary fintech (once GCP ACE lands)
-
----
-
-## § Appendix A — Wave 1 raw agent outputs
-
-**Lane scores & deltas:**
-- rust-quality: 8 (+1), FFI drop-order P1 refuted
-- frontend-ux: 7 (0), φ/fib refactor math-broken in token duplication
-- content-fit: 4 (0), 4 P0s unresolved since morning
-- build-deploy: 8 (+2), all checks pass but bundle 24% over
-- security: 7 (0), CSP unsafe-inline, 4 inner_html, deny.toml broken
-- recon: raw — 5,705 Rust LOC, 5,780 CSS LOC, 20 commits/30d, resume.pdf hash mismatch public vs static
-
-## § Appendix B — Wave 2 narrative sweep
-
-- 4 surfaces scanned (bio / resume / projects / meta)
-- **On-site resume lists 22 skills; PDF lists 34** — 12 tools hidden on-site (Entra ID, Intune, Autopilot, M365, VMware, Prometheus, Grafana, BitLocker, Conditional Access, MantisBT, Python, systemd)
-- **Four domains** in active circulation (richmuscle.github.io, richardmussell.github.io, richardmussell.dev, + differing OG image URLs)
-- **Zero repo links** on any of the four projects
-- **Zero completed certs surfaced** anywhere; 2 in-progress only in PDF
-
-## § Appendix C — Patch log
-
-**No automated patches applied this run.** Per project CONTEXT.md ("Never ship content without human approval"), content P0s require owner approval per variant. Engineering P0s (bundle, CI gates, deny.toml, CSP) are scoped and ready to hand off to the engineering-patch-agent in Wave 4, pending owner green-light on the list in § P0 Actions.
-
----
-
-*Generated by Opus 4.6 orchestration · 16 parallel subagents · 3 waves · 2026-04-15 afternoon*
+P0-2 (PDF source unification) and P1-1 (stale handle in `contact.rs:64`) are both single-commit fixes that can ride behind P0-1 in the same push.
