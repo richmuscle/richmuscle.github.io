@@ -247,6 +247,8 @@ h3 {
 .pb-4 { padding-bottom: 1rem; }
 .pb-8 { padding-bottom: 2rem; }
 .pb-12 { padding-bottom: 3rem; }
+.pb-16 { padding-bottom: 4rem; }
+.pb-24 { padding-bottom: 6rem; }
 .pl-6 { padding-left: 1.5rem; }
 .mb-1 { margin-bottom: 0.25rem; }
 .mb-2 { margin-bottom: 0.5rem; }
@@ -263,12 +265,24 @@ h3 {
 .mt-3 { margin-top: 0.75rem; }
 .mt-8 { margin-top: 2rem; }
 .mt-10 { margin-top: 2.5rem; }
+.mt-12 { margin-top: 3rem; }
+.mt-16 { margin-top: 4rem; }
 .rounded { border-radius: 0.25rem; }
 .rounded-lg { border-radius: 0.5rem; }
 .rounded-full { border-radius: 9999px; }
 .rounded-xl { border-radius: 0.75rem; }
 .rounded-2xl { border-radius: 1rem; }
 .border { border-width: 1px; border-style: solid; }
+/* Utility transitions / hover-behavior used in Leptos view! macros. */
+.transition-colors {
+  transition-property: color, background-color, border-color, fill, stroke;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover\:underline:hover { text-decoration: underline; }
+.hover\:opacity-80:hover { opacity: 0.8; }
+.border-subtle { border-color: var(--border-subtle); }
+.border-active:hover { border-color: var(--border-active, var(--accent-cyan)); }
 .border-b { border-bottom-width: 1px; border-bottom-style: solid; }
 .border-r { border-right-width: 1px; border-right-style: solid; }
 .border-l-2 { border-left-width: 2px; border-left-style: solid; }
