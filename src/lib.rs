@@ -71,6 +71,51 @@ pub fn App() -> impl IntoView {
         crate::utils::set_body_scroll_lock(any_modal_open);
     });
 
+    // Project-overlay focus management + background inert.
+    // On open: focus .po-close (ARIA APG Dialog); inert .home-page-wrap.
+    // On close: remove inert; return focus to the project card that triggered it.
+    #[cfg(not(feature = "ssr"))]
+    create_effect(move |prev: Option<Option<String>>| {
+        use leptos::wasm_bindgen::JsCast;
+        let current = expanded_slug.get();
+        let prev_slug = prev.clone().flatten();
+        let was_open = prev_slug.is_some();
+        let is_open = current.is_some();
+
+        let Some(document) = web_sys::window().and_then(|w| w.document()) else {
+            return current;
+        };
+
+        // Toggle inert on the home page wrap so background content is neither
+        // focusable nor announced while the dialog is open. No-op on other routes.
+        if let Ok(Some(wrap)) = document.query_selector(".home-page-wrap") {
+            if is_open {
+                let _ = wrap.set_attribute("inert", "");
+            } else {
+                let _ = wrap.remove_attribute("inert");
+            }
+        }
+
+        if is_open && !was_open {
+            if let Ok(Some(el)) = document.query_selector(".po-close") {
+                if let Some(html_el) = el.dyn_ref::<web_sys::HtmlElement>() {
+                    let _ = html_el.focus();
+                }
+            }
+        } else if !is_open && was_open {
+            if let Some(slug) = prev_slug {
+                let selector = format!("a.project-card-link[href=\"/project/{}\"]", slug);
+                if let Ok(Some(el)) = document.query_selector(&selector) {
+                    if let Some(html_el) = el.dyn_ref::<web_sys::HtmlElement>() {
+                        let _ = html_el.focus();
+                    }
+                }
+            }
+        }
+
+        current
+    });
+
     // Dark/light mode — browser only. web_sys is a WASM-only dep; the cfg guard
     // prevents a compile error on the native SSR target even though create_effect
     // never runs during SSR rendering.
