@@ -26,18 +26,8 @@ jobs:
         run: |
           wget -qO- https://github.com/trunk-rs/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
           sudo mv trunk /usr/local/bin/
-      - name: Install wasm-opt
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y binaryen
       - name: Build with Trunk (release)
         run: trunk build --release
-      - name: Optimize WASM bundle
-        run: |
-          WASM=$(ls dist/*_bg.wasm)
-          wasm-opt --all-features -Oz "$WASM" -o "${WASM}.opt"
-          mv "${WASM}.opt" "$WASM"
-          echo "WASM size after wasm-opt: $(stat -c%s $WASM) bytes"
       - name: Place fonts, SPA fallback, disable Jekyll
         run: |
           rm -rf dist/fonts
