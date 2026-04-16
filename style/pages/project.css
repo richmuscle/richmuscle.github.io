@@ -1232,3 +1232,350 @@
     padding: 13px 16px;
   }
 }
+
+/* ============================================================
+   V2 STRUCTURED DOCS — TOC sidebar layout + doc-specific blocks
+   ============================================================ */
+
+.pd-v2-docs-layout {
+  display: block;
+}
+.pd-v2-docs-toc {
+  display: none;
+}
+.pd-v2-docs-content {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .pd-v2-docs-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 55px;
+    align-items: start;
+  }
+  .pd-v2-docs-toc {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 89px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+    padding: 21px 0;
+    border-right: 1px solid var(--border-subtle);
+    padding-right: 21px;
+  }
+}
+
+.pd-v2-docs-toc-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 13px;
+}
+.pd-v2-docs-toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 21px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pd-v2-docs-toc-link {
+  display: block;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+  border-radius: 0 4px 4px 0;
+}
+.pd-v2-docs-toc-link:hover,
+.pd-v2-docs-toc-link:focus-visible {
+  color: var(--accent-cyan);
+  border-left-color: var(--accent-cyan);
+  background: color-mix(in srgb, var(--accent-cyan) 5%, transparent);
+}
+.pd-v2-docs-toc-footer {
+  margin-top: auto;
+  padding-top: 21px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pd-v2-docs-toc-footer .pd-docs-back-cta {
+  margin-top: 0;
+  padding: 6px 0;
+  min-height: unset;
+  font-size: 11px;
+}
+
+/* System overview components */
+.pd-v2-components {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 21px;
+}
+.pd-v2-component {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--accent-cyan);
+  border-radius: 6px;
+  padding: 16px 21px;
+}
+.pd-v2-component-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin: 0 0 6px;
+}
+.pd-v2-component-purpose {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 13px;
+}
+.pd-v2-component-specs {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 4px 16px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.pd-v2-component-specs dt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  padding-top: 2px;
+}
+.pd-v2-component-specs dd {
+  margin: 0;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+
+/* ADR header: id badge + status badge */
+.pd-v2-adr-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 13px;
+}
+.pd-v2-adr-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+.pd-v2-adr-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.pd-v2-adr-status-active {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.pd-v2-adr-status-superseded {
+  color: var(--text-muted);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+}
+.pd-v2-adr-status-rejected {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* Runbook ops + incidents */
+.pd-v2-code-plain {
+  border-radius: 8px;
+  margin-top: 0;
+  margin-bottom: 21px;
+}
+.pd-v2-runbook-ops,
+.pd-v2-runbook-incidents {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 21px;
+}
+.pd-v2-runbook-op,
+.pd-v2-runbook-incident {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 16px 21px;
+}
+.pd-v2-runbook-op-title,
+.pd-v2-runbook-incident-scenario {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+.pd-v2-runbook-incident {
+  border-left: 2px solid #f59e0b;
+}
+.pd-v2-runbook-incident-response {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 72ch;
+}
+.pd-v2-runbook-op-steps {
+  margin: 0;
+  padding-left: 21px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+.pd-v2-runbook-op-steps li {
+  margin-bottom: 4px;
+}
+
+/* Threat model rows */
+.pd-v2-threats {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin-bottom: 21px;
+}
+.pd-v2-threat {
+  padding: 13px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+}
+.pd-v2-threat p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.618;
+  color: var(--text-secondary);
+  max-width: 72ch;
+}
+.pd-v2-threat-threat {
+  color: var(--text-primary) !important;
+  margin-bottom: 6px !important;
+}
+.pd-v2-threat-threat strong {
+  color: #f59e0b;
+}
+.pd-v2-threat-mitigation strong {
+  color: var(--accent-cyan);
+}
+
+/* Compliance framework chips */
+.pd-v2-compliance {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin-bottom: 21px;
+}
+.pd-v2-compliance-framework {
+  padding: 13px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--accent-cyan);
+  border-radius: 0 6px 6px 0;
+}
+.pd-v2-compliance-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.pd-v2-compliance-controls {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.pd-v2-compliance-controls li {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  color: var(--text-muted);
+}
+
+/* Observability list items */
+.pd-v2-obs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 21px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pd-v2-obs-item {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(140px, 1fr) minmax(200px, 2fr);
+  gap: 16px;
+  align-items: center;
+  padding: 10px 13px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  font-size: 12px;
+}
+.pd-v2-obs-name {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-cyan);
+  letter-spacing: 0.02em;
+}
+.pd-v2-obs-threshold {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.pd-v2-obs-source {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Docs mobile overrides */
+@media (max-width: 768px) {
+  .pd-v2-component-specs {
+    grid-template-columns: 1fr;
+    gap: 4px 0;
+  }
+  .pd-v2-component-specs dt {
+    padding-top: 10px;
+  }
+  .pd-v2-component-specs dt:first-of-type {
+    padding-top: 0;
+  }
+  .pd-v2-obs-item {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+

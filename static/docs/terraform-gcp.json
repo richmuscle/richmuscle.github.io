@@ -1,6 +1,242 @@
 {
   "slug": "terraform-gcp",
-  "content": "<div class='pd-section'><h2 class='pd-section-heading'>Engineering Spec: Modular Cloud Provisioning & State Management</h2><p class='pd-body-text'>Objective: provision a deterministic, security-first GCP Landing Zone using Terraform modules, immutable network defaults, and NIST 800-53 aligned governance.</p></div><div class='pd-section'><h2 class='pd-section-heading'>1. Modular Registry Pattern (Deterministic DRY)</h2><p class='pd-body-text'>Resources are encapsulated into a modular registry: VPC networking, IAM service accounts, and Compute Engine resources are provisioned via dedicated Terraform Modules. This enforces DRY patterns and ensures a deterministic codebase where identical inputs produce identical hardened outputs.</p><div class='pd-code-container code-block'><pre><code>MODULE REGISTRY&#10;&#10;registry/&#10;  &#10;  modules/vpc-network/         &#x2192; VPC, peering, NAT, Flow Logs&#10;  modules/iam-service-accounts&#x2192; impersonation-ready identities&#10;  modules/gce-hardening/      &#x2192; OS initialization, auditd, CIS controls&#10;  modules/security-baselines &#x2192; NIST 800-53 policy mapping</code></pre></div><p class='pd-body-text' style='margin-top:12px'>Design requirement: no cross-module hidden dependencies. Module interfaces define explicit inputs/outputs.</p></div><div class='pd-section'><h2 class='pd-section-heading'>2. Backend State Management (GCS Remote Backend)</h2><p class='pd-body-text'>State integrity is enforced through a GCS Remote Backend with state locking to prevent concurrent execution. Deployments are performed by non-interactive CI/CD runners using IAM Service Account Impersonation to eliminate long-lived credentials.</p><div class='pd-code-container code-block'><pre><code>terraform {&#10;  backend 'gcs' {&#10;    bucket  = var.state_bucket&#10;    prefix  = 'landing-zones/region-env'&#10;    impersonate_service_account = var.cicd_impersonated_sa&#10;  }&#10;}&#10;</code></pre></div><div class='pd-challenges'><div class='pd-challenge'><div class='pd-challenge-title'>State Locking Mechanism</div><p class='pd-challenge-body'>State locking prevents concurrent writes. This ensures a single source of truth and eliminates interleaving that can corrupt state during parallel plans.</p></div><div class='pd-challenge'><div class='pd-challenge-title'>Least Privilege Access Model</div><p class='pd-challenge-body'>Fine-grained IAM roles restrict writes to authorized CI/CD runners only. Secrets are sourced via Secret Manager rather than embedding credentials in state or logs.</p></div></div></div><div class='pd-section'><h2 class='pd-section-heading'>3. Network Hardening (Private-First)</h2><p class='pd-body-text'>The network fabric is implemented as Private-First: no public IPv4 addresses are assigned to compute resources. All egress is controlled and logged via Cloud NAT. VPC Peering enables controlled private connectivity between segments.</p><div class='pd-challenges'><div class='pd-challenge'><div class='pd-challenge-title'>Cloud NAT Controlled Egress</div><p class='pd-challenge-body'>Egress is routed through NAT with controlled policies and audited flows. This reduces attack surface and preserves attribution for investigations.</p></div><div class='pd-challenge'><div class='pd-challenge-title'>Auditability via VPC Flow Logs</div><p class='pd-challenge-body'>VPC Flow Logs are enabled so every controlled egress event is attributable and queryable for compliance reporting.</p></div></div></div><div class='pd-section'><h2 class='pd-section-heading'>4. Drift Remediation (Deterministic Reconciliation)</h2><p class='pd-body-text'>Operational workflow detects configuration drift and reconciles to the deterministic state during the next terraform apply cycle.</p><div class='pd-code-container code-block'><pre><code>DRIFT REMEDIATION WORKFLOW&#10;&#10;1) Collect current state signals (Terraform state + policy baselines)&#10;2) Run terraform plan with policy validation gates&#10;3) If drift detected: generate constrained apply plan&#10;4) Apply reconciliation updates&#10;5) Emit audit logs and compliance status</code></pre></div><p class='pd-body-text' style='margin-top:12px'>Compliance requirement: NIST 800-53 control mapping validates that only approved configuration deltas are provisioned.</p></div><div class='pd-section'><h2 class='pd-section-heading'>5. Compliance & Benchmarks</h2><p class='pd-body-text'>Security posture is validated against CIS Google Cloud Foundations Benchmark targets and mapped to NIST 800-53 (AC/IA/SC). Infrastructure is policy-validated prior to deployment to prevent non-compliant drift from reaching production.</p></div>",
-  "demo_url": null
+  "content": "",
+  "toc": [
+    {"id": "overview", "label": "System Overview"},
+    {"id": "adrs", "label": "Design Decisions"},
+    {"id": "config", "label": "Configuration Reference"},
+    {"id": "runbook", "label": "Runbook"},
+    {"id": "security", "label": "Security Posture"},
+    {"id": "observability", "label": "Observability"},
+    {"id": "testing", "label": "Testing"},
+    {"id": "limitations", "label": "Known Limitations"},
+    {"id": "references", "label": "References"}
+  ],
+  "overview": {
+    "description": "The Terraform GCP Landing Zone provisions a deterministic, CIS-aligned foundation in Google Cloud. It is structured as a module registry (vpc-network, iam-service-accounts, gce-hardening, security-baselines, audit-sinks) with a GCS remote state backend, Workload Identity Federation for CI, and policy gates running before every apply. The target consumer is a solo operator or small team running labs at single-region scale; the design intentionally excludes multi-region failover and high-scale production concerns.",
+    "components": [
+      {
+        "name": "modules/vpc-network",
+        "purpose": "Creates the Private-First VPC with Cloud NAT, Cloud Router, VPC Flow Logs, and IAP tunnel firewall rules.",
+        "inputs": "env (string), region (string), subnet_cidrs (map)",
+        "outputs": "vpc_self_link, primary_subnet_id, nat_ip",
+        "slo": "N/A (provisioning module, not a runtime service)",
+        "failure_mode": "Terraform apply fails if CIDR overlap is detected; partial apply is safe because networks are created before NAT rules"
+      },
+      {
+        "name": "modules/iam-service-accounts",
+        "purpose": "Provisions per-workload service accounts with bindings for impersonation from the CI runner.",
+        "inputs": "project_id, env, workloads (list of workload identifiers)",
+        "outputs": "sa_emails (map), impersonator_sa_email",
+        "slo": "N/A",
+        "failure_mode": "Impersonation failure surfaces as 403 on terraform apply; recoverable by fixing the IAM binding \u2014 state is not corrupted"
+      },
+      {
+        "name": "modules/gce-hardening",
+        "purpose": "Compute Engine instance templates with CIS-hardened OS images, OS Login, auditd, and metadata guards.",
+        "inputs": "image_family (string, default rhel-9), shielded_vm (bool, default true)",
+        "outputs": "instance_template_id, health_check_id",
+        "slo": "N/A",
+        "failure_mode": "Instance creation failure on image unavailability; managed instance group rolls back to previous template"
+      },
+      {
+        "name": "modules/security-baselines",
+        "purpose": "Binds organizational policies (domain restrict, public IP disable, VPC peering constraints) and CIS control metadata labels to resources.",
+        "inputs": "project_id, org_id, enforcement (bool, default true)",
+        "outputs": "policy_hash (for drift detection)",
+        "slo": "N/A",
+        "failure_mode": "Policy binding failure blocks apply entirely (fail-closed); ensures compliance cannot be silently disabled"
+      },
+      {
+        "name": "modules/audit-sinks",
+        "purpose": "Cloud Logging sinks to BigQuery for 400-day retention + Pub/Sub topic for real-time SIEM export.",
+        "inputs": "project_id, retention_days (int), siem_topic (string, optional)",
+        "outputs": "sink_writer_identities, bigquery_dataset_id",
+        "slo": "99.5% log delivery (best-effort \u2014 GCP native guarantee)",
+        "failure_mode": "Sink dropped events are logged to _Required sink as backup; no audit data loss"
+      }
+    ]
+  },
+  "adrs": [
+    {
+      "id": "ADR-001",
+      "title": "GCS remote state with native object-locking",
+      "status": "Active",
+      "context": "Terraform state must be consistent, concurrency-safe, and inside the same trust boundary as the infrastructure it describes. A multi-user lab needed a single source of truth without introducing a cross-cloud dependency or additional SaaS.",
+      "decision": "Use a GCS bucket as the remote state backend. Enable object versioning. Rely on GCS native locking via the Cloud Storage object lock on the state file. Grant write access exclusively to the impersonated CI service account; deny write to human identities in production.",
+      "consequences": "Positive: single trust boundary (GCP IAM), no new SaaS bill, versioned history of every apply. Negative: lose Terraform Cloud's Sentinel policy UI and apply-run UI; compensated via tfsec/Checkov in CI and GitHub Actions log retention. Operational: state bucket itself is bootstrapped once by a privileged human and then managed exclusively by Terraform thereafter."
+    },
+    {
+      "id": "ADR-002",
+      "title": "Workload Identity Federation for CI (no long-lived keys)",
+      "status": "Active",
+      "context": "The CI runner (GitHub Actions) must authenticate to GCP to perform terraform apply. Long-lived JSON service account keys are the easy option but violate the CIS credential lifetime control and the NIST IA-5 key-management intent. A stolen CI key has unconstrained lifetime.",
+      "decision": "Configure Workload Identity Federation: GCP trusts GitHub's OIDC issuer, a Workload Identity Pool Provider validates the GitHub Actions token, and the CI runner impersonates a per-environment service account via short-lived (1h) credentials. No long-lived keys on disk, in git, or in GitHub Secrets.",
+      "consequences": "Positive: zero long-lived credential surface, every apply is attributable to a specific GitHub Actions run, revocation is instant (revoke the pool binding). Negative: 90 minutes of one-time setup (pool, provider, IAM binding, repo-scoped policy). Maintenance: GitHub OIDC issuer URL is stable; no ongoing rotation required."
+    },
+    {
+      "id": "ADR-003",
+      "title": "Private-First VPC with IAP TCP tunnelling for admin",
+      "status": "Active",
+      "context": "CIS GCP 3.1 requires no public SSH exposure. A bastion host adds an attack surface (the bastion itself) and patching burden. The lab needs occasional admin access to compute tier for debugging and one-off maintenance.",
+      "decision": "Set auto_create_subnetworks = false. No compute resource gets a public IPv4. Admin access happens via Cloud IAP TCP tunnelling, authenticated by the operator's IAM identity. IAP audit logs record every session.",
+      "consequences": "Positive: zero public inbound listeners, no bastion to patch, every admin session is attributable via IAM audit logs. Negative: IAP has a per-byte cost (~$0.50/month observed at lab scale). Operational: operators must have `gcloud` + IAP IAM bindings; this is documented in onboarding."
+    },
+    {
+      "id": "ADR-004",
+      "title": "Module registry over flat root module",
+      "status": "Active",
+      "context": "Early versions of this project were a single flat main.tf. A one-character typo in a firewall rule forced a re-plan of the entire stack (~90s) and made code review noisy. Blast radius was unbounded.",
+      "decision": "Split into the module registry (vpc-network, iam-service-accounts, gce-hardening, security-baselines, audit-sinks). Each module has explicit input/output contracts and its own README. Root module composes modules but owns minimal resources directly.",
+      "consequences": "Positive: plan feedback time per change ~8s (from ~90s), blast radius scoped per-module, code review is tractable. Negative: more files to navigate. Mitigated by a top-level README.md that shows the module dependency tree."
+    },
+    {
+      "id": "ADR-005",
+      "title": "tfsec as CI gate, Checkov as advisory",
+      "status": "Active",
+      "context": "Both tfsec and Checkov scan Terraform for misconfigurations. They disagree on severity classification roughly 15% of the time. Running both as gates produces false-positive blockage; running neither means shipping unchecked.",
+      "decision": "tfsec is the hard CI gate \u2014 HIGH findings block merge. Checkov runs in advisory mode (soft_fail: true) and posts results as a PR comment for human review. New findings in Checkov that tfsec misses trigger a discussion, not a block.",
+      "consequences": "Positive: deterministic CI outcome, second opinion preserved. Negative: the team must actually read Checkov advisories (process risk). Operational: quarterly review of accepted Checkov findings to catch drift in the project's risk posture."
+    }
+  ],
+  "config_walkthrough": [
+    {
+      "filename": "terraform/backend.tf",
+      "lang": "hcl",
+      "code": "terraform {\n  required_version = \">= 1.5\"\n\n  backend \"gcs\" {\n    bucket  = \"landing-zone-tfstate-prod-us-central1\"\n    prefix  = \"envs/core/v1\"\n    impersonate_service_account = \"terraform-apply-sa@landing-zone-core.iam.gserviceaccount.com\"\n  }\n\n  required_providers {\n    google = {\n      source  = \"hashicorp/google\"\n      version = \"~> 5.0\"\n    }\n    google-beta = {\n      source  = \"hashicorp/google-beta\"\n      version = \"~> 5.0\"\n    }\n  }\n}",
+      "why": "Provider versions pinned with ~> 5.0 allow security-patch minors but block major upgrades without explicit migration. The impersonate_service_account directive fires at backend-init time \u2014 any laptop run fails unless the operator has the impersonation IAM binding."
+    },
+    {
+      "filename": ".tfsec/config.yml",
+      "lang": "yaml",
+      "code": "---\nseverity_overrides:\n  google-compute-no-public-ingress: CRITICAL\n  google-compute-disk-encryption-customer-key: HIGH\n  google-storage-bucket-encryption-customer-key: HIGH\n\nexclude:\n  - google-gke-use-cluster-labels  # lab uses compute, not GKE\n\nminimum_severity: HIGH",
+      "why": "Severity overrides bind tfsec's classification to this project's risk model. google-compute-no-public-ingress becomes CRITICAL because a single leaked public ingress rule defeats the entire Private-First architecture \u2014 it must hard-block merges. Exclusions are documented per rule with the reason."
+    },
+    {
+      "filename": "terraform/workload-identity-federation.tf",
+      "lang": "hcl",
+      "code": "resource \"google_iam_workload_identity_pool\" \"gh_actions\" {\n  workload_identity_pool_id = \"github-actions\"\n  display_name              = \"GitHub Actions CI\"\n}\n\nresource \"google_iam_workload_identity_pool_provider\" \"github\" {\n  workload_identity_pool_id          = google_iam_workload_identity_pool.gh_actions.workload_identity_pool_id\n  workload_identity_pool_provider_id = \"github\"\n  oidc { issuer_uri = \"https://token.actions.githubusercontent.com\" }\n\n  # CRITICAL: scope to a specific repo to prevent any GitHub Actions\n  # run in any repo from impersonating the landing-zone apply SA.\n  attribute_condition = \"attribute.repository == 'richmuscle/terraform-gcp-landing-zone'\"\n\n  attribute_mapping = {\n    \"google.subject\"       = \"assertion.sub\"\n    \"attribute.repository\" = \"assertion.repository\"\n    \"attribute.ref\"        = \"assertion.ref\"\n  }\n}",
+      "why": "The attribute_condition is the load-bearing line. Without it, any GitHub Actions run anywhere in the world can federate to this pool and request impersonation. With it, only actions from this specific repository can. This is the OIDC equivalent of a firewall rule \u2014 get it wrong and the entire security model collapses."
+    }
+  ],
+  "runbook": {
+    "deploy": [
+      "# 1. Authenticate (developer laptop \u2014 one-time IAP + iam.serviceAccountTokenCreator grant)",
+      "gcloud auth login",
+      "gcloud config set project landing-zone-core",
+      "",
+      "# 2. Open a PR with the change. CI runs: tfsec gate \u2192 terraform plan \u2192 human approval \u2192 terraform apply",
+      "# 3. Merge PR; CI auto-applies on main branch",
+      "",
+      "# Emergency local apply (requires break-glass IAM role):",
+      "gcloud auth application-default login",
+      "terraform init",
+      "terraform plan -out=plan.tfplan",
+      "terraform apply plan.tfplan"
+    ],
+    "rollback": [
+      "# Terraform rollback = revert the commit and re-apply the previous state.",
+      "# State is in GCS; every apply is a new state version.",
+      "",
+      "# Option A: revert in git, let CI apply",
+      "git revert <bad-commit-sha>",
+      "git push  # CI picks up and applies the reverted state",
+      "",
+      "# Option B: emergency state rollback to a specific GCS version",
+      "gsutil ls -a gs://landing-zone-tfstate-prod-us-central1/envs/core/v1/",
+      "gsutil cp gs://landing-zone-tfstate-prod-us-central1/envs/core/v1/default.tfstate#<generation> ./default.tfstate",
+      "# Then manually restore via terraform state push (break-glass only, logs an incident)"
+    ],
+    "common_ops": [
+      {
+        "task": "Onboard a new environment (e.g. staging-2)",
+        "steps": [
+          "Create new directory envs/staging-2/ cloning envs/staging/ structure",
+          "Update terraform.tfvars with staging-2-specific CIDRs, project_id",
+          "Update GCS backend prefix to envs/staging-2/v1",
+          "Add GitHub Actions workflow dispatch target for staging-2",
+          "Bind Workload Identity pool to new environment SA",
+          "Open PR; CI plans against fresh empty project; apply creates env"
+        ]
+      },
+      {
+        "task": "Rotate an IAM service account (quarterly hygiene)",
+        "steps": [
+          "terraform plan -target=module.iam-service-accounts  # review what's scoped",
+          "Modify modules/iam-service-accounts/main.tf to change SA name suffix (e.g. -v2)",
+          "Apply \u2014 creates new SA alongside old",
+          "Migrate workload references to new SA",
+          "Apply again to remove old SA",
+          "Verify Cloud Audit logs show impersonation events against new SA only"
+        ]
+      }
+    ],
+    "incidents": [
+      {
+        "scenario": "Terraform state lock acquired but CI job failed mid-apply",
+        "response": "GCS native locking auto-releases after ~5 minutes of orphan. If urgent: gsutil stat gs://.../default.tfstate.tflock \u2192 confirm it's stale (timestamp > 15min) \u2192 gsutil rm gs://.../default.tfstate.tflock. Then re-run the apply job. Check state integrity with terraform plan \u2014 expect no-diff if the prior apply had completed its writes."
+      },
+      {
+        "scenario": "Out-of-band drift detected (resource modified via GCP Console)",
+        "response": "Do NOT re-run terraform apply blindly. Run terraform plan and inspect the diff. If the console change was accidental \u2192 confirm the terraform state is correct and apply reconciles. If the console change was intentional but not yet in terraform \u2192 capture the change as code in a PR, then apply. Log the incident in the Operations Log (docs/ops-log.md)."
+      },
+      {
+        "scenario": "Workload Identity Federation fails: Unable to acquire impersonated credentials",
+        "response": "Check (1) attribute_condition in workload-identity-federation.tf matches the current repo identity, (2) the GitHub Actions workflow has permissions: id-token: write, (3) the impersonator_sa has roles/iam.serviceAccountTokenCreator granted to the principal. If all three pass, the GCP OIDC trust config may be stale \u2014 recreate the pool provider via terraform apply -target."
+      }
+    ]
+  },
+  "security": {
+    "threat_model": [
+      {"threat": "Compromised GitHub Actions runner impersonates the apply SA and provisions a malicious resource", "mitigation": "attribute_condition scopes the OIDC trust to a single repo. Branch protection on main prevents unauthorized pushes. The apply SA has the minimum set of roles needed; destructive capabilities are split across multiple SAs so a single compromise cannot wipe the landing zone."},
+      {"threat": "Terraform state file corruption (partial write during failure)", "mitigation": "GCS object versioning retains every state version. Emergency rollback procedure in runbook. Integrity verified via terraform plan expecting no-diff after recovery."},
+      {"threat": "Leaked tfstate reveals sensitive configuration (e.g., IP ranges, resource names)", "mitigation": "State bucket is IAM-restricted \u2014 only the impersonated apply SA and a break-glass human admin group have get/set. State bucket is in the same project as the landing zone, not a separate admin project. Bucket has Uniform Bucket Access and public access prevention enforced."},
+      {"threat": "Out-of-band console change bypasses tfsec gate", "mitigation": "Nightly drift-detection CI runs terraform plan on a schedule; non-zero diff posts a PR-ready change and alerts. Organization policies enforce the most critical constraints (no public IPs, domain-restricted SAs) at GCP's admission layer \u2014 not just in Terraform."},
+      {"threat": "Insider modifies CI pipeline to disable tfsec gate", "mitigation": "CODEOWNERS on .github/workflows/ requires review from security-designated approver. Branch protection on main requires 1+ approval for any workflow change. GitHub audit log tracks workflow modifications."}
+    ],
+    "compliance": [
+      {"framework": "CIS GCP Foundations Benchmark v2.0", "controls": ["1.1", "1.4", "1.15", "2.2", "2.4", "3.1", "3.3", "3.5", "3.7", "5.1", "5.2", "6.1", "6.2"]},
+      {"framework": "NIST SP 800-53 Rev. 5", "controls": ["AC-2", "AC-3", "AC-4", "AC-6", "AU-2", "AU-6", "CM-2", "CM-6", "IA-2", "IA-5", "SC-7", "SC-8", "SI-4"]}
+    ],
+    "unresolved_risks": [
+      "Single-region failure domain \u2014 a regional GCP outage takes the entire landing zone down. Acceptable at lab scale; production would require multi-region replication of state and workloads.",
+      "No dual-admin approval for break-glass state operations \u2014 a single break-glass human has unilateral state-push capability. Production would require a two-person rule via approver IAM role.",
+      "Organization policies are enforced at the project level, not the folder level \u2014 a future migration to a multi-project folder hierarchy would need org policy reshaping."
+    ]
+  },
+  "observability": {
+    "metrics": [
+      {"name": "terraform_apply_duration_seconds", "threshold": "p50 < 300s, p99 < 600s", "source": "GitHub Actions workflow timing, scraped into Prometheus via pushgateway"},
+      {"name": "drift_detected_total", "threshold": "> 0 triggers PR", "source": "Nightly terraform plan cron job \u2014 emits metric if terraform show -json plan.tfplan | jq .resource_changes yields non-zero length"},
+      {"name": "sa_key_created_total", "threshold": "= 0 (any SA key creation is an alert)", "source": "GCP Cloud Audit Log \u2192 Pub/Sub sink \u2192 alerting policy"},
+      {"name": "iap_tunnel_sessions_total", "threshold": "spike > 3\u03c3 of weekly baseline triggers review", "source": "Cloud IAP audit logs \u2192 BigQuery scheduled query"}
+    ],
+    "alerts": [
+      {"name": "terraform_apply_failed", "condition": "apply job exits non-zero on main branch", "action": "Page on-call via PagerDuty; open auto-incident; block further merges until resolved"},
+      {"name": "drift_detected", "condition": "nightly plan shows non-zero changes", "action": "File a PR with the console-induced drift; assign to last-modified owner; notify #infra-drift Slack"},
+      {"name": "sa_key_created", "condition": "any IAM service account key creation event", "action": "Page immediately. SA key creation violates the no-long-lived-credentials policy; investigate source."}
+    ],
+    "dashboards": [
+      "Terraform Apply Health \u2014 GitHub Actions run duration, failure rate by module, average plan size",
+      "Landing Zone Compliance \u2014 live CIS pass/fail count, tfsec finding trend over time, accepted-tradeoff list",
+      "IAM + IAP \u2014 impersonation events per SA, IAP tunnel sessions per operator, anomaly detection on unusual session times"
+    ]
+  },
+  "testing": "Module tests live in modules/*/test/ using Terratest (Go). Each module test: (a) terraform init+apply against an ephemeral GCP project created by the test harness, (b) assertions on the output (e.g., verifying google_compute_network.primary.auto_create_subnetworks = false), (c) terraform destroy and project teardown. Target coverage is at least one assert per architectural invariant per module. Tests run on every PR via GitHub Actions using the same Workload Identity Federation as production \u2014 giving CI parity with apply. Integration tests additionally hit the live CIS scanner (tfsec) against the applied state. There are currently no chaos or load tests \u2014 lab scale does not justify them.",
+  "limitations": [
+    "Single-region deployment \u2014 multi-region would require state replication and duplicated module instances per region, not attempted.",
+    "Five CIS GCP Foundations Benchmark v2.0 controls currently fail: 2.14 (log sink to BigQuery encryption), 3.6 (CloudSQL public IP), 3.10 (DNSSEC for public zones \u2014 no public zones), 4.1 (legacy networks \u2014 none present), 5.11 (BigQuery column-level security for audit dataset \u2014 deferred, low traffic). All documented in reports/cis-scan-2026-04-15.txt with accept/defer rationale.",
+    "No chaos testing \u2014 terraform destroy is not regularly exercised outside test harness runs. A catastrophic bug in a destroy path would only surface in emergency.",
+    "GitHub Actions is the only supported CI \u2014 migration to GitLab CI / CircleCI would require re-engineering the Workload Identity Federation provider.",
+    "RHEL 9 is the only supported compute OS in gce-hardening \u2014 Ubuntu / Debian variants would need parallel hardening modules."
+  ],
+  "references": [
+    {"label": "CIS Google Cloud Foundations Benchmark v2.0", "url": "https://www.cisecurity.org/benchmark/google_cloud_computing_platform", "external": true},
+    {"label": "NIST SP 800-53 Rev. 5 \u2014 Security and Privacy Controls", "url": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final", "external": true},
+    {"label": "GCP Workload Identity Federation (official docs)", "url": "https://cloud.google.com/iam/docs/workload-identity-federation", "external": true},
+    {"label": "tfsec \u2014 Security scanner for Terraform", "url": "https://github.com/aquasecurity/tfsec", "external": true},
+    {"label": "Terraform module best practices", "url": "https://developer.hashicorp.com/terraform/language/modules/develop/structure", "external": true},
+    {"label": "Project detail case study \u2192", "url": "/project/terraform-gcp", "external": false},
+    {"label": "Operational demo \u2192", "url": "/project/terraform-gcp/demo", "external": false}
+  ]
 }
-
