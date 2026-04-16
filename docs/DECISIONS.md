@@ -28,6 +28,27 @@ Context: The inventory surfaced three unrelated pre-existing bugs (ReadingProgre
 Decision: Fix all three as separate clean commits on revamp before starting Phase 1.
 Consequences: Phase 1 SSR work begins on a codebase where the build pipeline is honest (local and CI use identical linker flags), the docs route works in production, and the UI chrome is correctly wired. Hydration debugging in Phase 1 will not be confused by pre-existing brokenness.
 
+## ADR-006: Retain CSP unsafe-inline — Trunk module script hash instability
+Date: 2026-04-15
+Status: Accepted
+Context: The meta CSP in index.html includes `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'`.
+`unsafe-inline` was flagged in the security audit. The fix would be to compute SHA-256 hashes of each
+inline script and add `'sha256-...'` to the CSP, removing `unsafe-inline`.
+However, Trunk 0.21 generates a `<script type="module">` in dist/index.html whose body contains a
+content-hashed filename (e.g. `richardmussell-a299326bdc081096.js`). This hash changes on every
+`trunk build --release` as any source file changes. Pinning a static SHA-256 hash in index.html
+would require recomputing and committing the hash after every build — fragile and CI-incompatible.
+Decision: Retain `unsafe-inline`. Accept the audit finding. Document it here. Revisit when either:
+(a) Trunk supports nonce injection or stable hash computation for its generated scripts, or
+(b) a custom post-build script is added to compute the Trunk module hash and inject it into a
+response-header CSP (requires moving off GitHub Pages to a CDN that supports custom headers).
+The two manually-authored inline scripts (WASM preload hint and init timeout fallback) have stable
+bodies and COULD be hashed, but there is no value in hashing those while the Trunk script remains
+unhashed — `unsafe-inline` would still be required for the Trunk script.
+Consequences: CSP audit finding remains open. The actual XSS risk is low (static site, no user
+input processed server-side). Priority: low. Do not spend engineering time on this until Trunk
+or hosting supports it cleanly.
+
 ## ADR-005: Defer content/substance work in favor of engineering phases
 Date: 2026-04-11
 Status: Accepted (with reservations documented)

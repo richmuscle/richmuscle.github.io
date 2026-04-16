@@ -6,7 +6,13 @@
     <!-- GitHub Pages does not honor _headers / response-header config files,
          so security headers are inlined as <meta http-equiv> below. If/when this
          site moves behind a CDN (Cloudflare Pages, Workers), prefer real HTTP
-         response headers via public/_headers and remove these meta tags. -->
+         response headers via public/_headers and remove these meta tags.
+
+         CSP NOTE — unsafe-inline retained intentionally (see docs/DECISIONS.md ADR-006):
+         Trunk 0.21 generates a <script type="module"> in dist/index.html containing a
+         content-hashed filename that changes on every build. Pinning a static SHA-256 hash
+         is CI-incompatible. Revisit when Trunk supports nonce injection or when the site
+         moves to a CDN that supports hash computation in a post-build step. -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <title>Richard J. Mussell | Systems Administrator & DevOps Engineer</title>
