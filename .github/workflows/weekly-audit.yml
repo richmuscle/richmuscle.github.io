@@ -154,7 +154,14 @@ jobs:
             "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/AUDIT_SCORE_HISTORY.md
           git commit -m "ci: record weekly audit snapshot"
-          git push origin revamp
+          # Retry with rebase if someone pushed to revamp while we were building.
+          for i in 1 2 3; do
+            git pull --rebase origin revamp && \
+              git push origin revamp && exit 0
+            sleep 5
+          done
+          echo "::warning::Failed to push audit snapshot after 3 retries"
+          exit 0
 
       - name: Upload audit artifacts
         if: always()
