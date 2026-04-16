@@ -450,3 +450,27 @@
     line-height: 1.4;
   }
 }
+
+/* Resume footer email copy-to-clipboard button */
+.resume-footer-email {
+  font-family: var(--font-mono);
+  font-size: var(--text-3xs);
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color 150ms ease, background 150ms ease;
+}
+.resume-footer-email:hover,
+.resume-footer-email:focus-visible {
+  color: var(--accent-cyan);
+}
+.resume-footer-email:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}

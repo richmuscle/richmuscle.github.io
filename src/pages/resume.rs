@@ -228,15 +228,26 @@ pub fn ResumePage() -> impl IntoView {
                     </div>
                 </section>
 
-                <footer class="pt-8 border-t border-[var(--border-subtle)] flex items-center justify-between">
+                <footer class="pt-8 border-t border-subtle flex items-center justify-between">
                     <p class="text-[11px] font-mono text-[var(--text-muted)]">"Built with Leptos — compiled to WebAssembly"</p>
-                    <button on:click=move |_| {
-                        #[cfg(not(feature = "ssr"))]
-                        let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
-                        set_email_copied.set(true);
-                        set_timeout(move || set_email_copied.set(false), std::time::Duration::from_millis(2000));
-                    } class="text-[11px] font-mono text-[var(--text-muted)] hover:text-[#22d3ee] transition-colors cursor-pointer bg-transparent border-0 p-0" aria-label="Copy email">
-                        EMAIL
+                    <button
+                        type="button"
+                        on:click=move |_| {
+                            #[cfg(not(feature = "ssr"))]
+                            let _ = js_sys::eval(&format!(
+                                "navigator.clipboard.writeText({:?}).catch(function(){{}})",
+                                EMAIL
+                            ));
+                            set_email_copied.set(true);
+                            set_timeout(
+                                move || set_email_copied.set(false),
+                                std::time::Duration::from_millis(2000),
+                            );
+                        }
+                        class="resume-footer-email"
+                        aria-label="Copy email address to clipboard"
+                    >
+                        {move || if email_copied.get() { "✓ Copied".to_string() } else { EMAIL.to_string() }}
                     </button>
                 </footer>
             </div>

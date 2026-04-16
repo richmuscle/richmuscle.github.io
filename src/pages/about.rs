@@ -1,11 +1,9 @@
-use crate::data::{EMAIL, GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE};
+use crate::data::PROFESSIONAL_TITLE;
 use leptos::*;
 use leptos_meta::{Meta, Title};
 
 #[component]
 pub fn AboutPage() -> impl IntoView {
-    let (email_copied, set_email_copied) = create_signal(false);
-
     view! {
         <Title text=move || format!("About · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
         <Meta name="description" content="About Richard Mussell — Systems Administrator & DevOps Engineer based in Oklahoma City, OK. Lab projects spanning IaC, Linux automation, observability, and zero-trust networking."/>
@@ -117,27 +115,10 @@ pub fn AboutPage() -> impl IntoView {
                     </div>
                 </section>
 
-                <section style="border-top:1px solid #1a2540;padding-top:40px;">
-                    <div style="display:flex;align-items:center;gap:40px;font-size:13px;color:#22d3ee;flex-wrap:wrap;">
-                        <button
-                            type="button"
-                            class="about-email-copy cursor-pointer hover:opacity-80 transition-opacity"
-                            aria-label="Copy email address to clipboard"
-                            aria-live="polite"
-                            on:click=move |_| {
-                                #[cfg(not(feature = "ssr"))]
-                                let _ = js_sys::eval(&format!("navigator.clipboard.writeText({:?}).catch(function(){{}})", EMAIL));
-                                set_email_copied.set(true);
-                                set_timeout(move || set_email_copied.set(false), std::time::Duration::from_millis(2000));
-                            }
-                        >
-                            {move || if email_copied.get() { "Copied!" } else { EMAIL }}
-                        </button>
-                        // VERIFY: https://www.linkedin.com/in/richard-mussell/ — full URL, target=_blank, noopener.
-                        <a href=LINKEDIN_URL target="_blank" rel="noopener noreferrer" class="no-underline hover:opacity-80 transition-opacity" style="color:#22d3ee;">"LinkedIn"</a>
-                        <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" class="no-underline hover:opacity-80 transition-opacity" style="color:#22d3ee;">"GitHub"</a>
-                    </div>
-                </section>
+                // Email / LinkedIn / GitHub were here; removed because the
+                // site-wide <SiteFooter /> now renders them consistently at
+                // the bottom of every page. Avoids the pattern of having one
+                // contact block visually 20 px above another at the fold.
             </div>
         </main>
     }
