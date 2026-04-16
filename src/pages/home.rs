@@ -143,14 +143,16 @@ pub fn HomePage() -> impl IntoView {
                         </p>
                     </div>
 
-                    // Filter tabs
-                    <div class="filter-tabs">
+                    // Filter tabs (toggle-button group — ARIA: group + aria-pressed per button)
+                    <div class="filter-tabs" role="group" aria-label="Filter projects by discipline">
                         {
                             let set_filter_all = set_filter;
                             view! {
                                 <button
+                                    type="button"
                                     on:click=move |_| set_filter_all.set(None)
                                     class=move || if active_filter.get().is_none() { "filter-tab filter-tab-active" } else { "filter-tab" }
+                                    aria-pressed=move || if active_filter.get().is_none() { "true" } else { "false" }
                                 >
                                     "All "
                                     <span class="filter-tab-count">{move || counts.get().0}</span>
@@ -163,9 +165,10 @@ pub fn HomePage() -> impl IntoView {
                             ProjectCategory::SystemsAdmin,
                             ProjectCategory::Networking,
                         ].into_iter().map(|cat| {
-                            let label        = cat.label();
-                            let cat_filter   = cat.clone();
-                            let cat_click    = cat.clone();
+                            let label         = cat.label();
+                            let cat_filter    = cat.clone();
+                            let cat_pressed   = cat.clone();
+                            let cat_click     = cat.clone();
                             let cat_for_count = cat.clone();
                             let count = move || {
                                 let (_all, cyber, cloud, admin, net) = counts.get();
@@ -179,10 +182,12 @@ pub fn HomePage() -> impl IntoView {
                             view! {
                                 <span class="filter-tab-sep" aria-hidden="true">" · "</span>
                                 <button
+                                    type="button"
                                     on:click=move |_| set_filter.set(Some(cat_click.clone()))
                                     class=move || if active_filter.get().as_ref().map(|f| f == &cat_filter).unwrap_or(false) {
                                         "filter-tab filter-tab-active"
                                     } else { "filter-tab" }
+                                    aria-pressed=move || if active_filter.get().as_ref().map(|f| f == &cat_pressed).unwrap_or(false) { "true" } else { "false" }
                                 >
                                     {label}" "
                                     <span class="filter-tab-count">{count}</span>

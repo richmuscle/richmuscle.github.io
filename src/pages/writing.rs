@@ -191,7 +191,10 @@ pub fn WritingPage() -> impl IntoView {
                 >
                     <div class="filter-sheet-grabber" aria-hidden="true"></div>
                     <div class="filter-sheet-header">
-                        <h2 class="filter-sheet-title">"Filter by Category"</h2>
+                        // <p> instead of <h2> — the dialog's accessible name is set
+                        // via aria-label on the parent; a heading here would conflict
+                        // with the <h2> writeup card titles in the list beneath.
+                        <p class="filter-sheet-title" aria-hidden="true">"Filter by Category"</p>
                         <button
                             type="button"
                             class="filter-sheet-close"
