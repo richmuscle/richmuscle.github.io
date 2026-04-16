@@ -2,8 +2,6 @@ use crate::components::ComponentErrorFallback;
 use crate::data::{WriteUpDetail, WRITEUPS};
 use crate::error::AppError;
 use crate::utils::{sanitize_slug, track};
-#[cfg(not(feature = "ssr"))]
-use leptos::wasm_bindgen::{closure::Closure, JsCast};
 use leptos::*;
 use leptos_meta::{Meta, Title};
 use leptos_router::use_params_map;
@@ -11,68 +9,9 @@ use leptos_router::use_params_map;
 #[component]
 pub fn WritingPage() -> impl IntoView {
     let (search_query, set_search_query) = create_signal(String::new());
-    let (active_category, set_active_category) = create_signal(None::<&'static str>);
-    let (sheet_open, set_sheet_open) = create_signal(false);
-
-    // Node refs for focus management — trigger button and sheet close button.
-    // The refs are consumed in view! regardless of target; the _ prefix silences
-    // SSR warnings since focus-management effects are wasm32-only.
-    #[allow(unused_variables)]
-    let trigger_ref = create_node_ref::<html::Button>();
-    #[allow(unused_variables)]
-    let close_ref = create_node_ref::<html::Button>();
-
-    // Body scroll-lock while the filter bottom-sheet is open.
-    #[cfg(not(feature = "ssr"))]
-    create_effect(move |_| {
-        crate::utils::set_body_scroll_lock(sheet_open.get());
-    });
-    on_cleanup(|| crate::utils::set_body_scroll_lock(false));
-
-    // Focus management: on open → focus close button; on close → return focus to trigger.
-    #[cfg(not(feature = "ssr"))]
-    create_effect(move |prev: Option<bool>| {
-        let current = sheet_open.get();
-        let was_open = prev.unwrap_or(false);
-        if current && !was_open {
-            if let Some(el) = close_ref.get() {
-                let _ = el.focus();
-            }
-        } else if !current && was_open {
-            if let Some(el) = trigger_ref.get() {
-                let _ = el.focus();
-            }
-        }
-        current
-    });
-
-    // Escape-key closes the sheet. Listener installed once per component lifetime;
-    // handler checks signal inside so it's a no-op when the sheet is closed.
-    #[cfg(not(feature = "ssr"))]
-    {
-        if let Some(window) = web_sys::window() {
-            let closure = Closure::<dyn Fn(web_sys::KeyboardEvent)>::new(
-                move |ev: web_sys::KeyboardEvent| {
-                    if sheet_open.get_untracked() && ev.key() == "Escape" {
-                        ev.prevent_default();
-                        set_sheet_open.set(false);
-                    }
-                },
-            );
-            let _ = window.add_event_listener_with_callback(
-                "keydown",
-                closure.as_ref().unchecked_ref(),
-            );
-            closure.forget();
-        }
-    }
-    let categories: [&'static str; 5] = [
-        "PLATFORM ARCHITECTURE",
-        "CYBERSECURITY & NIST",
-        "OBSERVABILITY & SOC-OPS",
-        "NETWORKING & INFRA",
-        "STRATEGY & GOVERNANCE",
-    ];
+    // Category filter removed from UI; kept in signal for potential deep-link
+    // support via URL query param in the future. Always None for now.
+    let active_category = create_signal(None::<&'static str>).0;
     let core_order: [&'static str; 9] = [
         "the-architect-of-the-prismatic-apex-orchestrating-equilibrium-in-a-holographic-landscape",
         "the-orchestrated-landscape-building-a-high-integrity-ecosystem",
@@ -130,90 +69,8 @@ pub fn WritingPage() -> impl IntoView {
                     <h1 class="text-[36px] font-bold text-[var(--text-primary)] tracking-tight mb-3">"Technical Write-ups"</h1>
                     <p class="text-[14px] font-mono text-[var(--text-muted)]">"Architectural manifestos and operational deep-dives focused on orchestrating equilibrium within high-integrity ecosystems-from the technical bedrock of connectivity to the 50-year lookout of strategic governance."</p>
                 </section>
-                // Desktop inline category pills block REMOVED — the search
-                // input is the sole filter path on desktop. Mobile users get
-                // the .filter-trigger-btn → bottom-sheet drawer below.
-
-                // Mobile: filter trigger button (hidden on desktop via CSS)
-                <button
-                    type="button"
-                    class="filter-trigger-btn"
-                    node_ref=trigger_ref
-                    on:click=move |_| set_sheet_open.set(true)
-                    aria-haspopup="dialog"
-                    aria-expanded=move || if sheet_open.get() { "true" } else { "false" }
-                >
-                    <span class="filter-trigger-label">"FILTER"</span>
-                    <span class="filter-trigger-value">
-                        {move || active_category.get().map(|c| c.to_string()).unwrap_or_else(|| "ALL CATEGORIES".into())}
-                    </span>
-                    <span class="filter-trigger-chevron" aria-hidden="true">"▾"</span>
-                </button>
-
-                // Mobile: bottom-sheet drawer (always in DOM; visibility driven by is-open class)
-                <div
-                    class=move || format!("filter-sheet-backdrop {}", if sheet_open.get() { "is-open" } else { "" })
-                    on:click=move |_| set_sheet_open.set(false)
-                    aria-hidden=move || if sheet_open.get() { "false" } else { "true" }
-                ></div>
-                <div
-                    class=move || format!("filter-sheet {}", if sheet_open.get() { "is-open" } else { "" })
-                    role="dialog"
-                    aria-modal="true"
-                    aria-label="Filter write-ups by category"
-                    aria-hidden=move || if sheet_open.get() { "false" } else { "true" }
-                >
-                    <div class="filter-sheet-grabber" aria-hidden="true"></div>
-                    <div class="filter-sheet-header">
-                        // <p> instead of <h2> — the dialog's accessible name is set
-                        // via aria-label on the parent; a heading here would conflict
-                        // with the <h2> writeup card titles in the list beneath.
-                        <p class="filter-sheet-title" aria-hidden="true">"Filter by Category"</p>
-                        <button
-                            type="button"
-                            class="filter-sheet-close"
-                            node_ref=close_ref
-                            on:click=move |_| set_sheet_open.set(false)
-                            aria-label="Close filter menu"
-                        >"×"</button>
-                    </div>
-                    <div class="filter-sheet-list" role="list">
-                        <button
-                            type="button"
-                            role="listitem"
-                            class=move || format!("filter-sheet-item {}", if active_category.get().is_none() { "filter-sheet-item-active" } else { "" })
-                            on:click=move |_| {
-                                set_active_category.set(None);
-                                set_sheet_open.set(false);
-                            }
-                        >
-                            <span class="filter-sheet-item-label">"All Categories"</span>
-                            <span class="filter-sheet-item-check" aria-hidden="true">
-                                {move || if active_category.get().is_none() { "●" } else { "" }}
-                            </span>
-                        </button>
-                        {move || categories.iter().map(|&cat| {
-                            let cat_click = cat;
-                            let is_active = move || active_category.get() == Some(cat_click);
-                            view! {
-                                <button
-                                    type="button"
-                                    role="listitem"
-                                    class=move || format!("filter-sheet-item {}", if is_active() { "filter-sheet-item-active" } else { "" })
-                                    on:click=move |_| {
-                                        set_active_category.set(Some(cat_click));
-                                        set_sheet_open.set(false);
-                                    }
-                                >
-                                    <span class="filter-sheet-item-label">{cat}</span>
-                                    <span class="filter-sheet-item-check" aria-hidden="true">
-                                        {move || if is_active() { "●" } else { "" }}
-                                    </span>
-                                </button>
-                            }
-                        }).collect_view()}
-                    </div>
-                </div>
+                // Category filter UI (desktop pills + mobile drawer) fully
+                // removed. Search input below is the only filter affordance.
                 <div role="search" aria-label="Search write-ups">
                     <input
                         type="text"
