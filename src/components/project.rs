@@ -43,6 +43,8 @@ pub fn ProjectCard(
                 if !did_drag.get() {
                     let slug_track = slug_for_expand.clone();
                     set_expanded.set(Some(slug_track.clone()));
+                    #[cfg(not(feature = "ssr"))]
+                    crate::utils::set_body_scroll_lock(true);
                     track("project_view", &format!(r#"{{"slug":"{}"}}"#, slug_track));
                 }
             }

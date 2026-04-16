@@ -314,7 +314,11 @@ pub fn HomePage() -> impl IntoView {
                                 view! {
                                     <div
                                         class="po-scrim"
-                                        on:click=move |_| set_expanded_slug.set(None)
+                                        on:click=move |_| {
+                                            set_expanded_slug.set(None);
+                                            #[cfg(not(feature = "ssr"))]
+                                            crate::utils::set_body_scroll_lock(false);
+                                        }
                                         aria-hidden="true"
                                     />
 
@@ -337,7 +341,11 @@ pub fn HomePage() -> impl IntoView {
                                             </div>
                                             <button
                                                 class="po-close"
-                                                on:click=move |_| set_expanded_slug.set(None)
+                                                on:click=move |_| {
+                                                    set_expanded_slug.set(None);
+                                                    #[cfg(not(feature = "ssr"))]
+                                                    crate::utils::set_body_scroll_lock(false);
+                                                }
                                                 aria-label="Close project preview"
                                             >
                                                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">

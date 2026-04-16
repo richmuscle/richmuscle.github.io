@@ -186,6 +186,7 @@ pub fn CommandPalette() -> impl IntoView {
                                         let rows = results.get();
                                         if let Some(item) = rows.get(selected_idx.get()) {
                                             palette_open.set(false);
+                                            crate::utils::set_body_scroll_lock(false);
                                             let nav = navigate.get_value();
                                             nav(&item.path, Default::default());
                                         }
@@ -193,6 +194,7 @@ pub fn CommandPalette() -> impl IntoView {
                                     "Escape" => {
                                         ev.prevent_default();
                                         palette_open.set(false);
+                                            crate::utils::set_body_scroll_lock(false);
                                     }
                                     _ => {}
                                 }
@@ -216,6 +218,7 @@ pub fn CommandPalette() -> impl IntoView {
                                                 on:mouseenter=move |_| set_selected_idx.set(i)
                                                 on:click=move |_| {
                                                     palette_open.set(false);
+                                            crate::utils::set_body_scroll_lock(false);
                                                     let nav = navigate.get_value();
                                                     nav(&path, Default::default());
                                                 }

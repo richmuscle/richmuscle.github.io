@@ -130,7 +130,10 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
                     class=move || if palette_open.get() { "navbar-search-toggle is-open" } else { "navbar-search-toggle" }
                     aria-label=move || if palette_open.get() { "Close command palette" } else { "Open command palette and search" }
                     aria-expanded=move || if palette_open.get() { "true" } else { "false" }
-                    on:click=move |_| palette_open.update(|v| *v = !*v)
+                    on:click=move |_| {
+                        palette_open.update(|v| *v = !*v);
+                        crate::utils::set_body_scroll_lock(palette_open.get());
+                    }
                 >
                     {move || if palette_open.get() {
                         view! {
@@ -151,7 +154,10 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
                     type="button"
                     class="theme-toggle-btn shortcuts-toggle-btn"
                     aria-label="Keyboard shortcuts"
-                    on:click=move |_| shortcuts_open.update(|v| *v = !*v)
+                    on:click=move |_| {
+                        shortcuts_open.update(|v| *v = !*v);
+                        crate::utils::set_body_scroll_lock(shortcuts_open.get());
+                    }
                 >"?"</button>
                 <span class="palette-hint" aria-hidden="true">"Cmd + K"</span>
                 <ThemeToggle is_dark set_is_dark />
@@ -333,6 +339,7 @@ pub fn KeyboardNav() -> impl IntoView {
                 if key == "Escape" {
                     if palette_open_clone.get() {
                         palette_open_clone.set(false);
+                        crate::utils::set_body_scroll_lock(false);
                         return;
                     }
                     shortcuts_open.set(false);
@@ -344,6 +351,9 @@ pub fn KeyboardNav() -> impl IntoView {
                     if let Some(signals) = project_card_signals_clone.as_ref() {
                         signals.set_expanded_slug.set(None);
                     }
+
+                    // Imperative release — any escape-triggered close unlocks scroll.
+                    crate::utils::set_body_scroll_lock(false);
 
                     if let Some(active) = document_clone.active_element() {
                         if let Some(el) = active.dyn_ref::<web_sys::HtmlElement>() {

@@ -63,13 +63,11 @@ pub fn App() -> impl IntoView {
         });
     }
 
-    // Body scroll-lock whenever ANY global modal is open: shortcuts-modal or
-    // project-overlay. The writing-page filter sheet owns its own scroll lock.
-    #[cfg(not(feature = "ssr"))]
-    create_effect(move |_| {
-        let any_modal_open = shortcuts_open.get() || expanded_slug.with(|s| s.is_some());
-        crate::utils::set_body_scroll_lock(any_modal_open);
-    });
+    // NOTE: body scroll-lock is NOT managed here reactively. Tried that —
+    // resulted in a frozen destination page after navigating via an <A>
+    // inside an open project-overlay (the signal-reset propagation and the
+    // reactive effect didn't settle before paint). Scroll-lock is now handled
+    // imperatively at each overlay lifecycle point (open/close/escape/navigate).
 
     // Project-overlay focus management + background inert.
     // On open: focus .po-close (ARIA APG Dialog); inert .home-page-wrap.
@@ -195,7 +193,11 @@ pub fn App() -> impl IntoView {
                 <div
                     class="shortcuts-scrim"
                     role="presentation"
-                    on:click=move |_| shortcuts_open.set(false)
+                    on:click=move |_| {
+                        shortcuts_open.set(false);
+                        #[cfg(not(feature = "ssr"))]
+                        crate::utils::set_body_scroll_lock(false);
+                    }
                 >
                     <div
                         class="shortcuts-modal"
