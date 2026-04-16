@@ -1700,6 +1700,45 @@
   line-height: 1.4;
 }
 
+/* Related Projects section styled as a V2 section */
+.pd-v2-related {
+  margin-top: var(--space-8);
+}
+.pd-v2-related .related-projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+@media (max-width: 768px) {
+  .pd-v2-related .related-projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Page-end footer — single "All Projects" link, thin top divider */
+.pd-v2-page-footer {
+  margin-top: var(--space-12);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+}
+.pd-v2-page-footer-back {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 150ms ease;
+  padding: var(--space-2) 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.pd-v2-page-footer-back:hover,
+.pd-v2-page-footer-back:focus-visible {
+  color: var(--accent-cyan);
+}
+
 /* Docs mobile overrides */
 @media (max-width: 768px) {
   .pd-v2-component-specs {

@@ -482,21 +482,18 @@ pub fn ProjectDetailPage() -> impl IntoView {
                                 </Suspense>
                             </ErrorBoundary>
 
-                            <div class="pd-section pd-footer-actions flex items-center gap-3 flex-wrap mt-12">
-                                <A href=format!("/project/{}/docs", p.slug) class="pd-footer-btn">
-                                    <span aria-hidden="true">"📄"</span>"View Documentation"
-                                </A>
-                                <A href=format!("/project/{}/demo", p.slug) class="pd-footer-btn">
-                                    <span aria-hidden="true">"▶"</span>"Watch Demo"
-                                </A>
-                            </div>
+                            // NOTE: docs/demo navigation is already served by the surface
+                                //       tab bar at the top AND by the §Artifacts section inside
+                                //       render_v2_detail. The duplicate pd-footer-actions
+                                //       button row was removed — three CTAs to the same
+                                //       destinations was visual noise.
 
                             {move || {
                                 let list = related_row.get();
                                 if list.is_empty() { return view! { <span></span> }.into_view(); }
                                 view! {
-                                    <div class="pd-section">
-                                        <h2 class="pd-section-heading">"Related Projects"</h2>
+                                    <section class="pd-v2-section pd-v2-related">
+                                        <h2 class="pd-v2-heading">"§ Related Projects"</h2>
                                         <div class="related-projects-grid">
                                             {list.into_iter().map(|(s, title, label)| {
                                                 let href = format!("/project/{}", sanitize_slug(&s));
@@ -509,13 +506,13 @@ pub fn ProjectDetailPage() -> impl IntoView {
                                                 }
                                             }).collect_view()}
                                         </div>
-                                    </div>
+                                    </section>
                                 }.into_view()
                             }}
 
-                            <div class="flex items-center gap-6 pt-8 border-t border-subtle" style="margin-top: 24px;">
-                                <A href="/" class="text-[13px] font-mono text-[var(--text-muted)] transition-colors pd-back-link">"← All Projects"</A>
-                            </div>
+                            <nav class="pd-v2-page-footer" aria-label="Page end navigation">
+                                <A href="/" class="pd-v2-page-footer-back">"← All Projects"</A>
+                            </nav>
                         </div>
                     </main>
                 }.into_view()
