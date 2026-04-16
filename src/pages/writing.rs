@@ -130,35 +130,9 @@ pub fn WritingPage() -> impl IntoView {
                     <h1 class="text-[36px] font-bold text-[var(--text-primary)] tracking-tight mb-3">"Technical Write-ups"</h1>
                     <p class="text-[14px] font-mono text-[var(--text-muted)]">"Architectural manifestos and operational deep-dives focused on orchestrating equilibrium within high-integrity ecosystems-from the technical bedrock of connectivity to the 50-year lookout of strategic governance."</p>
                 </section>
-                // Desktop: inline category pills (hidden on mobile via CSS)
-                <div class="tag-pills-row mb-4">
-                    <button
-                        type="button"
-                        class=move || format!("tag-pill {}", if active_category.get().is_none() { "tag-pill-active" } else { "" })
-                        on:click=move |_| {
-                            set_active_category.set(None);
-                        }
-                    >
-                        "ALL"
-                    </button>
-                    {move || categories.iter().map(|&cat| {
-                        let cat_click = cat;
-                        let is_active = move || active_category.get() == Some(cat_click);
-                        view! {
-                            <button
-                                type="button"
-                                class=move || format!("tag-pill {}", if is_active() { "tag-pill-active" } else { "" })
-                                on:click=move |_| {
-                                    set_active_category.update(|v| {
-                                        *v = if *v == Some(cat_click) { None } else { Some(cat_click) };
-                                    });
-                                }
-                            >
-                                {cat}
-                            </button>
-                        }
-                    }).collect_view()}
-                </div>
+                // Desktop inline category pills block REMOVED — the search
+                // input is the sole filter path on desktop. Mobile users get
+                // the .filter-trigger-btn → bottom-sheet drawer below.
 
                 // Mobile: filter trigger button (hidden on desktop via CSS)
                 <button
