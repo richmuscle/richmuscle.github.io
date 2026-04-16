@@ -442,3 +442,15 @@ html.light .po-scrim {
     padding: 13px 21px;
   }
 }
+
+/* ── Reduced-motion: explicitly disable transform/slide-up keyframes.
+   The global prefers-reduced-motion rule in base.css sets animation-duration
+   to 0.01ms, which produces a near-instant but visible jitter on these
+   panels. Explicit `animation: none` avoids any visual artifact. ── */
+@media (prefers-reduced-motion: reduce) {
+  .po-panel,
+  .po-scrim {
+    animation: none !important;
+    opacity: 1;
+  }
+}
