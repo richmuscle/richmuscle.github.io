@@ -225,6 +225,26 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
   color: var(--text-secondary);
 }
 
+/* Overflow guards for JSON-rendered content — tables, pre blocks, and images
+   shouldn't bleed past the 100% width of the prose container at 320px CSS. */
+.wu-prose img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.wu-prose pre {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.wu-prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-collapse: collapse;
+}
+
 .wu-prose p,
 .wu-prose .pd-body-text {
   font-size: 16px;

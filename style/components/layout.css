@@ -136,6 +136,8 @@ html.light .timeline-body {
   padding: 13px 21px;
   background: #1a1f2e;
   overflow-x: auto;
+  max-width: 100%;
+  overscroll-behavior-x: contain;
 }
 .code-body pre {
   margin: 0;
@@ -275,6 +277,8 @@ html.light .timeline-body {
   border-radius: 8px;
   padding: 21px 34px;
   overflow-x: auto;
+  max-width: 100%;
+  overscroll-behavior-x: contain;
 }
 .pd-code-container .code-header {
   display: none;
