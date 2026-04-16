@@ -337,9 +337,19 @@ html.light .theme-toggle-btn {
     background: rgba(34, 211, 238, 0.06);
   }
 }
+/* Desktop: every mobile-only navbar affordance is forcibly hidden.
+   Covers: hamburger toggle, drawer (even if nav_open signal is stuck
+   true somehow), drawer scrim overlay, and the mobile search button.
+   The .navbar-search-toggle base rule has display:none already but
+   explicit !important here prevents any future leak via specificity. */
 @media (min-width: 769px) {
-  .navbar-mobile-toggle { display: none; }
-  .navbar-mobile-drawer { display: none !important; }
+  .navbar-mobile-toggle,
+  .navbar-mobile-drawer,
+  .navbar-mobile-drawer.nav-open,
+  .navbar-drawer-scrim,
+  .navbar-search-toggle {
+    display: none !important;
+  }
 }
 
 /* ── Hide keyboard-centric affordances on touch/mobile.
