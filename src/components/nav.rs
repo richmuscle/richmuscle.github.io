@@ -35,6 +35,14 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
         if let Some(signals) = project_card_signals.as_ref() {
             signals.set_expanded_slug.set(None);
         }
+        // Defensive: unconditionally release the body scroll-lock on any
+        // navigation. The signal resets above SHOULD propagate to the
+        // lib.rs scroll-lock effect, but relying on reactive-graph timing
+        // for critical UX (can this page scroll?) is fragile — observed
+        // freeze when navigating via <A> from the project overlay.
+        // This call is idempotent when the class is already absent.
+        #[cfg(not(feature = "ssr"))]
+        crate::utils::set_body_scroll_lock(false);
     });
 
     // Focus management: on drawer open, move focus to the first drawer link;

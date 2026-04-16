@@ -7,6 +7,11 @@ use leptos_meta::{Meta, Title};
 use leptos_router::{use_params_map, A};
 #[component]
 pub fn ProjectDetailPage() -> impl IntoView {
+    // Defensive: project pages MUST be scrollable. Release any stale
+    // body scroll-lock from an overlay that didn't reset its signal.
+    #[cfg(not(feature = "ssr"))]
+    crate::utils::set_body_scroll_lock(false);
+
     let params = use_params_map();
     let slug = move || {
         let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
@@ -193,6 +198,9 @@ pub fn ProjectDetailPage() -> impl IntoView {
 
 #[component]
 pub fn ProjectDocsPage() -> impl IntoView {
+    #[cfg(not(feature = "ssr"))]
+    crate::utils::set_body_scroll_lock(false);
+
     let params = use_params_map();
     let slug = move || {
         let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
@@ -276,6 +284,9 @@ pub fn ProjectDocsPage() -> impl IntoView {
 
 #[component]
 pub fn ProjectDemoPage() -> impl IntoView {
+    #[cfg(not(feature = "ssr"))]
+    crate::utils::set_body_scroll_lock(false);
+
     let params = use_params_map();
     let slug = move || {
         let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
