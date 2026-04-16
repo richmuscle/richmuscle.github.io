@@ -7,6 +7,49 @@ use leptos_meta::{Meta, Title};
 use leptos_router::{use_params_map, A};
 
 // ============================================================
+//   SURFACE TAB BAR — shared across all 3 project sub-pages
+// ============================================================
+// Renders below the hero on detail/docs/demo. Current surface is
+// highlighted. aria-current="page" on the active tab. Links use
+// <A> so navigation is client-side.
+
+#[derive(Copy, Clone, PartialEq)]
+enum Surface {
+    Detail,
+    Docs,
+    Demo,
+}
+
+fn surface_tabs(slug: &'static str, current: Surface) -> impl IntoView {
+    let tab = move |label: &'static str, path_suffix: &'static str, variant: Surface| {
+        let href = if path_suffix.is_empty() {
+            format!("/project/{}", slug)
+        } else {
+            format!("/project/{}/{}", slug, path_suffix)
+        };
+        let is_active = variant == current;
+        let class = if is_active {
+            "pd-surface-tab pd-surface-tab-active"
+        } else {
+            "pd-surface-tab"
+        };
+        let aria = if is_active { "page" } else { "" };
+        view! {
+            <A href=href class=class attr:aria-current=aria>
+                {label}
+            </A>
+        }
+    };
+    view! {
+        <nav class="pd-surface-tabs" aria-label="Project surface navigation">
+            {tab("Case Study", "", Surface::Detail)}
+            {tab("Documentation", "docs", Surface::Docs)}
+            {tab("Demo", "demo", Surface::Demo)}
+        </nav>
+    }
+}
+
+// ============================================================
 //   V2 STRUCTURED DETAIL RENDER
 // ============================================================
 //
@@ -372,6 +415,8 @@ pub fn ProjectDetailPage() -> impl IntoView {
                                     {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
+
+                            {surface_tabs(p.slug, Surface::Detail)}
 
                             <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
                                 <Suspense fallback=move || view! {
@@ -822,7 +867,7 @@ pub fn ProjectDocsPage() -> impl IntoView {
                                 <a href=format!("/project/{}", p.slug)>{p.title}</a>
                                 <span aria-hidden="true">" / Docs"</span>
                             </nav>
-                            <header class="pd-header mb-12">
+                            <header class="pd-header">
                                 <div class="pd-category-label" style=format!("color:{}", p.category.accent())>{p.category.label()}</div>
                                 <h1 class="pd-title">{p.title}</h1>
                                 <p class="pd-subtitle">{p.subtitle}</p>
@@ -830,6 +875,9 @@ pub fn ProjectDocsPage() -> impl IntoView {
                                     {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
+
+                            {surface_tabs(p.slug, Surface::Docs)}
+
                             <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
                                 <Suspense fallback=move || view! {
                                     <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
@@ -1134,6 +1182,8 @@ pub fn ProjectDemoPage() -> impl IntoView {
                                     {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
+
+                            {surface_tabs(p.slug, Surface::Demo)}
 
                             // V2 demo if /demos/{slug}.json exists AND is populated;
                             // otherwise render the legacy hardcoded walkthrough steps.

@@ -765,6 +765,68 @@
 }
 
 /* ============================================================
+   SURFACE TAB BAR
+   Rendered below the hero on every project sub-page.
+   3 tabs: Case Study | Documentation | Demo.
+   Active tab has cyan underline + primary text. aria-current="page".
+   ============================================================ */
+
+.pd-surface-tabs {
+  display: flex;
+  gap: var(--space-5);
+  margin: var(--space-5) 0 var(--space-12);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.pd-surface-tabs::-webkit-scrollbar { display: none; }
+
+.pd-surface-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-1) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 160ms ease, border-color 160ms ease;
+  white-space: nowrap;
+  min-height: 44px;
+  margin-bottom: -1px; /* overlap the container's border-bottom so active tab aligns */
+}
+.pd-surface-tab:hover,
+.pd-surface-tab:focus-visible {
+  color: var(--text-secondary);
+  border-bottom-color: var(--border-active);
+}
+.pd-surface-tab-active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+}
+.pd-surface-tab-active:hover,
+.pd-surface-tab-active:focus-visible {
+  color: var(--accent-cyan);
+}
+
+@media (max-width: 768px) {
+  .pd-surface-tabs {
+    gap: var(--space-3);
+    margin: var(--space-3) 0 var(--space-8);
+  }
+  .pd-surface-tab {
+    font-size: var(--text-xs);
+    padding: var(--space-3) var(--space-1);
+  }
+}
+
+/* ============================================================
    V2 STRUCTURED PROJECT DETAIL
    FAANG-grade layout: hero strip → problem → constraints → approach
    → decisions → highlights → outcomes → lessons → artifacts.
