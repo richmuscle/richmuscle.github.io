@@ -29,7 +29,8 @@ fn meta_strip(
     reading_time_minutes: Option<u32>,
     status_label: Option<String>,
 ) -> impl IntoView {
-    let has_any = last_updated.is_some() || reading_time_minutes.is_some() || status_label.is_some();
+    let has_any =
+        last_updated.is_some() || reading_time_minutes.is_some() || status_label.is_some();
     if !has_any {
         return view! { <span></span> }.into_view();
     }
@@ -54,7 +55,8 @@ fn meta_strip(
                 </span>
             })}
         </div>
-    }.into_view()
+    }
+    .into_view()
 }
 
 fn surface_tabs(slug: &'static str, current: Surface) -> impl IntoView {

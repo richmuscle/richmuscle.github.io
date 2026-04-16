@@ -28,8 +28,8 @@ jobs:
           sudo mv trunk /usr/local/bin/
       - name: Install wasm-opt
         run: |
-          curl -sL https://github.com/WebAssembly/binaryen/releases/latest/download/binaryen-version_123-x86_64-linux.tar.gz | tar -xz
-          sudo mv binaryen-version_123/bin/wasm-opt /usr/local/bin/
+          sudo apt-get update
+          sudo apt-get install -y binaryen
       - name: Build with Trunk (release)
         run: trunk build --release
       - name: Optimize WASM bundle

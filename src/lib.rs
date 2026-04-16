@@ -10,7 +10,9 @@ pub use db::{search_portfolio_projects, search_projects, sqlite_index_ready};
 pub use error::AppError;
 pub use state::GlobalAppState;
 
-use crate::components::{BackToTop, CommandPalette, KeyboardNav, NavBar, ReadingProgress, SiteFooter};
+use crate::components::{
+    BackToTop, CommandPalette, KeyboardNav, NavBar, ReadingProgress, SiteFooter,
+};
 use crate::data::{ProjectCardSignals, ReadProgressSignals};
 use crate::pages::{
     AboutPage, ContactPage, HomePage, NotFoundPage, OnePageSummary, ProjectDemoPage,

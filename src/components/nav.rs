@@ -246,16 +246,17 @@ pub fn BackToTop() -> impl IntoView {
     // or headless), silently no-op rather than abort the WASM module.
     #[cfg(not(feature = "ssr"))]
     create_effect(move |_| {
-        let Some(window) = web_sys::window() else { return; };
+        let Some(window) = web_sys::window() else {
+            return;
+        };
         let closure = wasm_bindgen::closure::Closure::wrap(Box::new(move || {
-            let Some(w) = web_sys::window() else { return; };
+            let Some(w) = web_sys::window() else {
+                return;
+            };
             let scroll_y = w.scroll_y().unwrap_or(0.0);
             set_visible.set(scroll_y > 300.0);
         }) as Box<dyn FnMut()>);
-        let _ = window.add_event_listener_with_callback(
-            "scroll",
-            closure.as_ref().unchecked_ref(),
-        );
+        let _ = window.add_event_listener_with_callback("scroll", closure.as_ref().unchecked_ref());
         // Closure is intentionally leaked — BackToTop mounts once at App
         // level and persists for the page lifetime. remove_event_listener
         // on unmount is moot since App never unmounts in this CSR app.
