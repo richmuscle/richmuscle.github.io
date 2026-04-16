@@ -1,5 +1,5 @@
 use crate::components::ComponentErrorFallback;
-use crate::data::{find_project, get_infrastructure_fleet, DocsDetail, ProjectDetail};
+use crate::data::{find_project, get_infrastructure_fleet, DemoDetail, DocsDetail, ProjectDetail};
 use crate::error::AppError;
 use crate::utils::sanitize_slug;
 use leptos::*;
@@ -857,6 +857,151 @@ pub fn ProjectDocsPage() -> impl IntoView {
     }
 }
 
+// ============================================================
+//   V2 STRUCTURED DEMO RENDER
+// ============================================================
+//
+// Enterprise demo layout: hero media → narration cues (timestamps)
+// → verification (criterion/method/observed) → reproduce steps →
+// output snippets (real terminal output) → not-demonstrated honesty list.
+
+fn render_v2_demo(d: DemoDetail, p_slug: &'static str) -> impl IntoView {
+    let hero_src = d.hero_media_src.clone();
+    let hero_caption = d.hero_caption.clone();
+    let narration = d.narration.clone();
+    let verification = d.verification.clone();
+    let reproduce = d.reproduce.clone();
+    let output_snippets = d.output_snippets.clone();
+    let not_demonstrated = d.not_demonstrated.clone();
+
+    view! {
+        <article class="pd-v2">
+            // § Hero media (mandatory for V2 demo)
+            {hero_src.map(|src| view! {
+                <section class="pd-v2-section" id="hero">
+                    <div class="pd-v2-diagram">
+                        <img src=src alt="Operational demo flow" loading="lazy"/>
+                    </div>
+                    {hero_caption.clone().map(|c| view! {
+                        <p class="pd-v2-prose" style="text-align:center; margin-top:13px;">{c}</p>
+                    })}
+                </section>
+            })}
+
+            // § Narration cues
+            {if !narration.is_empty() {
+                view! {
+                    <section class="pd-v2-section" id="narration">
+                        <h2 class="pd-v2-heading">"§ What You're Seeing"</h2>
+                        <ol class="pd-v2-narration">
+                            {narration.into_iter().map(|n| view! {
+                                <li class="pd-v2-narration-item">
+                                    <span class="pd-v2-narration-ts">{n.timestamp}</span>
+                                    <span class="pd-v2-narration-caption">{n.caption}</span>
+                                </li>
+                            }).collect_view()}
+                        </ol>
+                    </section>
+                }.into_view()
+            } else { view! { <span></span> }.into_view() }}
+
+            // § Verification checks
+            {if !verification.is_empty() {
+                view! {
+                    <section class="pd-v2-section" id="verification">
+                        <h2 class="pd-v2-heading">"§ Verification Criteria"</h2>
+                        <p class="pd-v2-prose" style="max-width:72ch;">"Every claim below has an explicit pass/fail check, the command used to measure it, and what was actually observed."</p>
+                        <div class="pd-v2-verifications">
+                            {verification.into_iter().map(|v| view! {
+                                <article class="pd-v2-verification">
+                                    <h3 class="pd-v2-verification-criterion">{v.criterion}</h3>
+                                    <dl class="pd-v2-verification-body">
+                                        <dt>"Method"</dt>
+                                        <dd><pre class="pd-v2-code-inline"><code>{v.method}</code></pre></dd>
+                                        <dt>"Observed"</dt>
+                                        <dd class="pd-v2-verification-observed">{v.observed}</dd>
+                                    </dl>
+                                </article>
+                            }).collect_view()}
+                        </div>
+                    </section>
+                }.into_view()
+            } else { view! { <span></span> }.into_view() }}
+
+            // § Reproduce locally
+            {reproduce.map(|r| {
+                let prereqs = r.prereqs.clone();
+                let env_vars = r.env_vars.clone();
+                let steps = r.steps.clone();
+                view! {
+                    <section class="pd-v2-section" id="reproduce">
+                        <h2 class="pd-v2-heading">"§ Reproduce Locally"</h2>
+                        {if !prereqs.is_empty() {
+                            view! {
+                                <h3 class="pd-v2-subheading pd-v2-in">"Prerequisites"</h3>
+                                <ul class="pd-v2-list">
+                                    {prereqs.into_iter().map(|p| view! { <li>{p}</li> }).collect_view()}
+                                </ul>
+                            }.into_view()
+                        } else { view! { <span></span> }.into_view() }}
+                        {if !env_vars.is_empty() {
+                            view! {
+                                <h3 class="pd-v2-subheading pd-v2-in">"Environment"</h3>
+                                <pre class="pd-v2-code pd-v2-code-plain"><code>{env_vars.join("\n")}</code></pre>
+                            }.into_view()
+                        } else { view! { <span></span> }.into_view() }}
+                        {if !steps.is_empty() {
+                            view! {
+                                <h3 class="pd-v2-subheading pd-v2-in">"Steps"</h3>
+                                <pre class="pd-v2-code pd-v2-code-plain"><code>{steps.join("\n")}</code></pre>
+                            }.into_view()
+                        } else { view! { <span></span> }.into_view() }}
+                    </section>
+                }
+            })}
+
+            // § Output snippets (real terminal output, verbatim)
+            {if !output_snippets.is_empty() {
+                view! {
+                    <section class="pd-v2-section" id="output">
+                        <h2 class="pd-v2-heading">"§ Captured Output"</h2>
+                        <div class="pd-v2-highlights">
+                            {output_snippets.into_iter().map(|s| view! {
+                                <figure class="pd-v2-highlight">
+                                    <figcaption class="pd-v2-highlight-caption">
+                                        <span class="pd-v2-highlight-filename">{s.label}</span>
+                                        <span class="pd-v2-highlight-lang">{s.lang}</span>
+                                    </figcaption>
+                                    <pre class="pd-v2-code"><code>{s.output}</code></pre>
+                                </figure>
+                            }).collect_view()}
+                        </div>
+                    </section>
+                }.into_view()
+            } else { view! { <span></span> }.into_view() }}
+
+            // § Not demonstrated (honesty)
+            {if !not_demonstrated.is_empty() {
+                view! {
+                    <section class="pd-v2-section" id="not-demonstrated">
+                        <h2 class="pd-v2-heading">"§ What This Demo Does Not Show"</h2>
+                        <p class="pd-v2-prose">"Explicit credibility builder — the limitations of this walkthrough. Each item is either deferred work, a future-production concern, or out-of-scope for a lab demo."</p>
+                        <ul class="pd-v2-list">
+                            {not_demonstrated.into_iter().map(|n| view! { <li>{n}</li> }).collect_view()}
+                        </ul>
+                    </section>
+                }.into_view()
+            } else { view! { <span></span> }.into_view() }}
+
+            // Footer nav
+            <section class="pd-v2-section pd-v2-footer-nav">
+                <A href=format!("/project/{}", p_slug) class="pd-docs-back-cta">"← Case study"</A>
+                <A href=format!("/project/{}/docs", p_slug) class="pd-docs-back-cta">"Docs →"</A>
+            </section>
+        </article>
+    }
+}
+
 //  PROJECT DEMO PAGE
 // ============================================================
 
@@ -876,6 +1021,34 @@ pub fn ProjectDemoPage() -> impl IntoView {
         sanitize_slug(&raw)
     };
     let project = create_memo(move |_| find_project(&slug()));
+
+    // V2 demo resource — fetches /demos/{slug}.json. 404 (project without
+    // a demo JSON) resolves to an error that the legacy fallback catches
+    // via is_populated() check.
+    let demo_data = create_resource(slug, |s| async move {
+        #[cfg(feature = "ssr")]
+        {
+            let _ = s;
+            return Err::<DemoDetail, AppError>(AppError::logic("ssr build skips fetch"));
+        }
+        #[cfg(not(feature = "ssr"))]
+        {
+            if s.is_empty() {
+                return Err(AppError::logic("empty slug"));
+            }
+            let url = format!("/demos/{}.json", s);
+            let resp = gloo_net::http::Request::get(&url)
+                .send()
+                .await
+                .map_err(|e| AppError::fetch(e.to_string()))?;
+            if !resp.ok() {
+                return Err(AppError::fetch(format!("no demo JSON for {}", s)));
+            }
+            resp.json::<DemoDetail>()
+                .await
+                .map_err(|e| AppError::parse(e.to_string()))
+        }
+    });
 
     view! {
         {move || match project.get() {
@@ -961,27 +1134,36 @@ pub fn ProjectDemoPage() -> impl IntoView {
                                     {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
-                            <div class="pd-section" style="margin-top: 2.25rem;">
-                                <div class="video-placeholder">"Documented operational scenario — walkthrough steps below."</div>
-                            </div>
 
-                            <div class="pd-section">
-                                <h2 class="pd-section-heading">Technical Walkthrough (Operational Scenario)</h2>
-                                <div class="pd-challenges">
-                                    {steps.into_iter().map(|s| view! {
-                                        <div class="pd-challenge">
-                                            <div class="pd-challenge-title">{s.title}</div>
-                                            <p class="pd-challenge-body">{s.body}</p>
+                            // V2 demo if /demos/{slug}.json exists AND is populated;
+                            // otherwise render the legacy hardcoded walkthrough steps.
+                            {
+                                let p_slug = p.slug;
+                                move || match demo_data.get() {
+                                    Some(Ok(d)) if d.is_populated() => render_v2_demo(d, p_slug).into_view(),
+                                    _ => view! {
+                                        <div class="pd-section" style="margin-top: 2.25rem;">
+                                            <div class="video-placeholder">"Documented operational scenario — walkthrough steps below."</div>
                                         </div>
-                                    }).collect_view()}
-                                </div>
-                            </div>
-
-                            <A href=format!("/project/{}", p.slug) class="pd-docs-back-cta">"View case study →"</A>
-                            <footer class="pd-footer-nav mt-16 pt-8 border-t border-[var(--border-subtle)]">
-                                <a href=format!("/project/{}", p.slug) class="pd-footer-btn">"Case Study"</a>
-                                <a href=format!("/project/{}/docs", p.slug) class="pd-footer-btn">"Documentation"</a>
-                            </footer>
+                                        <div class="pd-section">
+                                            <h2 class="pd-section-heading">Technical Walkthrough (Operational Scenario)</h2>
+                                            <div class="pd-challenges">
+                                                {steps.iter().map(|s| view! {
+                                                    <div class="pd-challenge">
+                                                        <div class="pd-challenge-title">{s.title}</div>
+                                                        <p class="pd-challenge-body">{s.body}</p>
+                                                    </div>
+                                                }).collect_view()}
+                                            </div>
+                                        </div>
+                                        <A href=format!("/project/{}", p_slug) class="pd-docs-back-cta">"View case study →"</A>
+                                        <footer class="pd-footer-nav mt-16 pt-8 border-t border-subtle">
+                                            <a href=format!("/project/{}", p_slug) class="pd-footer-btn">"Case Study"</a>
+                                            <a href=format!("/project/{}/docs", p_slug) class="pd-footer-btn">"Documentation"</a>
+                                        </footer>
+                                    }.into_view(),
+                                }
+                            }
                         </div>
                     </main>
                 }.into_view()

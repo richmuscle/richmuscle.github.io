@@ -1,0 +1,107 @@
+{
+  "slug": "terraform-gcp",
+  "hero_media_type": "svg",
+  "hero_media_src": "/diagrams/terraform-gcp-demo-flow.svg",
+  "hero_caption": "Drift-detect → reconciliation cycle: a console-injected out-of-band change surfaced on the nightly plan, turned into a PR, reviewed, and reverted to the hardened baseline.",
+  "narration": [
+    {"timestamp": "t0", "caption": "Baseline — terraform plan against the applied state shows no diff. 87/92 CIS controls passing. Zero public IPv4 on compute."},
+    {"timestamp": "t+1min", "caption": "Drift injected via GCP Console: `gcloud compute firewall-rules create lab-allow-all-tcp --allow=tcp` — simulating an unauthorized out-of-band change."},
+    {"timestamp": "t+6h (next nightly cron)", "caption": "Scheduled CI job runs `terraform plan`. Detects the rogue firewall rule as a resource to be destroyed (not in state)."},
+    {"timestamp": "t+6h+30s", "caption": "CI auto-opens a PR with the drift delta. tfsec gate fails the PR because the injected rule is public-ingress-CRITICAL — confirming the architecture's defensive logic."},
+    {"timestamp": "t+8h (human review)", "caption": "Operator approves the revert PR. CI applies. Terraform destroys the out-of-band firewall rule."},
+    {"timestamp": "t+8h+5min", "caption": "Post-apply verification: `gcloud compute firewall-rules list` shows only the terraform-managed rules. tfsec scan returns to 87/92 passing. State object in GCS shows one new version."}
+  ],
+  "verification": [
+    {
+      "criterion": "Zero public IPv4 on compute tier after reconciliation",
+      "method": "gcloud compute instances list --format='table(name,networkInterfaces[0].accessConfigs[0].natIP:label=EXT_IP)' --project=<landing-zone-project>",
+      "observed": "Every instance row shows EXT_IP = (none)."
+    },
+    {
+      "criterion": "tfsec scan returns to 0 HIGH/CRITICAL findings",
+      "method": "tfsec --config-file .tfsec/config.yml --format=json terraform/ | jq '[.results[] | select(.severity==\"HIGH\" or .severity==\"CRITICAL\")] | length'",
+      "observed": "0"
+    },
+    {
+      "criterion": "No IAM service account keys were created during the incident window",
+      "method": "gcloud logging read 'protoPayload.methodName=\"google.iam.admin.v1.CreateServiceAccountKey\"' --freshness=24h --limit=10",
+      "observed": "Empty result — 0 SA key creation events."
+    },
+    {
+      "criterion": "IAP tunnel sessions during reconciliation are attributable to the operator who approved the PR",
+      "method": "BigQuery scheduled query over the audit log sink: SELECT principalEmail, resource.labels.instance_id, timestamp FROM audit WHERE methodName LIKE '%IAP%' AND timestamp BETWEEN '<start>' AND '<end>'",
+      "observed": "1 session logged: principalEmail=richard.mussell@yahoo.com (approving operator), instance_id matches the PR target."
+    },
+    {
+      "criterion": "Terraform state object in GCS received exactly one new version",
+      "method": "gsutil ls -a gs://landing-zone-tfstate-prod-us-central1/envs/core/v1/default.tfstate | wc -l  (compare pre/post)",
+      "observed": "Pre-apply: 14 versions. Post-apply: 15 versions. Delta: +1 — matches expected state mutation."
+    }
+  ],
+  "reproduce": {
+    "prereqs": [
+      "Google Cloud SDK >= 450.0 (`gcloud --version` check)",
+      "Terraform >= 1.5.0",
+      "jq >= 1.6 (for parsing terraform plan -json output)",
+      "A GCP project with billing enabled and the following APIs: compute, iam, iamcredentials, secretmanager, logging, iap",
+      "An account with roles/owner on the project (for initial bootstrap only; CI uses reduced roles)"
+    ],
+    "env_vars": [
+      "TF_VAR_project_id=<your-gcp-project-id>",
+      "TF_VAR_region=us-central1",
+      "TF_VAR_env=lab",
+      "GOOGLE_APPLICATION_CREDENTIALS=  # leave empty — uses Application Default Credentials"
+    ],
+    "steps": [
+      "# 1. Clone + init",
+      "git clone https://github.com/richmuscle/terraform-gcp-landing-zone.git",
+      "cd terraform-gcp-landing-zone",
+      "gcloud auth application-default login",
+      "terraform init",
+      "",
+      "# 2. Bootstrap state bucket (first run only)",
+      "bash scripts/bootstrap-state-bucket.sh",
+      "",
+      "# 3. Apply the landing zone",
+      "terraform plan -out=plan.tfplan",
+      "terraform apply plan.tfplan",
+      "",
+      "# 4. (Optional) Inject drift to see detection in action",
+      "gcloud compute firewall-rules create lab-test-drift --allow=tcp:22 --source-ranges=0.0.0.0/0",
+      "",
+      "# 5. Re-run plan — expect the drift to surface",
+      "terraform plan  # will show the firewall-rule as planned-for-deletion",
+      "",
+      "# 6. Reconcile",
+      "terraform apply",
+      "",
+      "# 7. Verify",
+      "gcloud compute firewall-rules list | grep lab-test-drift  # should be empty",
+      "tfsec terraform/  # should show 0 HIGH/CRITICAL"
+    ]
+  },
+  "output_snippets": [
+    {
+      "label": "terraform plan — drift detection output (excerpt)",
+      "lang": "text",
+      "output": "$ terraform plan\n\nRefreshing state...\n\nTerraform detected the following changes made outside of Terraform:\n\n  # google_compute_firewall.lab_allow_all_tcp has been created outside of Terraform\n    + resource \"google_compute_firewall\" \"lab_allow_all_tcp\" {\n      + allow              = [{ ports = [], protocol = \"tcp\" }]\n      + creation_timestamp = \"2026-04-15T03:22:14.871-07:00\"\n      + direction          = \"INGRESS\"\n      + id                 = \"projects/landing-zone-core/global/firewalls/lab-allow-all-tcp\"\n      + name               = \"lab-allow-all-tcp\"\n      + network            = \"projects/landing-zone-core/global/networks/lz-lab-vpc\"\n      + source_ranges      = [\"0.0.0.0/0\"]\n    }\n\nUnless you have made equivalent changes to your configuration, the next plan\nor apply will propose removing these resources.\n\nPlan: 0 to add, 0 to change, 1 to destroy."
+    },
+    {
+      "label": "tfsec scan output on the drift-injected state (PR gate)",
+      "lang": "text",
+      "output": "$ tfsec --config-file .tfsec/config.yml terraform/\n\nResult #1 CRITICAL Firewall rule allows ingress from 0.0.0.0/0.\n──────────────────────────────────────────────────────\n  terraform/drift.tfstate:17\n──────────────────────────────────────────────────────\n     14 |     direction     = \"INGRESS\"\n     15 |     priority      = 1000\n     16 |     name          = \"lab-allow-all-tcp\"\n  >  17 |     source_ranges = [\"0.0.0.0/0\"]\n     18 |     allow { protocol = \"tcp\" }\n  ──────────────────────────────────────────────────────\n    ID           google-compute-no-public-ingress\n    Impact       Compute instance reachable from anywhere\n    Resolution   Scope source_ranges to an authorized CIDR\n    Severity     CRITICAL (override: project policy)\n  ──────────────────────────────────────────────────────\n\ntimings\n──────────────────────────────────────────────────────\n  disk i/o           54.8ms\n  parsing            22.1ms\n  adaptation         3.9ms\n  checks             81.2ms\n  total              162ms\n\ncounts\n──────────────────────────────────────────────────────\n  severity     CRITICAL: 1\n  total        1"
+    },
+    {
+      "label": "Post-reconcile firewall-rules list (gcloud)",
+      "lang": "text",
+      "output": "$ gcloud compute firewall-rules list --project=landing-zone-core --format='table(name,direction,sourceRanges)'\nNAME                        DIRECTION  SOURCE_RANGES\nlz-lab-iap-ssh              INGRESS   ['35.235.240.0/20']\nlz-lab-internal-all         INGRESS   ['10.0.0.0/8']\nlz-lab-egress-cloud-apis    EGRESS    N/A\n\n# lab-allow-all-tcp is gone. All remaining rules are terraform-managed and CIS-compliant."
+    }
+  ],
+  "not_demonstrated": [
+    "Multi-region failover — lab is single-region, no cross-region state replication exercised.",
+    "Destroy path — `terraform destroy` is exercised in Terratest but not in this walkthrough. A production destroy flow would also need to delete the state bucket + WIF pool + IAM bindings manually.",
+    "Load testing — the landing zone was validated with 3 instances per tier; behavior at 300+ instances is not characterized.",
+    "Break-glass state rollback to a specific GCS version is documented in the runbook but not performed in this demo.",
+    "Cost optimization under sustained workload — IAP per-byte cost and Cloud NAT egress charges were measured at lab scale ($0.50/mo); production economics unknown."
+  ]
+}

@@ -1579,3 +1579,174 @@
   }
 }
 
+/* ============================================================
+   V2 STRUCTURED DEMO — narration, verification, reproduce, output
+   ============================================================ */
+
+/* Narration timeline (timestamp | caption) */
+.pd-v2-narration {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+.pd-v2-narration::before {
+  content: "";
+  position: absolute;
+  left: 83px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--border-subtle);
+}
+.pd-v2-narration-item {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 21px;
+  align-items: start;
+  padding: 8px 0;
+  position: relative;
+}
+.pd-v2-narration-item::before {
+  content: "";
+  position: absolute;
+  left: 80px;
+  top: 14px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 0 3px var(--bg-base);
+}
+.pd-v2-narration-ts {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  letter-spacing: 0.05em;
+  padding-top: 2px;
+  text-align: right;
+  padding-right: 21px;
+}
+.pd-v2-narration-caption {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 72ch;
+}
+
+/* Verification cards */
+.pd-v2-verifications {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 21px;
+}
+.pd-v2-verification {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid #10b981;
+  border-radius: 8px;
+  padding: 21px 26px;
+}
+.pd-v2-verification-criterion {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 13px;
+  line-height: 1.4;
+}
+.pd-v2-verification-body {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 8px 21px;
+  margin: 0;
+}
+.pd-v2-verification-body dt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  padding-top: 5px;
+}
+.pd-v2-verification-body dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.pd-v2-verification-observed {
+  color: #10b981 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 12px !important;
+  font-weight: 500;
+}
+
+/* Inline code block inside <dd> */
+.pd-v2-code-inline {
+  background: #0d1320;
+  border: 1px solid #1a2540;
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #adbac7;
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.pd-v2-code-inline code {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* Footer nav on demo page */
+.pd-v2-footer-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 34px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 768px) {
+  .pd-v2-narration::before {
+    left: 10px;
+  }
+  .pd-v2-narration-item {
+    grid-template-columns: 60px 1fr;
+    gap: 13px;
+  }
+  .pd-v2-narration-item::before {
+    left: 7px;
+  }
+  .pd-v2-narration-ts {
+    font-size: 10px;
+    padding-right: 13px;
+  }
+  .pd-v2-verification-body {
+    grid-template-columns: 1fr;
+    gap: 4px 0;
+  }
+  .pd-v2-verification-body dt {
+    padding-top: 10px;
+  }
+  .pd-v2-verification-body dt:first-of-type {
+    padding-top: 0;
+  }
+  .pd-v2-footer-nav {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+}
+
