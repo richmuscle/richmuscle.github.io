@@ -21,11 +21,20 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
     let (nav_open, set_nav_open) = create_signal(false);
     #[allow(unused_variables)]
     let hamburger_ref = create_node_ref::<html::Button>();
+    let project_card_signals = use_context::<GlobalAppState>().map(|s| s.project_cards);
 
-    // Close drawer when route changes (e.g. keyboard shortcut navigation)
+    // Close drawer + any dismissable overlays on route change. Critical for
+    // releasing body scroll-lock: when the project-overlay "View Case Study"
+    // link navigates to /project/:slug, expanded_slug must reset or body stays
+    // locked and the destination page cannot scroll.
     create_effect(move |_| {
         let _ = location.pathname.get();
         set_nav_open.set(false);
+        shortcuts_open.set(false);
+        palette_open.set(false);
+        if let Some(signals) = project_card_signals.as_ref() {
+            signals.set_expanded_slug.set(None);
+        }
     });
 
     // Focus management: on drawer open, move focus to the first drawer link;
