@@ -231,6 +231,41 @@
   --bp-sm:                  480px;
   --bp-md:                  768px;
   --bp-lg:                  1024px;
+
+  /* === V2 PROJECT-SURFACE TOKENS =============================
+     Extensions to the base scale used by the FAANG-grade case-study,
+     docs, and demo page templates. Adding these as dedicated tokens
+     (rather than reusing --color-success/warning/danger) so the V2
+     surfaces can evolve their semantic palette independently of
+     legacy pages.
+     ============================================================= */
+  --v2-ok:                  #10b981;   /* verification pass, ADR active, result text */
+  --v2-warn:                #f59e0b;   /* incident, drift, threat label */
+  --v2-reject:              #ef4444;   /* ADR rejected status only */
+  --v2-ok-bg:               rgba(16, 185, 129, 0.08);
+  --v2-warn-bg:             rgba(245, 158, 11, 0.08);
+  --v2-reject-bg:           rgba(239, 68, 68, 0.08);
+  --v2-ok-border:           rgba(16, 185, 129, 0.25);
+  --v2-warn-border:         rgba(245, 158, 11, 0.25);
+  --v2-reject-border:       rgba(239, 68, 68, 0.25);
+
+  /* V2-specific type sizes filling gaps in the base scale.
+     Base scale collapsed to 11·13·16·26·42 per fibonacci spec;
+     V2 needs an intermediate 15px body (denser than 16) and
+     21px section heading (tighter hierarchy than 26). */
+  --v2-text-body:           15px;
+  --v2-text-section:        21px;
+
+  /* V2 surface spacing uses the existing --space-* tokens:
+     --space-1 (4)  inline gap
+     --space-2 (8)  dense list gap
+     --space-3 (13) card internal gap
+     --space-5 (21) inter-card gap, subheading → content
+     --space-8 (34) major sub-block separator
+     --space-12(55) **canonical section separator**
+     --space-20(89) hero → first section
+
+     Ban new spacing values in V2 CSS. Use only --space-* from above. */
 }
 
 /* === DESIGN TOKENS — LIGHT ================================== */
@@ -273,4 +308,15 @@ html.light {
   /* Legacy alias overrides */
   --accent-magenta:         #86198f;
   --card-shadow:            var(--shadow-sm);
+
+  /* V2 semantic colors — light-mode variants (slightly darker for AA) */
+  --v2-ok:                  #047857;
+  --v2-warn:                #b45309;
+  --v2-reject:              #b91c1c;
+  --v2-ok-bg:               rgba(4, 120, 87, 0.08);
+  --v2-warn-bg:             rgba(180, 83, 9, 0.08);
+  --v2-reject-bg:           rgba(185, 28, 28, 0.08);
+  --v2-ok-border:           rgba(4, 120, 87, 0.25);
+  --v2-warn-border:         rgba(180, 83, 9, 0.25);
+  --v2-reject-border:       rgba(185, 28, 28, 0.25);
 }

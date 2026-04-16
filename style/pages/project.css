@@ -5,7 +5,7 @@
   border: none;
   padding: 0;
   font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   color: var(--text-muted);
   cursor: pointer;
   transition: color 0.15s ease;
@@ -25,7 +25,7 @@
   padding-top: 89px;
   margin-bottom: 34px;
   font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -39,7 +39,7 @@
 .pd-breadcrumb a:hover { color: var(--accent-cyan); }
 .pd-back {
   font-size: 13px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   color: var(--text-muted);
   text-decoration: none;
   transition: color 0.2s;
@@ -54,7 +54,7 @@
 }
 .pd-header-cat {
   font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--accent-cyan);
@@ -69,7 +69,7 @@
 }
 .pd-header-subtitle {
   font-size: 13px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   color: var(--text-muted);
   margin: 0 0 21px 0;
 }
@@ -85,7 +85,7 @@
   padding: 4px 13px;
   font-size: 11px;
   color: var(--text-muted);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
 }
 
 /* Section label (cyan + line) — same as About */
@@ -100,7 +100,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--accent-cyan);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -178,7 +178,7 @@
 }
 .pd-ba-col-header {
   font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 13px;
@@ -246,7 +246,7 @@
   border-radius: 4px;
   font-size: 13px;
   letter-spacing: 0.06em;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   text-decoration: none;
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
@@ -372,7 +372,7 @@
   padding: 8px 0;
   min-height: 44px;
   color: var(--accent-cyan);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   text-decoration: none;
   transition: opacity 150ms ease;
@@ -611,7 +611,7 @@
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   letter-spacing: 0.02em;
 }
 
@@ -622,7 +622,7 @@
 }
 
 .pd-challenge-body code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   background: var(--bg-base);
   border: 1px solid var(--border);
@@ -645,7 +645,7 @@
 }
 
 .pd-lesson-num {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: #22d3ee;
@@ -663,7 +663,7 @@
 }
 
 .pd-lesson-item p code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -698,7 +698,7 @@
 
 .pd-before-label,
 .pd-after-label {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -741,7 +741,7 @@
 }
 
 .pd-timeline-week {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
   color: #22d3ee;
@@ -786,7 +786,7 @@
 }
 .pd-v2-status-badge {
   align-self: flex-start;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -811,7 +811,7 @@
   border-radius: 8px;
 }
 .pd-v2-metric-value {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 22px;
   font-weight: 700;
   line-height: 1.1;
@@ -833,7 +833,7 @@
   margin-bottom: 0;
 }
 .pd-v2-heading {
-  font-size: 21px;
+  font-size: var(--v2-text-section);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.01em;
@@ -842,7 +842,7 @@
 }
 .pd-v2-subheading {
   font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.15em;
   margin: 0 0 13px;
@@ -852,7 +852,7 @@
 .pd-v2-out   { color: var(--text-muted); }
 
 .pd-v2-prose {
-  font-size: 15px;
+  font-size: var(--v2-text-body);
   line-height: 1.7;
   color: var(--text-secondary);
   max-width: 72ch;
@@ -943,7 +943,7 @@
   margin: 0;
 }
 .pd-v2-decision-body dt {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -965,7 +965,7 @@
   gap: 6px;
 }
 .pd-v2-decision-options li {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   padding: 4px 10px;
   background: var(--bg-base);
@@ -1000,7 +1000,7 @@
   border: 1px solid #1a2540;
   border-bottom: none;
   border-radius: 8px 8px 0 0;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
 }
 .pd-v2-highlight-filename {
@@ -1021,7 +1021,7 @@
   margin: 0;
   overflow-x: auto;
   max-width: 100%;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.618;
   color: #adbac7;
@@ -1058,7 +1058,7 @@
   padding: 21px 26px;
 }
 .pd-v2-outcome-metric {
-  font-size: 15px;
+  font-size: var(--v2-text-body);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 16px;
@@ -1082,7 +1082,7 @@
   gap: 4px;
 }
 .pd-v2-outcome-kicker {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -1098,19 +1098,19 @@
   font-size: 14px;
   line-height: 1.5;
   font-weight: 600;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
 }
 .pd-v2-outcome-arrow {
   color: var(--text-muted);
   font-size: 18px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
 }
 .pd-v2-outcome-method {
   font-size: 12px;
   line-height: 1.6;
   color: var(--text-muted);
   margin: 0;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   max-width: none;
 }
 .pd-v2-outcome-method strong {
@@ -1142,7 +1142,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--accent-cyan);
   letter-spacing: 0.1em;
@@ -1174,7 +1174,7 @@
   color: var(--text-secondary);
   text-decoration: none;
   font-size: 14px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
   min-height: 44px;
 }
@@ -1268,7 +1268,7 @@
 }
 
 .pd-v2-docs-toc-kicker {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -1287,7 +1287,7 @@
   display: block;
   padding: 6px 8px;
   font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   color: var(--text-muted);
   text-decoration: none;
   border-left: 2px solid transparent;
@@ -1330,7 +1330,7 @@
   padding: 16px 21px;
 }
 .pd-v2-component-name {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 700;
   color: var(--accent-cyan);
@@ -1351,7 +1351,7 @@
   line-height: 1.5;
 }
 .pd-v2-component-specs dt {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -1361,7 +1361,7 @@
 .pd-v2-component-specs dd {
   margin: 0;
   color: var(--text-secondary);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
 }
 
@@ -1373,7 +1373,7 @@
   margin-bottom: 13px;
 }
 .pd-v2-adr-id {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
   padding: 3px 8px;
@@ -1383,7 +1383,7 @@
   color: var(--text-muted);
 }
 .pd-v2-adr-status {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
   padding: 3px 8px;
@@ -1391,9 +1391,9 @@
   text-transform: uppercase;
 }
 .pd-v2-adr-status-active {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: var(--v2-ok);
+  background: var(--v2-ok-bg);
+  border: 1px solid var(--v2-ok-border);
 }
 .pd-v2-adr-status-superseded {
   color: var(--text-muted);
@@ -1401,9 +1401,9 @@
   border: 1px solid var(--border-subtle);
 }
 .pd-v2-adr-status-rejected {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: var(--v2-reject);
+  background: var(--v2-reject-bg);
+  border: 1px solid var(--v2-reject-border);
 }
 
 /* Runbook ops + incidents */
@@ -1434,7 +1434,7 @@
   margin: 0 0 8px;
 }
 .pd-v2-runbook-incident {
-  border-left: 2px solid #f59e0b;
+  border-left: 2px solid var(--v2-warn);
 }
 .pd-v2-runbook-incident-response {
   margin: 0;
@@ -1479,7 +1479,7 @@
   margin-bottom: 6px !important;
 }
 .pd-v2-threat-threat strong {
-  color: #f59e0b;
+  color: var(--v2-warn);
 }
 .pd-v2-threat-mitigation strong {
   color: var(--accent-cyan);
@@ -1515,7 +1515,7 @@
   gap: 4px;
 }
 .pd-v2-compliance-controls li {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.05em;
   padding: 2px 6px;
@@ -1546,12 +1546,12 @@
   font-size: 12px;
 }
 .pd-v2-obs-name {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   color: var(--accent-cyan);
   letter-spacing: 0.02em;
 }
 .pd-v2-obs-threshold {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   color: var(--text-secondary);
   font-size: 11px;
 }
@@ -1622,7 +1622,7 @@
   box-shadow: 0 0 0 3px var(--bg-base);
 }
 .pd-v2-narration-ts {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
   color: var(--accent-cyan);
@@ -1648,12 +1648,12 @@
 .pd-v2-verification {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-left: 3px solid #10b981;
+  border-left: 3px solid var(--v2-ok);
   border-radius: 8px;
   padding: 21px 26px;
 }
 .pd-v2-verification-criterion {
-  font-size: 15px;
+  font-size: var(--v2-text-body);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 13px;
@@ -1666,7 +1666,7 @@
   margin: 0;
 }
 .pd-v2-verification-body dt {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -1680,8 +1680,8 @@
   color: var(--text-secondary);
 }
 .pd-v2-verification-observed {
-  color: #10b981 !important;
-  font-family: 'JetBrains Mono', monospace !important;
+  color: var(--v2-ok) !important;
+  font-family: var(--font-mono) !important;
   font-size: 12px !important;
   font-weight: 500;
 }
@@ -1693,7 +1693,7 @@
   border-radius: 4px;
   padding: 6px 10px;
   margin: 0;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.5;
   color: #adbac7;
