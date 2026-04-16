@@ -12,7 +12,14 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
+          components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
+      - name: cargo fmt --check
+        run: cargo fmt --check
+      - name: cargo test (ssr, host-only)
+        run: cargo test --no-default-features --features ssr
+      - name: cargo clippy (wasm32, deny warnings)
+        run: cargo clippy --target wasm32-unknown-unknown -- -D warnings
       - name: cargo check (csr default, wasm32)
         run: cargo check --target wasm32-unknown-unknown
       - name: cargo check (ssr)
