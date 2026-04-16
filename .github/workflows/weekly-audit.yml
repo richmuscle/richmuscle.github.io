@@ -1,0 +1,170 @@
+---
+name: Weekly Passive Audit
+'on':
+  schedule:
+    - cron: '0 14 * * 1'
+  workflow_dispatch: null
+  push:
+    branches: [revamp]
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'deny.toml'
+      - 'Trunk.toml'
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: audit-cache
+
+      - name: Install Trunk
+        run: |
+          wget -qO- https://github.com/trunk-rs/trunk/releases/\
+            latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz \
+            | tar -xzf-
+          sudo mv trunk /usr/local/bin/
+
+      - name: Install cargo tools
+        run: |
+          cargo install --locked \
+            cargo-audit cargo-deny cargo-outdated
+        timeout-minutes: 15
+
+      - name: Run cargo audit
+        id: audit
+        run: |
+          cargo audit --json > audit-report.json 2>&1 || true
+          ADVISORIES=$(jq '.vulnerabilities | length' \
+            audit-report.json 2>/dev/null || echo 0)
+          echo "advisories=$ADVISORIES" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Run cargo deny
+        id: deny
+        run: |
+          cargo deny check 2>&1 | tee deny-report.txt || true
+          DENY_STATUS="pass"
+          grep -q "error:" deny-report.txt && DENY_STATUS="fail" || true
+          echo "deny_status=$DENY_STATUS" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Run cargo outdated
+        id: outdated
+        run: |
+          cargo outdated --root-deps-only 2>&1 | \
+            tee outdated-report.txt || true
+          OUTDATED=$(grep -c "^" outdated-report.txt || echo 0)
+          echo "outdated=$OUTDATED" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Check warnings
+        id: warnings
+        run: |
+          WARNINGS=$(cargo check --target wasm32-unknown-unknown \
+            2>&1 | grep -c "warning:" || echo 0)
+          echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Build WASM release
+        run: trunk build --release
+
+      - name: Measure WASM size
+        id: wasm_size
+        run: |
+          WASM_SIZE=$(stat -c%s dist/*.wasm | \
+            awk '{print int($1 / 1024)}')
+          GZIP_SIZE=$(gzip -c dist/*.wasm | wc -c | \
+            awk '{print int($1 / 1024)}')
+          echo "wasm_kb=$WASM_SIZE" >> $GITHUB_OUTPUT
+          echo "gzip_kb=$GZIP_SIZE" >> $GITHUB_OUTPUT
+
+      - name: Count Rust LOC
+        id: loc
+        run: |
+          LOC=$(find src -name "*.rs" | xargs wc -l | \
+            tail -1 | awk '{print $1}')
+          echo "rust_loc=$LOC" >> $GITHUB_OUTPUT
+
+      - name: Count tests
+        id: tests
+        run: |
+          TESTS=$(grep -rn "#\[test\]" src/ | wc -l || echo 0)
+          echo "tests=$TESTS" >> $GITHUB_OUTPUT
+
+      - name: Get current commit
+        id: commit
+        run: |
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          echo "sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+
+      - name: Get current date
+        id: date
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          echo "date=$DATE" >> $GITHUB_OUTPUT
+
+      - name: Update audit history
+        id: update_history
+        env:
+          AUDIT_DATE: ${{ steps.date.outputs.date }}
+          COMMIT_SHA: ${{ steps.commit.outputs.sha }}
+          RUST_LOC: ${{ steps.loc.outputs.rust_loc }}
+          TESTS: ${{ steps.tests.outputs.tests }}
+          WASM_KB: ${{ steps.wasm_size.outputs.wasm_kb }}
+          GZIP_KB: ${{ steps.wasm_size.outputs.gzip_kb }}
+          WARNINGS: ${{ steps.warnings.outputs.warnings }}
+          ADVISORIES: ${{ steps.audit.outputs.advisories }}
+          DENY_STATUS: ${{ steps.deny.outputs.deny_status }}
+          OUTDATED: ${{ steps.outdated.outputs.outdated }}
+        run: |
+          LAST_COMMIT=$(tail -1 \
+            docs/AUDIT_SCORE_HISTORY.md | \
+            grep -oE '\| [a-f0-9]{7}' | \
+            grep -oE '[a-f0-9]{7}' || echo "")
+
+          if [ "$LAST_COMMIT" = "$COMMIT_SHA" ]; then
+            echo "Commit already recorded, skipping"
+            echo "should_commit=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          ROW="| $AUDIT_DATE | $COMMIT_SHA | $RUST_LOC | \
+            $TESTS | $WASM_KB | $GZIP_KB | $WARNINGS | \
+            $ADVISORIES | $DENY_STATUS | $OUTDATED |"
+          echo "$ROW" >> docs/AUDIT_SCORE_HISTORY.md
+          echo "should_commit=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push history
+        if: steps.update_history.outputs.should_commit == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/AUDIT_SCORE_HISTORY.md
+          git commit -m "ci: record weekly audit snapshot"
+          git push origin revamp
+
+      - name: Upload audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-reports
+          path: |
+            audit-report.json
+            deny-report.txt
+            outdated-report.txt
+          retention-days: 90
