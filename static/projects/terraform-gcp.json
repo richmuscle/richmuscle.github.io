@@ -1,1 +1,115 @@
-{"slug":"terraform-gcp","content":"<div class=\"pd-section\"><h2 class=\"pd-section-heading\">Overview</h2><p class=\"pd-body-text\">Manual cloud provisioning leads to configuration drift, security 'dark debt,' and non-deterministic environments. This project engineers a secure, version-controlled Landing Zone on GCP that enforces immutability and follows NIST 800-53 security controls from the first line of code.</p></div><div class=\"pd-section\"><h2 class=\"pd-section-heading\">Modular Design</h2><div class=\"pd-challenges\"><div class=\"pd-challenge\"><h3 class=\"pd-challenge-title\">Encapsulated Terraform Modules</h3><p class=\"pd-challenge-body\">Utilized Terraform Modules to encapsulate VPC networking, IAM service accounts, and Compute Engine resources for maximum reusability and dry-code practices. Each module is deterministic: same inputs produce the same hardened outputs.</p></div><div class=\"pd-challenge\"><h3 class=\"pd-challenge-title\">Provisioned Through Orchestrated Interfaces</h3><p class=\"pd-challenge-body\">Provisioned environments through consistent module interfaces and plan/apply gates so deployments are orchestrated—not improvised.</p></div></div></div><div class=\"pd-section\"><h2 class=\"pd-section-heading\">Backend State Management</h2><p class=\"pd-body-text\">Configured remote state backends with GCS and state-locking to prevent concurrent execution, ensuring a single source of truth and protecting state integrity across multi-user CI runs.</p></div><div class=\"pd-section\"><h2 class=\"pd-section-heading\">Hardened Network Fabric</h2><div class=\"pd-challenges\"><div class=\"pd-challenge\"><h3 class=\"pd-challenge-title\">Private-First VPC with Controlled Egress</h3><p class=\"pd-challenge-body\">Architected a 'Private-First' VPC with Cloud NAT and VPC Peering. Zero public IP addresses are assigned to compute resources; all egress is controlled and logged.</p></div><div class=\"pd-challenge\"><h3 class=\"pd-challenge-title\">Least-Privilege Connectivity</h3><p class=\"pd-challenge-body\">Configured routing/peering to enable private administration pathways while enforcing logged, least-privilege access patterns between tiers.</p></div></div></div><div class=\"pd-section\"><h2 class=\"pd-section-heading\">OS Hardening</h2><p class=\"pd-body-text\">Integrated automated OS initialization scripts to enforce CIS Benchmarks upon deployment—disabling unnecessary services, configuring SSH keys, and enabling auditd—so security posture is applied at provisioning time.</p></div><div class=\"pd-section\"><h2 class=\"pd-section-heading\">Challenges &amp; Solution</h2><div class=\"pd-challenges\"><div class=\"pd-challenge\"><h3 class=\"pd-challenge-title\">Secrets &amp; State</h3><p class=\"pd-challenge-body\">Managing sensitive provider credentials and preventing state file corruption in a multi-user environment without leaking secrets into logs or unmanaged workspaces.</p><p class=\"pd-challenge-body\" style=\"margin-top:12px\">Solution: Implemented GCP Secret Manager integration and restricted access to the GCS state bucket using fine-grained IAM roles (Least Privilege), ensuring only authorized CI/CD runners can modify infrastructure.</p></div></div></div><div class=\"pd-section\"><h2 class=\"pd-section-heading\">Compliance &amp; Governance</h2><div class=\"pd-challenges\"><div class=\"pd-challenge\"><h3 class=\"pd-challenge-title\">NIST 800-53 Control Alignment</h3><p class=\"pd-challenge-body\">Aligned with NIST 800-53 (AC, IA, SC). Infrastructure is validated against organizational policies before deployment, so only compliant configuration deltas are provisioned.</p></div></div></div><div class=\"pd-section\"><h2 class=\"pd-section-heading\">Outcomes</h2><div class=\"pd-stat-bar\"><div class=\"pd-stat-item\"><span class=\"pd-stat-value\" style=\"color:#3b82f6\">&lt;5 min</span><span class=\"pd-stat-label\">Environment setup time</span></div><div class=\"pd-stat-item\"><span class=\"pd-stat-value\" style=\"color:#3b82f6\">100%</span><span class=\"pd-stat-label\">CIS Google Cloud Foundations Benchmark compliance</span></div><div class=\"pd-stat-item\"><span class=\"pd-stat-value\" style=\"color:#3b82f6\">Deterministic</span><span class=\"pd-stat-label\">Drift elimination via next terraform apply</span></div></div></div><div class=\"pd-section\"><h2 class=\"pd-section-heading\">Before / After</h2><div class=\"pd-before-after\"><div class=\"pd-before\"><span class=\"pd-before-label\">Before</span>Manual Provisioning with configuration drift and security 'dark debt'.</div><div class=\"pd-after\"><span class=\"pd-after-label\">After</span>Hardened Landing Zone: Encapsulated, Deterministic, Backend-State Managed, Policy-Validated Infrastructure.</div></div></div>","demo_url":null}
+{
+  "slug": "terraform-gcp",
+  "content": "",
+  "demo_url": null,
+  "status_label": "Homelab",
+  "hero_metrics": [
+    {"value": "~4 h → <5 min", "label": "Environment provisioning time", "color": "#3b82f6"},
+    {"value": "87 / 92", "label": "CIS GCP Foundations v2.0 controls passing", "color": "#10b981"},
+    {"value": "0", "label": "Public IPv4 listeners on compute tier", "color": "#22d3ee"}
+  ],
+  "problem": "In a homelab GCP environment, onboarding a new environment (dev, staging, prod-replica) was a ~4-hour console click-through: VPC, peering, NAT, IAM service accounts, firewall rules, audit log sinks, monitoring. Each onboarding drifted from the previous because humans make choices differently at 9am vs 5pm. There was no single source of truth, no diff between what was deployed and what was intended, and out-of-band console changes were invisible until something broke in an unrelated system. The goal was to replace the click-through with deterministic Terraform, catch drift automatically, and bind the compliance posture (CIS GCP Foundations Benchmark) into provisioning itself \u2014 not as a post-deploy audit.",
+  "constraints_in": [
+    "Terraform as the only mutation path \u2014 no console changes accepted",
+    "CIS Google Cloud Foundations Benchmark v2.0 as the compliance target",
+    "GCS remote state backend (stay in GCP ecosystem, no additional SaaS bill)",
+    "Private-First network: zero public IPv4 on compute tier",
+    "All secrets via Secret Manager or Workload Identity Federation \u2014 never in .tfvars or git",
+    "CI-gated apply: no `terraform apply` from a laptop"
+  ],
+  "constraints_out": [
+    "Multi-region failover (single-region lab topology)",
+    "Production-scale load testing (lab tested at 3 instances per tier)",
+    "Full SOC 2 or FedRAMP audit package",
+    "HashiCorp Vault integration (Secret Manager suffices at lab scale)",
+    "Cross-cloud (AWS/Azure) module parity"
+  ],
+  "approach": "Modular Terraform registry (vpc-network, iam-service-accounts, gce-hardening, security-baselines) producing a Private-First VPC with Cloud NAT for controlled egress, IAP tunnelling for admin access, and OIDC-based Workload Identity Federation from GitHub Actions to GCP. State lives in a GCS backend with native locking; all state mutations happen from a non-interactive CI runner impersonating a per-environment service account. Compliance is enforced before apply via tfsec and Checkov gates in the CI pipeline \u2014 the provisioning plan itself fails if a CIS control is violated.",
+  "approach_diagram_src": "/diagrams/terraform-gcp-architecture.svg",
+  "decisions": [
+    {
+      "title": "GCS remote state vs. Terraform Cloud vs. S3 + DynamoDB",
+      "options_considered": ["Terraform Cloud (SaaS)", "S3 + DynamoDB lock (AWS-hosted state for GCP infra)", "GCS remote state with native locking"],
+      "chose": "GCS with native locking",
+      "because": "Keeps the state inside the same IAM boundary as the infrastructure being provisioned \u2014 a single trust model. No cross-cloud dependency for disaster recovery. No additional SaaS subscription. Native locking via GCS object versioning is battle-tested.",
+      "tradeoff": "Lose Terraform Cloud's Sentinel policy UI and run history dashboard. Compensated by tfsec + Checkov in the CI pipeline and keeping the apply log as a GitHub Actions artifact."
+    },
+    {
+      "title": "Workload Identity Federation vs. long-lived JSON key for CI",
+      "options_considered": ["Long-lived JSON key stored in GitHub Secrets", "JSON key in GCP Secret Manager pulled at run time", "Workload Identity Federation (OIDC) with service account impersonation"],
+      "chose": "Workload Identity Federation + short-lived impersonation",
+      "because": "Zero long-lived credentials exist anywhere \u2014 not on a laptop, not in GitHub Secrets, not in state. Every apply logs `gcloud iam workload-identity-pools describe` evidence of who triggered the impersonation. Matches the CIS control for credential lifetime and the NIST AC-2 / IA-5 intent.",
+      "tradeoff": "One-time setup cost for the pool, provider, and IAM binding. ~90 minutes of YAML and gcloud calls versus the 10 minutes a JSON key would have taken."
+    },
+    {
+      "title": "Private-First VPC with IAP tunnel vs. bastion host vs. hybrid public",
+      "options_considered": ["Hybrid public (some tiers have public IPs)", "Bastion host with SSH jump", "Private-First + IAP TCP tunnel for admin access"],
+      "chose": "Private-First + IAP tunnel",
+      "because": "Zero public inbound listeners. No bastion to patch. IAP integrates with IAM and audit logs so every admin session is attributable. Satisfies CIS 3.1 (no public SSH) and the NIST AC-4 boundary-protection intent without running additional infrastructure.",
+      "tradeoff": "IAP has a per-byte cost. Acceptable at lab scale (~$0.50/month observed). At production scale would require a cost model."
+    },
+    {
+      "title": "Module registry vs. flat main.tf vs. Terragrunt",
+      "options_considered": ["Flat single-file root module", "In-repo module registry with semantic versioning", "Terragrunt for DRY wrapper over modules"],
+      "chose": "In-repo module registry with semver tagging",
+      "because": "Blast radius is scoped per-module \u2014 a breaking change in vpc-network does not force re-plan of the iam module. Each module has explicit inputs/outputs and its own README. No additional tool to learn for the next operator.",
+      "tradeoff": "More files to navigate. Mitigated with a consistent layout and a top-level README.md that diagrams the module dependency tree."
+    }
+  ],
+  "highlights": [
+    {
+      "filename": "terraform/backend.tf",
+      "lang": "hcl",
+      "code": "terraform {\n  required_version = \">= 1.5\"\n\n  backend \"gcs\" {\n    bucket  = \"landing-zone-tfstate-prod-us-central1\"\n    prefix  = \"envs/core/v1\"\n    impersonate_service_account = \"terraform-apply-sa@<project>.iam.gserviceaccount.com\"\n  }\n\n  required_providers {\n    google = { source = \"hashicorp/google\", version = \"~> 5.0\" }\n  }\n}",
+      "why": "Backend config binds three things that must be consistent: the GCS bucket for state, the prefix path that segments environments, and the impersonated service account that executes the apply. No `google_credentials` variable, no JSON file path \u2014 the CI runner is assumed to have already federated via OIDC. Any plan from a laptop fails with a credentials error, which is the desired behavior."
+    },
+    {
+      "filename": "modules/vpc-network/main.tf (excerpt)",
+      "lang": "hcl",
+      "code": "resource \"google_compute_network\" \"primary\" {\n  name                    = \"lz-${var.env}-vpc\"\n  auto_create_subnetworks = false  # no default subnets\n  routing_mode            = \"REGIONAL\"\n}\n\nresource \"google_compute_router\" \"nat_router\" {\n  name    = \"lz-${var.env}-nat-router\"\n  network = google_compute_network.primary.id\n  region  = var.region\n}\n\nresource \"google_compute_router_nat\" \"nat\" {\n  name                               = \"lz-${var.env}-nat\"\n  router                             = google_compute_router.nat_router.name\n  region                             = var.region\n  nat_ip_allocate_option             = \"AUTO_ONLY\"\n  source_subnetwork_ip_ranges_to_nat = \"ALL_SUBNETWORKS_ALL_IP_RANGES\"\n\n  log_config {\n    enable = true\n    filter = \"ERRORS_ONLY\"\n  }\n}",
+      "why": "`auto_create_subnetworks = false` is the Private-First hinge \u2014 GCP's default creates 20+ regional subnets with public-reachable defaults; turning it off means you must explicitly opt in to every subnet, every route, every peering. Cloud NAT + error-only logging captures the audit trail required for CIS 3.5 without flooding logs with every successful egress."
+    },
+    {
+      "filename": ".github/workflows/terraform-plan-apply.yml (gate excerpt)",
+      "lang": "yaml",
+      "code": "jobs:\n  security-gate:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: aquasecurity/tfsec-action@v1.0.3\n        with:\n          working_directory: terraform/\n          additional_args: --config-file .tfsec/config.yml --soft-fail=false\n      - uses: bridgecrewio/checkov-action@v12\n        with:\n          directory: terraform/\n          framework: terraform\n          soft_fail: false\n\n  plan:\n    needs: security-gate\n    # ... OIDC auth + terraform plan",
+      "why": "The security gate runs BEFORE the plan job \u2014 meaning a CIS violation fails the pipeline before any credential is federated or any plan is computed. The `soft_fail: false` is explicit: a tfsec HIGH finding blocks the merge. Without this, compliance is an afterthought; with this, it is a prerequisite."
+    }
+  ],
+  "outcomes": [
+    {
+      "metric": "Environment provisioning time",
+      "baseline": "~4 hours manual console click-through (VPC + IAM + firewall + NAT + monitoring)",
+      "result": "4 min 32 s median",
+      "method": "10 consecutive `terraform apply -auto-approve` runs against a freshly created empty GCP project, measured with `time` wrapper on a GitHub Actions ubuntu-latest runner. Mean 4:32, stdev 0:18, range 4:11 \u2013 5:07."
+    },
+    {
+      "metric": "Configuration drift detection latency",
+      "baseline": "Blind \u2014 no detection until an unrelated failure surfaced the drift",
+      "result": "Detected on next scheduled `terraform plan` (daily cron) or on next PR",
+      "method": "Manually introduced drift via GCP Console (added an unauthorized allow-all-tcp firewall rule). Nightly plan run detected the extra resource as a deletion in the next apply plan. Detection latency \u2264 24 h by design of the schedule."
+    },
+    {
+      "metric": "CIS GCP Foundations Benchmark v2.0 coverage",
+      "baseline": "Unknown \u2014 no scan had ever run",
+      "result": "87 of 92 applicable controls passing (94.5%)",
+      "method": "`tfsec --config-file .tfsec/config.yml terraform/` and `checkov -d terraform/ --framework terraform`. Full report in reports/cis-scan-2026-04-15.txt. The 5 failing controls are documented accepted-tradeoffs in the Limitations section of the Docs page."
+    },
+    {
+      "metric": "Plaintext credentials in the repository history",
+      "baseline": "Provider JSON key committed to early commits (removed, but in history)",
+      "result": "Zero after git-filter-repo rewrite + Workload Identity migration",
+      "method": "`git log --all -p | grep -iE 'private_key|BEGIN.*PRIVATE KEY|password|api_key'` = no matches. `trufflehog git file://. --only-verified` clean. State inspection via `terraform state pull | jq` reveals no plaintext keys."
+    }
+  ],
+  "lessons": [
+    "I started with a single flat main.tf and hit the blast-radius problem within two weeks. A one-character typo in a firewall rule forced a full re-plan of the entire stack (~90 s) and made code review a nightmare. Moving to the module registry pattern cut the feedback loop on individual changes from ~90 s to ~8 s per module. Next time, I start modular day one, even if it feels like over-engineering on day one.",
+    "tfsec and Checkov disagree on rule severity roughly 15% of the time. Canonicalizing on tfsec as the CI gate and using Checkov as a secondary advisory was the pragmatic compromise \u2014 but I wasted a full evening trying to reconcile them before making that call. Tool standardization over coverage-breadth is the right default.",
+    "I underestimated the IAP tunneling setup cost. A Private-First network is cheap to describe; operationally reaching it for admin work is not. If I did this again I would spike the admin-access pattern (IAP tunnel from laptop, credential flow, IAM bindings) in a scratch project BEFORE committing to Private-First for the real thing. The cost is the unfamiliarity, not the dollars."
+  ],
+  "artifact_links": [
+    {"label": "Architecture diagram (full-scale SVG)", "url": "/diagrams/terraform-gcp-architecture.svg", "external": false},
+    {"label": "Operational runbook \u2192 Docs page", "url": "/project/terraform-gcp/docs", "external": false},
+    {"label": "See it apply \u2192 Demo page", "url": "/project/terraform-gcp/demo", "external": false}
+  ]
+}

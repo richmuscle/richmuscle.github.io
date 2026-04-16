@@ -78,12 +78,302 @@ pub struct ProjectIndex {
 }
 
 /// Fetched at runtime from /projects/{slug}.json
+///
+/// Dual-format support:
+/// - Legacy projects set only `content` (pre-rendered HTML string).
+/// - V2 projects populate the structured fields below (problem, decisions,
+///   outcomes, etc.) and leave `content` empty. The renderer checks
+///   `problem.is_some()` to pick the format.
 #[derive(Clone, serde::Deserialize, serde::Serialize)]
 pub struct ProjectDetail {
     pub slug: String,
+    #[serde(default)]
     pub content: String,
     #[serde(default)]
     pub demo_url: Option<String>,
+
+    // ── V2 structured fields ──────────────────────────────────
+    #[serde(default)]
+    pub status_label: Option<String>,
+    #[serde(default)]
+    pub hero_metrics: Vec<HeroMetric>,
+    #[serde(default)]
+    pub problem: Option<String>,
+    #[serde(default)]
+    pub constraints_in: Vec<String>,
+    #[serde(default)]
+    pub constraints_out: Vec<String>,
+    #[serde(default)]
+    pub approach: Option<String>,
+    #[serde(default)]
+    pub approach_diagram_src: Option<String>,
+    #[serde(default)]
+    pub decisions: Vec<Decision>,
+    #[serde(default)]
+    pub highlights: Vec<CodeHighlight>,
+    #[serde(default)]
+    pub outcomes: Vec<Outcome>,
+    #[serde(default)]
+    pub lessons: Vec<String>,
+    #[serde(default)]
+    pub artifact_links: Vec<ArtifactLink>,
+}
+
+impl ProjectDetail {
+    pub fn is_structured(&self) -> bool {
+        self.problem.is_some()
+    }
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct HeroMetric {
+    pub value: String,
+    pub label: String,
+    #[serde(default)]
+    pub color: Option<String>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct Decision {
+    pub title: String,
+    pub options_considered: Vec<String>,
+    pub chose: String,
+    pub because: String,
+    pub tradeoff: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct CodeHighlight {
+    pub filename: String,
+    pub lang: String,
+    pub code: String,
+    pub why: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct Outcome {
+    pub metric: String,
+    pub baseline: String,
+    pub result: String,
+    pub method: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct ArtifactLink {
+    pub label: String,
+    pub url: String,
+    #[serde(default)]
+    pub external: bool,
+}
+
+// ============================================================
+//   DOCS — V2 structured doc page
+// ============================================================
+
+/// Fetched at runtime from /docs/{slug}.json
+/// V2 structure with TOC + ADRs + runbook + threat model.
+/// Legacy docs still populate only `content`.
+#[derive(Clone, serde::Deserialize, serde::Serialize, Default)]
+pub struct DocsDetail {
+    pub slug: String,
+    #[serde(default)]
+    pub content: String,
+
+    #[serde(default)]
+    pub toc: Vec<TocEntry>,
+    #[serde(default)]
+    pub overview: Option<DocsOverview>,
+    #[serde(default)]
+    pub adrs: Vec<Adr>,
+    #[serde(default)]
+    pub config_walkthrough: Vec<CodeHighlight>,
+    #[serde(default)]
+    pub runbook: Option<Runbook>,
+    #[serde(default)]
+    pub security: Option<SecurityPosture>,
+    #[serde(default)]
+    pub observability: Option<Observability>,
+    #[serde(default)]
+    pub testing: Option<String>,
+    #[serde(default)]
+    pub limitations: Vec<String>,
+    #[serde(default)]
+    pub references: Vec<ArtifactLink>,
+}
+
+impl DocsDetail {
+    pub fn is_structured(&self) -> bool {
+        !self.toc.is_empty() || self.overview.is_some()
+    }
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct TocEntry {
+    pub id: String,
+    pub label: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct DocsOverview {
+    pub description: String,
+    #[serde(default)]
+    pub components: Vec<ComponentSpec>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct ComponentSpec {
+    pub name: String,
+    pub purpose: String,
+    #[serde(default)]
+    pub inputs: Option<String>,
+    #[serde(default)]
+    pub outputs: Option<String>,
+    #[serde(default)]
+    pub slo: Option<String>,
+    #[serde(default)]
+    pub failure_mode: Option<String>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct Adr {
+    pub id: String,
+    pub title: String,
+    pub status: String,
+    pub context: String,
+    pub decision: String,
+    pub consequences: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct Runbook {
+    #[serde(default)]
+    pub deploy: Vec<String>,
+    #[serde(default)]
+    pub rollback: Vec<String>,
+    #[serde(default)]
+    pub common_ops: Vec<RunbookOp>,
+    #[serde(default)]
+    pub incidents: Vec<RunbookIncident>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct RunbookOp {
+    pub task: String,
+    pub steps: Vec<String>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct RunbookIncident {
+    pub scenario: String,
+    pub response: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct SecurityPosture {
+    #[serde(default)]
+    pub threat_model: Vec<ThreatMitigation>,
+    #[serde(default)]
+    pub compliance: Vec<ComplianceFramework>,
+    #[serde(default)]
+    pub unresolved_risks: Vec<String>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct ThreatMitigation {
+    pub threat: String,
+    pub mitigation: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct ComplianceFramework {
+    pub framework: String,
+    pub controls: Vec<String>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct Observability {
+    #[serde(default)]
+    pub metrics: Vec<ObservabilityMetric>,
+    #[serde(default)]
+    pub alerts: Vec<ObservabilityAlert>,
+    #[serde(default)]
+    pub dashboards: Vec<String>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct ObservabilityMetric {
+    pub name: String,
+    pub threshold: String,
+    pub source: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct ObservabilityAlert {
+    pub name: String,
+    pub condition: String,
+    pub action: String,
+}
+
+// ============================================================
+//   DEMO — V2 structured demo page
+// ============================================================
+
+/// Fetched at runtime from /demos/{slug}.json (new file tree).
+#[derive(Clone, serde::Deserialize, serde::Serialize, Default)]
+pub struct DemoDetail {
+    pub slug: String,
+    #[serde(default)]
+    pub hero_media_type: Option<String>, // "svg" | "gif" | "screenshot" | "video"
+    #[serde(default)]
+    pub hero_media_src: Option<String>,
+    #[serde(default)]
+    pub hero_caption: Option<String>,
+    #[serde(default)]
+    pub narration: Vec<NarrationCue>,
+    #[serde(default)]
+    pub verification: Vec<VerificationCheck>,
+    #[serde(default)]
+    pub reproduce: Option<ReproduceSteps>,
+    #[serde(default)]
+    pub output_snippets: Vec<OutputSnippet>,
+    #[serde(default)]
+    pub not_demonstrated: Vec<String>,
+}
+
+impl DemoDetail {
+    pub fn is_populated(&self) -> bool {
+        self.hero_media_src.is_some()
+    }
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct NarrationCue {
+    pub timestamp: String,
+    pub caption: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct VerificationCheck {
+    pub criterion: String,
+    pub method: String,
+    pub observed: String,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct ReproduceSteps {
+    #[serde(default)]
+    pub prereqs: Vec<String>,
+    #[serde(default)]
+    pub env_vars: Vec<String>,
+    #[serde(default)]
+    pub steps: Vec<String>,
+}
+
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+pub struct OutputSnippet {
+    pub label: String,
+    pub lang: String,
+    pub output: String,
 }
 
 fn init_projects_index() -> Vec<ProjectIndex> {
