@@ -14,7 +14,9 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 8px 13px;
-  font-size: 13px;
+  /* 16px explicit to prevent iOS auto-zoom on focus regardless of cascade.
+     Mobile-specific override below bumps padding/min-height for touch. */
+  font-size: 16px;
   font-family: 'JetBrains Mono', monospace;
   color: var(--text-primary);
 }

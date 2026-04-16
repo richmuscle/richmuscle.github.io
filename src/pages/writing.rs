@@ -279,21 +279,23 @@ pub fn WritingPage() -> impl IntoView {
                                     "writeup-card-link writeup-card block py-8 border-b border-[var(--border-subtle)] group"
                                 };
                                 let detail_href = format!("/writing/{}", sanitize_slug(&slug));
+                                // Entire card is a block link so taps on the meta row also navigate.
+                                // <article> is nested inside <a> (valid HTML5: <a> accepts flow content).
                                 view! {
-                                    <article class=card_class>
-                                        <div class="flex items-center gap-3 mb-3">
-                                            <span class="text-[11px] font-mono text-[var(--text-muted)]">{date}</span>
-                                            {if is_core {
-                                                view! {
-                                                    <span class="core-essay-badge">"[CORE_ESSAY]"</span>
-                                                }.into_view()
-                                            } else {
-                                                view! { <span></span> }.into_view()
-                                            }}
-                                            <span class="text-[var(--border-subtle)]">"·"</span>
-                                            <span class="text-[11px] font-mono text-[var(--text-muted)]">{read_time}</span>
-                                        </div>
-                                        <a href=detail_href class="writeup-card-main">
+                                    <a href=detail_href class="writeup-card-main">
+                                        <article class=card_class>
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <span class="text-[11px] font-mono text-[var(--text-muted)]">{date}</span>
+                                                {if is_core {
+                                                    view! {
+                                                        <span class="core-essay-badge">"[CORE_ESSAY]"</span>
+                                                    }.into_view()
+                                                } else {
+                                                    view! { <span></span> }.into_view()
+                                                }}
+                                                <span class="text-[var(--border-subtle)]">"·"</span>
+                                                <span class="text-[11px] font-mono text-[var(--text-muted)]">{read_time}</span>
+                                            </div>
                                             <h2 class=title_class>{title}</h2>
                                             <p class="text-[14px] text-[var(--text-secondary)] leading-7 mb-4">{subtitle}</p>
                                             <div class="writeup-card-tags flex flex-wrap gap-2">
@@ -301,8 +303,8 @@ pub fn WritingPage() -> impl IntoView {
                                                     <span class="text-[10px] font-mono px-2 py-1 rounded bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--accent-cyan)] uppercase tracking-wider">{tag}</span>
                                                 }).collect_view()}
                                             </div>
-                                        </a>
-                                    </article>
+                                        </article>
+                                    </a>
                                 }
                             }).collect_view()
                         }
