@@ -1642,6 +1642,196 @@
 }
 
 /* ============================================================
+   PRINT STYLESHEET for V2 project pages
+   Triggered by Cmd+P / browser print. Produces a clean single-column
+   PDF with site chrome stripped, code blocks bounded, and page-break
+   hints at section boundaries.
+   ============================================================ */
+
+@media print {
+  /* Strip site chrome */
+  .navbar,
+  .pd-surface-tabs,
+  .pd-v2-docs-toc,
+  .pd-breadcrumb-row,
+  .skip-to-content,
+  .reading-progress-bar,
+  .back-to-top-wrap,
+  .pd-footer-actions,
+  .pd-footer-nav,
+  .pd-v2-footer-nav,
+  .pd-docs-back-cta,
+  .home-footer,
+  .navbar-mobile-drawer,
+  .navbar-drawer-scrim {
+    display: none !important;
+  }
+
+  /* Page: white background, black text */
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Container: full page width */
+  .pd-container,
+  .pd-v2-docs-layout,
+  .pd-v2-docs-content {
+    display: block !important;
+    grid-template-columns: 1fr !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Hero: compact for print */
+  .pd-header {
+    margin-bottom: 16pt !important;
+    padding-bottom: 12pt !important;
+    border-bottom: 1.5pt solid #000 !important;
+  }
+  .pd-title {
+    font-size: 22pt !important;
+    color: #000 !important;
+    margin: 0 0 6pt !important;
+  }
+  .pd-subtitle {
+    font-size: 12pt !important;
+    color: #333 !important;
+    margin: 0 0 8pt !important;
+  }
+  .pd-category-label {
+    color: #666 !important;
+  }
+
+  /* V2 Section headings */
+  .pd-v2-heading {
+    font-size: 14pt !important;
+    color: #000 !important;
+    margin: 14pt 0 8pt !important;
+    page-break-after: avoid;
+  }
+  .pd-v2-subheading {
+    color: #333 !important;
+  }
+  .pd-v2-prose,
+  .pd-v2-list li,
+  .pd-v2-threat p,
+  .pd-v2-runbook-incident-response {
+    color: #000 !important;
+  }
+
+  /* Cards: borders only, no fill */
+  .pd-v2-metric,
+  .pd-v2-decision,
+  .pd-v2-highlight,
+  .pd-v2-outcome,
+  .pd-v2-threat,
+  .pd-v2-verification,
+  .pd-v2-constraints-col,
+  .pd-v2-compliance-framework,
+  .pd-v2-runbook-op,
+  .pd-v2-runbook-incident,
+  .pd-v2-component,
+  .pd-v2-obs-item {
+    background: #fff !important;
+    border: 0.75pt solid #ccc !important;
+    padding: 6pt 8pt !important;
+    page-break-inside: avoid;
+    color: #000 !important;
+  }
+  .pd-v2-decision {
+    border-left: 2pt solid #444 !important;
+  }
+  .pd-v2-verification {
+    border-left: 2pt solid #222 !important;
+  }
+  .pd-v2-runbook-incident {
+    border-left: 2pt solid #666 !important;
+  }
+  .pd-v2-compliance-framework {
+    border-left: 2pt solid #222 !important;
+  }
+
+  /* Code blocks stay dark for legibility of syntax */
+  .pd-v2-code,
+  .pd-v2-code-plain,
+  .pd-v2-code-inline {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border: 0.5pt solid #333 !important;
+    padding: 6pt !important;
+    font-size: 9pt !important;
+    page-break-inside: avoid;
+  }
+  .pd-v2-highlight-caption {
+    background: #333 !important;
+    color: #fff !important;
+    border-bottom: none !important;
+  }
+
+  /* Metric values: bold black instead of color */
+  .pd-v2-metric-value,
+  .pd-v2-outcome-result .pd-v2-outcome-text,
+  .pd-v2-verification-observed {
+    color: #000 !important;
+    font-weight: 700;
+  }
+
+  /* Status badges: simple */
+  .pd-v2-status-badge,
+  .pd-v2-adr-status,
+  .pd-v2-adr-id {
+    background: #fff !important;
+    color: #000 !important;
+    border: 0.5pt solid #666 !important;
+  }
+
+  /* Images: max-width constraint */
+  .pd-v2-diagram img,
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  /* External link URLs printed inline */
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+  }
+  a[href^="/"]:after {
+    content: "";
+  }
+
+  /* Hide internal navigation links (they're meaningless on paper) */
+  .pd-v2-artifact-link[href^="/"] {
+    display: none !important;
+  }
+
+  /* Page break hints for major sections on docs */
+  .pd-v2-section#adrs,
+  .pd-v2-section#runbook,
+  .pd-v2-section#security,
+  .pd-v2-section#references {
+    page-break-before: always;
+  }
+
+  /* Avoid widows/orphans in prose */
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+}
+
+/* ============================================================
    V2 STRUCTURED DEMO — narration, verification, reproduce, output
    ============================================================ */
 
