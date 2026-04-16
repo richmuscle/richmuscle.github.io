@@ -9,8 +9,15 @@ use leptos_router::{use_params_map, A};
 pub fn ProjectDetailPage() -> impl IntoView {
     // Defensive: project pages MUST be scrollable. Release any stale
     // body scroll-lock from an overlay that didn't reset its signal.
+    // Three unlock paths: immediate sync, next animation frame, next-tick
+    // timeout. At least one runs after any pending reactive effect.
     #[cfg(not(feature = "ssr"))]
-    crate::utils::set_body_scroll_lock(false);
+    {
+        crate::utils::set_body_scroll_lock(false);
+        use gloo_timers::callback::Timeout;
+        Timeout::new(0, || crate::utils::set_body_scroll_lock(false)).forget();
+        Timeout::new(50, || crate::utils::set_body_scroll_lock(false)).forget();
+    }
 
     let params = use_params_map();
     let slug = move || {
@@ -199,7 +206,12 @@ pub fn ProjectDetailPage() -> impl IntoView {
 #[component]
 pub fn ProjectDocsPage() -> impl IntoView {
     #[cfg(not(feature = "ssr"))]
-    crate::utils::set_body_scroll_lock(false);
+    {
+        crate::utils::set_body_scroll_lock(false);
+        use gloo_timers::callback::Timeout;
+        Timeout::new(0, || crate::utils::set_body_scroll_lock(false)).forget();
+        Timeout::new(50, || crate::utils::set_body_scroll_lock(false)).forget();
+    }
 
     let params = use_params_map();
     let slug = move || {
@@ -285,7 +297,12 @@ pub fn ProjectDocsPage() -> impl IntoView {
 #[component]
 pub fn ProjectDemoPage() -> impl IntoView {
     #[cfg(not(feature = "ssr"))]
-    crate::utils::set_body_scroll_lock(false);
+    {
+        crate::utils::set_body_scroll_lock(false);
+        use gloo_timers::callback::Timeout;
+        Timeout::new(0, || crate::utils::set_body_scroll_lock(false)).forget();
+        Timeout::new(50, || crate::utils::set_body_scroll_lock(false)).forget();
+    }
 
     let params = use_params_map();
     let slug = move || {

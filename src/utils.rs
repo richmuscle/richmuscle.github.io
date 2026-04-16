@@ -31,8 +31,9 @@ pub fn wasm_start_time_ms() -> Option<f64> {
     WASM_START_TIME_MS.get().copied()
 }
 
-/// Toggle document.body `scroll-locked` class based on a boolean.
-/// Wraps web_sys DOM access so callers stay concise inside `create_effect`.
+/// Set or unset document.body `scroll-locked` class.
+/// Explicit add/remove (not toggle_with_force) — observed that toggle_with_force
+/// in some Leptos render cycles does not reliably clear the class.
 /// Safe on SSR (no-op). Silent on any DOM traversal failure.
 #[cfg(not(feature = "ssr"))]
 pub fn set_body_scroll_lock(locked: bool) {
@@ -42,7 +43,12 @@ pub fn set_body_scroll_lock(locked: bool) {
     else {
         return;
     };
-    let _ = body.class_list().toggle_with_force("scroll-locked", locked);
+    let cl = body.class_list();
+    if locked {
+        let _ = cl.add_1("scroll-locked");
+    } else {
+        let _ = cl.remove_1("scroll-locked");
+    }
 }
 
 #[cfg(feature = "ssr")]
