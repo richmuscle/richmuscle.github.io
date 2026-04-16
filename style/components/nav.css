@@ -365,7 +365,7 @@ html.light .theme-toggle-btn {
     height: 44px;
   }
 
-  /* Mobile-only search button — opens the command palette. */
+  /* Mobile-only search button — toggles the command palette open/close. */
   .navbar-search-toggle {
     display: flex;
     align-items: center;
@@ -385,6 +385,12 @@ html.light .theme-toggle-btn {
     color: var(--accent-cyan);
     border-color: var(--accent-cyan);
     background: color-mix(in srgb, var(--accent-cyan) 8%, transparent);
+  }
+  /* Active state when the palette is open — cyan chip for clear toggle signal. */
+  .navbar-search-toggle.is-open {
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    background: color-mix(in srgb, var(--accent-cyan) 14%, transparent);
   }
 }
 

@@ -110,14 +110,25 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
                 }}
                 <button
                     type="button"
-                    class="navbar-search-toggle"
-                    aria-label="Open command palette and search"
-                    on:click=move |_| palette_open.set(true)
+                    class=move || if palette_open.get() { "navbar-search-toggle is-open" } else { "navbar-search-toggle" }
+                    aria-label=move || if palette_open.get() { "Close command palette" } else { "Open command palette and search" }
+                    aria-expanded=move || if palette_open.get() { "true" } else { "false" }
+                    on:click=move |_| palette_open.update(|v| *v = !*v)
                 >
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                        <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
+                    {move || if palette_open.get() {
+                        view! {
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        }.into_view()
+                    } else {
+                        view! {
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                                <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        }.into_view()
+                    }}
                 </button>
                 <button
                     type="button"
