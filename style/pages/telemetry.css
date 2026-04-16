@@ -43,6 +43,12 @@
   gap: 13px;
   margin-bottom: 21px;
 }
+/* Below 640px the 2-col cards get cramped; single-col reads cleaner on phones. */
+@media (max-width: 640px) {
+  .telemetry-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .telemetry-card,
 .telemetry-logs {
   background: var(--bg-surface);

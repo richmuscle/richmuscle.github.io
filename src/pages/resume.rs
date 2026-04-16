@@ -42,8 +42,11 @@ pub fn ResumePage() -> impl IntoView {
                         <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" style="color:#22d3ee;text-decoration:none;vertical-align:baseline;">"GitHub"</a>
                     </div>
                     <a href="/pdfs/resume.pdf" target="_blank" rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 text-[12px] font-mono text-[var(--text-muted)] border border-[var(--border-subtle)] px-4 py-2 rounded-lg hover:border-[var(--border-active)] hover:text-[var(--accent-cyan)] transition-colors cursor-pointer bg-transparent mt-4 no-underline w-fit">
+                        aria-label="Download resume as PDF (opens in new tab)"
+                        class="inline-flex items-center gap-2 text-[12px] font-mono text-[var(--text-muted)] border border-[var(--border-subtle)] px-4 py-2 rounded-lg hover:border-[var(--border-active)] hover:text-[var(--accent-cyan)] transition-colors cursor-pointer bg-transparent mt-4 no-underline w-fit"
+                        style="min-height:44px;">
                         "Download Resume (PDF)"
+                        <span class="sr-only">"(opens in new tab)"</span>
                     </a>
                 </header>
 
