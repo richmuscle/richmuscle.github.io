@@ -10,6 +10,7 @@ use leptos_router::use_params_map;
 pub fn WritingPage() -> impl IntoView {
     let (search_query, set_search_query) = create_signal(String::new());
     let (active_category, set_active_category) = create_signal(None::<&'static str>);
+    let (sheet_open, set_sheet_open) = create_signal(false);
     let categories: [&'static str; 5] = [
         "PLATFORM ARCHITECTURE",
         "CYBERSECURITY & NIST",
@@ -74,6 +75,7 @@ pub fn WritingPage() -> impl IntoView {
                     <h1 class="text-[36px] font-bold text-[var(--text-primary)] tracking-tight mb-3">"Technical Write-ups"</h1>
                     <p class="text-[14px] font-mono text-[var(--text-muted)]">"Architectural manifestos and operational deep-dives focused on orchestrating equilibrium within high-integrity ecosystems-from the technical bedrock of connectivity to the 50-year lookout of strategic governance."</p>
                 </section>
+                // Desktop: inline category pills (hidden on mobile via CSS)
                 <div class="tag-pills-row mb-4">
                     <button
                         type="button"
@@ -101,6 +103,82 @@ pub fn WritingPage() -> impl IntoView {
                             </button>
                         }
                     }).collect_view()}
+                </div>
+
+                // Mobile: filter trigger button (hidden on desktop via CSS)
+                <button
+                    type="button"
+                    class="filter-trigger-btn"
+                    on:click=move |_| set_sheet_open.set(true)
+                    aria-haspopup="dialog"
+                    aria-expanded=move || if sheet_open.get() { "true" } else { "false" }
+                >
+                    <span class="filter-trigger-label">"FILTER"</span>
+                    <span class="filter-trigger-value">
+                        {move || active_category.get().map(|c| c.to_string()).unwrap_or_else(|| "ALL CATEGORIES".into())}
+                    </span>
+                    <span class="filter-trigger-chevron" aria-hidden="true">"▾"</span>
+                </button>
+
+                // Mobile: bottom-sheet drawer (always in DOM; visibility driven by is-open class)
+                <div
+                    class=move || format!("filter-sheet-backdrop {}", if sheet_open.get() { "is-open" } else { "" })
+                    on:click=move |_| set_sheet_open.set(false)
+                    aria-hidden=move || if sheet_open.get() { "false" } else { "true" }
+                ></div>
+                <div
+                    class=move || format!("filter-sheet {}", if sheet_open.get() { "is-open" } else { "" })
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Filter write-ups by category"
+                    aria-hidden=move || if sheet_open.get() { "false" } else { "true" }
+                >
+                    <div class="filter-sheet-grabber" aria-hidden="true"></div>
+                    <div class="filter-sheet-header">
+                        <h2 class="filter-sheet-title">"Filter by Category"</h2>
+                        <button
+                            type="button"
+                            class="filter-sheet-close"
+                            on:click=move |_| set_sheet_open.set(false)
+                            aria-label="Close filter menu"
+                        >"×"</button>
+                    </div>
+                    <div class="filter-sheet-list" role="list">
+                        <button
+                            type="button"
+                            role="listitem"
+                            class=move || format!("filter-sheet-item {}", if active_category.get().is_none() { "filter-sheet-item-active" } else { "" })
+                            on:click=move |_| {
+                                set_active_category.set(None);
+                                set_sheet_open.set(false);
+                            }
+                        >
+                            <span class="filter-sheet-item-label">"All Categories"</span>
+                            <span class="filter-sheet-item-check" aria-hidden="true">
+                                {move || if active_category.get().is_none() { "●" } else { "" }}
+                            </span>
+                        </button>
+                        {move || categories.iter().map(|&cat| {
+                            let cat_click = cat;
+                            let is_active = move || active_category.get() == Some(cat_click);
+                            view! {
+                                <button
+                                    type="button"
+                                    role="listitem"
+                                    class=move || format!("filter-sheet-item {}", if is_active() { "filter-sheet-item-active" } else { "" })
+                                    on:click=move |_| {
+                                        set_active_category.set(Some(cat_click));
+                                        set_sheet_open.set(false);
+                                    }
+                                >
+                                    <span class="filter-sheet-item-label">{cat}</span>
+                                    <span class="filter-sheet-item-check" aria-hidden="true">
+                                        {move || if is_active() { "●" } else { "" }}
+                                    </span>
+                                </button>
+                            }
+                        }).collect_view()}
+                    </div>
                 </div>
                 <div role="search" aria-label="Search write-ups">
                     <input

@@ -76,7 +76,7 @@ html.light .filter-tab-active {
   font-family: var(--font-mono);
   border-radius: var(--radius-md);
   text-decoration: none;
-  min-height: 34px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   transition: border-color var(--duration-fast) var(--ease-standard),
@@ -213,9 +213,9 @@ html.light .filter-tab-active {
   .filter-tabs::-webkit-scrollbar { display: none; }
   .filter-tab {
     white-space: nowrap;
-    padding: 8px 13px;
+    padding: 11px 13px;
     font-size: 11px;
-    min-height: 34px;
+    min-height: 44px;
   }
   .project-grid {
     grid-template-columns: 1fr;

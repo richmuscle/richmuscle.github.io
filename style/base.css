@@ -516,12 +516,19 @@ h3 {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
   pointer-events: none;
   transition: opacity 300ms ease, pointer-events 0s linear 300ms;
+}
+.back-to-top-ring {
+  width: 40px;
+  height: 40px;
 }
 .back-to-top-wrap.btt-visible {
   opacity: 1;
@@ -1062,8 +1069,8 @@ aside a:focus-visible {
 /* ── 13. BACK-TO-TOP (max-width: 768px) ─────────────────────────── */
 @media (max-width: 768px) {
   .back-to-top-wrap {
-    bottom: 20px;
-    right: 16px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    right: max(16px, env(safe-area-inset-right, 16px));
   }
 }
 

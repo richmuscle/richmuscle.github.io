@@ -239,17 +239,26 @@ html.light .category-desc {
   border-bottom: none;
 }
 
-/* ── 3. HOME HERO (max-width: 768px) ─────────────────────────────── */
+/* ── 3. HOME HERO + layout (max-width: 768px) ───────────────────── */
 @media (max-width: 768px) {
+  /* Nav clearance: was pt-24 (96px) inherited from .home-main's utility class */
+  main.home-main {
+    padding-top: 48px !important;
+  }
+  /* Single 21px gutter applied at wrap level; sections no longer stack their own. */
+  .home-page-wrap {
+    padding: 0 21px;
+  }
+
   .hero-section,
   .hero-container,
   section[class*="hero"] {
-    padding-left: 21px;
-    padding-right: 21px;
-    padding-top: 89px;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 21px;
   }
   .hero-section {
-    padding-bottom: 34px;
+    padding-bottom: 21px;
     text-align: left;
   }
   .hero-name {
@@ -281,6 +290,35 @@ html.light .category-desc {
     min-height: 44px;
     touch-action: manipulation;
   }
+
+  /* Projects section header + filter tabs — tighten vertical rhythm */
+  .projects-header {
+    margin-top: 21px;
+  }
+  .projects-title {
+    font-size: 22px;
+    margin-bottom: 13px;
+  }
+  .filter-tabs {
+    margin-bottom: 21px;
+  }
+
+  /* Category sections: reduce gap between disciplines */
+  .category-section {
+    margin-bottom: 34px;
+  }
+  .category-header {
+    margin-bottom: 13px;
+    padding-bottom: 8px;
+  }
+
+  /* Certifications → footer gap */
+  .certifications-section + .home-footer {
+    margin-top: 55px;
+  }
+  .home-page-wrap .certifications-section {
+    padding-top: 34px;
+  }
 }
 
 /* ── QA: Footer stack on mobile (max-width: 480px) ───────────────── */
@@ -301,5 +339,36 @@ html.light .category-desc {
   }
   .telemetry-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── Certifications: stack on narrow viewports ───────────────────── */
+@media (max-width: 640px) {
+  .home-page-wrap .certifications-section .cert-row {
+    flex-wrap: wrap;
+    gap: 4px 13px;
+    padding: 13px 0;
+    align-items: baseline;
+  }
+  .home-page-wrap .certifications-section .cert-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 13px;
+    line-height: 1.4;
+    order: 1;
+  }
+  .home-page-wrap .certifications-section .cert-status {
+    order: 2;
+    margin-left: auto;
+  }
+  .home-page-wrap .certifications-section .cert-issuer {
+    flex: 1 1 100%;
+    order: 3;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
   }
 }

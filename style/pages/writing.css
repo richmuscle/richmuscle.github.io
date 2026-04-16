@@ -120,44 +120,43 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 /* ── 6. WRITING PAGE (max-width: 768px) ─────────────────────────── */
 @media (max-width: 768px) {
+  /* Tighten vertical stack above the fold — reduce nav-clearance padding and header block */
+  main:has(> .writing-page-container) {
+    padding-top: 3rem !important;   /* 48px (was 96px) */
+    padding-bottom: 3rem !important; /* 48px (was dead class) */
+  }
   .writing-page-container {
-    padding: 21px;
+    padding: 0 21px;
+  }
+  .writing-page-container > section:first-of-type {
+    padding-top: 13px !important;    /* was 48px */
+    padding-bottom: 21px !important; /* was 56px */
   }
   .writing-page-container > section h1 {
     font-size: clamp(26px, 7vw, 42px);
+    margin-bottom: 8px;
   }
   .writing-page-container > section > p:last-child {
     line-height: 1.618;
-    margin-bottom: 21px;
+    margin-bottom: 0;
   }
   .writing-search-input {
     width: 100%;
-    min-height: 55px;
+    min-height: 48px;
     font-size: 16px;
-    margin-top: 13px;
+    margin-top: 0;
     margin-left: 0;
     margin-right: 0;
   }
+  /* Mobile: replace horizontal pill scroll with bottom-sheet drawer pattern */
   .tag-pills-row {
-    display: flex;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding: 4px 0 13px;
-    gap: 13px;
-  }
-  .tag-pills-row::-webkit-scrollbar { display: none; }
-  .tag-pill {
-    white-space: nowrap;
-    min-height: 44px;
-    padding: 8px 13px;
+    display: none !important;
   }
   .writeup-card {
     padding: 21px 0;
   }
   .writeup-card + .writeup-card {
-    margin-top: 34px;
+    margin-top: 21px;
   }
   .writeup-card > div:first-child {
     margin-bottom: 13px;
@@ -167,6 +166,10 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
   .writeup-card-tags {
     flex-wrap: wrap;
     gap: 4px;
+  }
+  /* Tighten the writeup list's top margin (it's mt-10 = 40px → 16px) */
+  .writing-page-container > .mt-10 {
+    margin-top: 16px !important;
   }
 }
 
@@ -463,4 +466,215 @@ p a, li a, .writeup-detail-content a:not([class*="hero"]),
 
 html.light .wu-prose .pd-challenge {
   background: var(--bg-surface);
+}
+
+/* ============================================================
+   MOBILE FILTER BOTTOM-SHEET (writing page categories)
+   Desktop: inline .tag-pills-row; Mobile: trigger button + sheet.
+   ============================================================ */
+
+/* Desktop defaults: trigger + sheet hidden */
+.filter-trigger-btn,
+.filter-sheet-backdrop,
+.filter-sheet {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* ── Filter trigger button ──────────────────────────────── */
+  .filter-trigger-btn {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    margin: 13px 0 21px;
+    padding: 13px 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: left;
+    min-height: 48px;
+    transition: border-color 160ms ease, background 160ms ease;
+  }
+  .filter-trigger-btn:hover,
+  .filter-trigger-btn:focus-visible {
+    border-color: var(--accent-cyan);
+    background: color-mix(in srgb, var(--accent-cyan) 4%, var(--bg-surface));
+  }
+  .filter-trigger-label {
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .filter-trigger-value {
+    flex: 1;
+    min-width: 0;
+    color: var(--accent-cyan);
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .filter-trigger-chevron {
+    color: var(--text-muted);
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  /* ── Backdrop ──────────────────────────────────────────── */
+  .filter-sheet-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+  .filter-sheet-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ── Sheet container ───────────────────────────────────── */
+  .filter-sheet {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 75vh;
+    background: var(--bg-base);
+    border-top: 1px solid color-mix(in srgb, var(--accent-cyan) 30%, var(--border));
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.45);
+    z-index: 91;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transform: translateY(100%);
+    transition: transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+    visibility: hidden;
+  }
+  .filter-sheet.is-open {
+    transform: translateY(0);
+    visibility: visible;
+  }
+
+  .filter-sheet-grabber {
+    width: 36px;
+    height: 4px;
+    margin: 8px auto 0;
+    border-radius: 2px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .filter-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 21px 13px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .filter-sheet-title {
+    margin: 0;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+  }
+  .filter-sheet-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    line-height: 1;
+    padding: 4px 12px;
+    cursor: pointer;
+    min-height: unset;
+    min-width: unset;
+    border-radius: 6px;
+    transition: color 160ms ease, background 160ms ease;
+  }
+  .filter-sheet-close:hover,
+  .filter-sheet-close:focus-visible {
+    color: var(--accent-cyan);
+    background: color-mix(in srgb, var(--accent-cyan) 10%, transparent);
+  }
+
+  .filter-sheet-list {
+    padding: 8px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .filter-sheet-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 13px;
+    width: 100%;
+    padding: 14px 13px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-align: left;
+    cursor: pointer;
+    min-height: 52px;
+    transition: background 160ms ease, color 160ms ease;
+  }
+  .filter-sheet-item:hover,
+  .filter-sheet-item:focus-visible {
+    background: var(--bg-surface);
+  }
+  .filter-sheet-item-active {
+    color: var(--accent-cyan);
+    background: color-mix(in srgb, var(--accent-cyan) 8%, transparent);
+  }
+  .filter-sheet-item-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .filter-sheet-item-check {
+    color: var(--accent-cyan);
+    font-size: 12px;
+    flex-shrink: 0;
+    min-width: 12px;
+    text-align: right;
+  }
+
+  /* Reduced motion: skip the slide-up animation */
+  @media (prefers-reduced-motion: reduce) {
+    .filter-sheet,
+    .filter-sheet-backdrop {
+      transition: none;
+    }
+  }
+}
+
+/* Light-mode tonal adjustments */
+html.light .filter-sheet {
+  border-top-color: color-mix(in srgb, var(--accent-cyan) 40%, var(--border));
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+}
+html.light .filter-sheet-backdrop {
+  background: rgba(15, 23, 42, 0.4);
 }

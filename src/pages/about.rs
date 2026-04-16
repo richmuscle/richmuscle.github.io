@@ -9,8 +9,8 @@ pub fn AboutPage() -> impl IntoView {
     view! {
         <Title text=move || format!("About · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
         <Meta name="description" content="About Richard Mussell — Systems Administrator & DevOps Engineer based in Oklahoma City, OK. Lab projects spanning IaC, Linux automation, observability, and zero-trust networking."/>
-        <main id="main-content" class="min-h-screen page-enter" style="padding-top:80px;">
-            <div style="max-width:760px;margin:0 auto;padding:clamp(40px,8vw,80px) clamp(16px,5vw,40px) clamp(60px,10vw,100px);padding-top:96px;">
+        <main id="main-content" class="min-h-screen page-enter about-main" style="padding-top:80px;">
+            <div class="about-wrap" style="max-width:760px;margin:0 auto;padding:clamp(40px,8vw,80px) clamp(16px,5vw,40px) clamp(60px,10vw,100px);padding-top:96px;">
 
                 <section>
                     <div style="margin-bottom:20px;">
@@ -39,7 +39,7 @@ pub fn AboutPage() -> impl IntoView {
                     <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:32px;">
                         "Where I have hands-on experience and where I am actively building depth."
                     </p>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:72px;">
+                    <div class="about-card-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:72px;">
                         {
                             let cards = vec![
                                 ("Terraform & Infrastructure as Code",
@@ -77,7 +77,7 @@ pub fn AboutPage() -> impl IntoView {
                     </div>
                 </section>
 
-                <blockquote style="border-left:2px solid #22d3ee;padding:28px 36px;margin:0 0 72px 0;background:#080c14;border-radius:0 8px 8px 0;font-style:normal;">
+                <blockquote class="about-quote" style="border-left:2px solid #22d3ee;padding:28px 36px;margin:0 0 72px 0;background:#080c14;border-radius:0 8px 8px 0;font-style:normal;">
                     <p style="font-size:15px;color:#94a3b8;line-height:1.9;margin:0;">
                         "The professionals I admire most can automate a repetitive onboarding workflow, debug a complex Active Directory sync issue, and maintain high-availability systems with quiet precision. That is the range I operate in: reliable, automation-focused, operationally grounded. I built and shipped a Rust/WASM portfolio with SQLite FFI and self-gated CI to demonstrate, not declare, that standard."
                     </p>
@@ -104,7 +104,7 @@ pub fn AboutPage() -> impl IntoView {
                         <span style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;">"Adjacent Technologies"</span>
                         <div style="flex:1;height:1px;background:#1a2540;"></div>
                     </div>
-                    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:72px;">
+                    <div class="about-pills-row" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:72px;">
                         {vec![
                             "Kubernetes (CKA path)", "Ansible", "Crossplane", "Pulumi",
                             "Helm Charts", "ArgoCD", "Vault", "SPIRE/SPIFFE",

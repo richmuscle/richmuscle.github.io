@@ -1,0 +1,50 @@
+/* About page — mobile spacing pass.
+   Desktop uses inline styles on about.rs; this file only tightens at ≤768px
+   so the at-a-glance stack fits in the first mobile viewport without forcing
+   long scroll-past-whitespace on phones. */
+
+@media (max-width: 768px) {
+  /* Top clearance: 80px → 48px (just clears the fixed nav). */
+  .about-main {
+    padding-top: 48px !important;
+  }
+
+  /* Inner wrap: drop the 96px padding-top override and reduce bottom
+     generous clamp; let the container breathe only modestly on phones. */
+  .about-wrap {
+    padding: 13px 21px 48px !important;
+  }
+
+  /* Card grid: stack on mobile. 2-col on desktop would cram cards at <768px. */
+  .about-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 13px !important;
+    margin-bottom: 34px !important;
+  }
+  /* The ninth-card "solo centered" rule is 2-col-only, neutralize on mobile. */
+  .about-card-grid > .about-card {
+    grid-column: auto !important;
+    max-width: none !important;
+  }
+  .about-card {
+    padding: 21px !important;
+  }
+
+  /* Blockquote: shrink excessive 72px margin-bottom and 36px side padding. */
+  .about-quote {
+    margin: 0 0 34px 0 !important;
+    padding: 21px 21px !important;
+  }
+
+  /* Adjacent-technologies pill row: 72px → 34px bottom gap. */
+  .about-pills-row {
+    margin-bottom: 34px !important;
+    gap: 6px !important;
+  }
+
+  /* Tighten top-of-wrap divider spacing and contact bar above footer. */
+  .about-wrap > section + section,
+  .about-wrap > blockquote + section {
+    margin-top: 0 !important;
+  }
+}

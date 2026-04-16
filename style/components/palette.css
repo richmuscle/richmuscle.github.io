@@ -434,7 +434,7 @@ html.light .po-scrim {
   .po-desc        { padding: 13px 13px 0; }
   .po-metric-strip{ margin:  13px 13px 0; }
   .po-tech-row    { padding: 13px 13px 0; }
-  .po-kbd-hint    { padding: 13px 13px 21px; }
+  .po-kbd-hint    { display: none; } /* touch: no keyboard → no key hints */
 
   .po-btn-primary,
   .po-btn-secondary {
