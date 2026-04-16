@@ -54,7 +54,7 @@ pub fn ContactPage() -> impl IntoView {
                         <span class="contact-row-glyph contact-glyph-in" aria-hidden="true">"in"</span>
                         <div class="contact-row-content">
                             <span class="contact-row-label">"LinkedIn"</span>
-                            <a href=LINKEDIN_URL target="_blank" rel="noopener noreferrer" class="contact-row-value">"/in/richard-mussell"</a>
+                            <a href=LINKEDIN_URL target="_blank" rel="noopener noreferrer" class="contact-row-value">"/in/richard-mussell-iii"</a>
                         </div>
                     </div>
                     <div class="contact-row">

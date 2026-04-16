@@ -35,7 +35,7 @@ pub fn ResumePage() -> impl IntoView {
                             {move || if email_copied.get() { "✓ Copied!" } else { EMAIL }}
                         </button>
                         <span style="color:var(--border-subtle);padding:0 10px;">"·"</span>
-                        // VERIFY: https://www.linkedin.com/in/richard-mussell/ — full URL, target=_blank, noopener.
+                        // VERIFY: https://www.linkedin.com/in/richard-mussell-iii-0b64a1218/ — full URL, target=_blank, noopener.
                         <a href=LINKEDIN_URL target="_blank" rel="noopener noreferrer" style="color:#22d3ee;text-decoration:none;vertical-align:baseline;">"LinkedIn"</a>
                         <span style="color:var(--border-subtle);padding:0 10px;">"·"</span>
                         // VERIFY: https://github.com/richardmussell — full URL, target=_blank, noopener.
