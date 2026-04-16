@@ -68,7 +68,7 @@ pub fn ProjectCard(
                             <span class="project-card-status-chip" style="color:#f59e0b;">"◐ PARTIAL"</span>
                         }.into_view(),
                         SystemStatus::Maintenance => view! {
-                            <span class="project-card-status-chip" style="color:#64748b;">"○ WIP"</span>
+                            <span class="project-card-status-chip" style="color:var(--text-muted);">"○ WIP"</span>
                         }.into_view(),
                     }}
                 </div>

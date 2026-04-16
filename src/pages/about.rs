@@ -23,10 +23,10 @@ pub fn AboutPage() -> impl IntoView {
                     <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:24px;">
                         "Richard Mussell is a Systems Administrator and DevOps Engineer based in Oklahoma City. Cybersecurity-specialized ITAM graduate (Central Washington University, 2024) with SOC analyst experience monitoring 13 municipal government networks on ELK. Operating production-grade infrastructure labs spanning Intune/Autopilot zero-touch deployment, Active Directory with GPO, WSUS patch automation, and a 12-tool SOC homelab (Wazuh, Suricata, Falco, TheHive, MISP, n8n SOAR). Pursuing GCP Associate Cloud Engineer (Q3 2026) and Certified Kubernetes Administrator (Q4 2026)."
                     </p>
-                    <p style="color:#64748b;font-size:12px;line-height:1.7;max-width:620px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;">
+                    <p style="color:var(--text-muted);font-size:12px;line-height:1.7;max-width:620px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;">
                         "This portfolio is a Rust + Leptos application compiled to wasm32-unknown-unknown. It ships in CSR mode (default deploy); SSR, hydrate, and SSG build targets are feature-gated in Cargo.toml and compile-validated in CI, ready for Phase 2. Served as a static binary on GitHub Pages — zero server runtime, zero GC."
                     </p>
-                    <p style="color:#64748b;font-size:12px;line-height:1.7;max-width:620px;margin-bottom:64px;font-family:'JetBrains Mono',monospace;">
+                    <p style="color:var(--text-muted);font-size:12px;line-height:1.7;max-width:620px;margin-bottom:64px;font-family:'JetBrains Mono',monospace;">
                         "Visual system: fibonacci spacing scale + golden-ratio type scale, single-accent cyan, layered SCSS (tokens → base → components → pages)."
                     </p>
                 </section>
@@ -69,7 +69,7 @@ pub fn AboutPage() -> impl IntoView {
                                 view! {
                                     <div class="about-card" style=style>
                                         <span style="font-size:11px;letter-spacing:0.12em;color:#22d3ee;font-family:'JetBrains Mono',monospace;margin-bottom:12px;display:block;">{label}</span>
-                                        <p style="font-size:12.5px;color:var(--color-text-faint);line-height:1.8;font-family:var(--font-body);">{desc}</p>
+                                        <p style="font-size:12.5px;color:var(--text-body);line-height:1.8;font-family:var(--font-body);">{desc}</p>
                                     </div>
                                 }
                             }).collect_view()
