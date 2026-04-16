@@ -1066,6 +1066,19 @@ aside a:focus-visible {
   }
 }
 
+/* ── Scroll lock (toggled by Rust when a modal / drawer is open).
+     Applied on body when sheet/overlay/shortcuts-modal is open.
+     Overscroll-behavior on modal containers prevents scroll-chain on iOS. ── */
+body.scroll-locked {
+  overflow: hidden !important;
+  touch-action: none;
+}
+.filter-sheet,
+.po-panel,
+.shortcuts-modal {
+  overscroll-behavior: contain;
+}
+
 /* ── 13. BACK-TO-TOP (max-width: 768px) ─────────────────────────── */
 @media (max-width: 768px) {
   .back-to-top-wrap {

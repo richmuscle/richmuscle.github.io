@@ -63,6 +63,14 @@ pub fn App() -> impl IntoView {
         });
     }
 
+    // Body scroll-lock whenever ANY global modal is open: shortcuts-modal or
+    // project-overlay. The writing-page filter sheet owns its own scroll lock.
+    #[cfg(not(feature = "ssr"))]
+    create_effect(move |_| {
+        let any_modal_open = shortcuts_open.get() || expanded_slug.with(|s| s.is_some());
+        crate::utils::set_body_scroll_lock(any_modal_open);
+    });
+
     // Dark/light mode — browser only. web_sys is a WASM-only dep; the cfg guard
     // prevents a compile error on the native SSR target even though create_effect
     // never runs during SSR rendering.

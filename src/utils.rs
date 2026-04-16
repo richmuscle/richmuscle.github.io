@@ -31,6 +31,23 @@ pub fn wasm_start_time_ms() -> Option<f64> {
     WASM_START_TIME_MS.get().copied()
 }
 
+/// Toggle document.body `scroll-locked` class based on a boolean.
+/// Wraps web_sys DOM access so callers stay concise inside `create_effect`.
+/// Safe on SSR (no-op). Silent on any DOM traversal failure.
+#[cfg(not(feature = "ssr"))]
+pub fn set_body_scroll_lock(locked: bool) {
+    let Some(body) = web_sys::window()
+        .and_then(|w| w.document())
+        .and_then(|d| d.body())
+    else {
+        return;
+    };
+    let _ = body.class_list().toggle_with_force("scroll-locked", locked);
+}
+
+#[cfg(feature = "ssr")]
+pub fn set_body_scroll_lock(_locked: bool) {}
+
 pub fn sanitize_slug(slug: &str) -> String {
     let out: String = slug
         .chars()

@@ -11,6 +11,13 @@ pub fn WritingPage() -> impl IntoView {
     let (search_query, set_search_query) = create_signal(String::new());
     let (active_category, set_active_category) = create_signal(None::<&'static str>);
     let (sheet_open, set_sheet_open) = create_signal(false);
+
+    // Body scroll-lock while the filter bottom-sheet is open.
+    #[cfg(not(feature = "ssr"))]
+    create_effect(move |_| {
+        crate::utils::set_body_scroll_lock(sheet_open.get());
+    });
+    on_cleanup(|| crate::utils::set_body_scroll_lock(false));
     let categories: [&'static str; 5] = [
         "PLATFORM ARCHITECTURE",
         "CYBERSECURITY & NIST",
