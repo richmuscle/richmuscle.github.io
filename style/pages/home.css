@@ -186,45 +186,8 @@ html.light .category-desc {
   color: var(--text-muted);
 }
 
-/* Home footer */
-.home-footer {
-  border-top: 1px solid var(--border);
-  padding: 34px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 13px;
-}
-.home-footer-left {
-  font-size: 13px;
-  color: var(--text-muted);
-  font-family: 'JetBrains Mono', monospace;
-}
-.home-footer-right {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.home-footer-link {
-  color: var(--text-muted);
-  text-decoration: none;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font: inherit;
-  transition: color 0.2s;
-}
-.home-footer-link:hover {
-  color: var(--accent-cyan);
-}
-.home-footer-sep {
-  color: var(--border);
-  user-select: none;
-}
+/* Legacy .home-footer rules removed — superseded by the site-wide
+   .site-footer component (style/components/site-footer.css). */
 
 /* ── CERTIFICATIONS ──────────────────────────────────────────── */
 .cert-row {

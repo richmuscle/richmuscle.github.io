@@ -1,0 +1,121 @@
+/* ============================================================
+   SITE FOOTER — uniform identity band at bottom of every page.
+   Rendered globally via <SiteFooter /> in lib.rs App; container is
+   page-width-independent (1100 px max, centered) so home / writing /
+   project / resume pages all get the same footer regardless of their
+   own content container widths.
+   ============================================================ */
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: var(--bg-base);
+  margin-top: var(--space-20);       /* 89 px — generous breathing room above */
+  padding: var(--space-8) 0;         /* 34 px vertical */
+}
+
+.site-footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--space-12);        /* 55 px horizontal to match home-page-wrap */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+}
+
+.site-footer-identity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.site-footer-identity-name {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.site-footer-identity-role {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-3xs);
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.site-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.site-footer-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  font: inherit;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 150ms ease;
+  border-radius: 4px;
+}
+.site-footer-link:hover,
+.site-footer-link:focus-visible {
+  color: var(--accent-cyan);
+}
+.site-footer-link:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.site-footer-sep {
+  color: var(--border);
+  user-select: none;
+}
+
+.site-footer-link-status {
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.site-footer-link-status:hover,
+.site-footer-link-status:focus-visible {
+  color: var(--accent-cyan);
+}
+
+/* Mobile: stack identity above nav, reduce horizontal padding */
+@media (max-width: 768px) {
+  .site-footer {
+    margin-top: var(--space-12);     /* 55 px — tighter on mobile */
+    padding: var(--space-5) 0 calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  }
+  .site-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 var(--space-5);       /* 21 px gutter — matches home wrap */
+    gap: var(--space-3);
+  }
+  .site-footer-nav {
+    width: 100%;
+    gap: var(--space-1);
+  }
+  .site-footer-sep {
+    display: none;                    /* separators visually noisy when stacked */
+  }
+  .site-footer-link {
+    padding: var(--space-1) 0;
+  }
+}
+
+/* Print: hide site footer — redundant with page URL in the printed address */
+@media print {
+  .site-footer {
+    display: none !important;
+  }
+}

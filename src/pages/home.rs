@@ -1,7 +1,7 @@
 use crate::components::ProjectCard;
 use crate::data::{
-    get_certifications, get_infrastructure_fleet, ProjectCardSignals, ProjectCategory, EMAIL,
-    GITHUB_URL, LINKEDIN_URL, PROFESSIONAL_TITLE,
+    get_certifications, get_infrastructure_fleet, ProjectCardSignals, ProjectCategory, GITHUB_URL,
+    PROFESSIONAL_TITLE,
 };
 use crate::GlobalAppState;
 use leptos::*;
@@ -47,7 +47,6 @@ fn CertificationsSection() -> impl IntoView {
 #[component]
 pub fn HomePage() -> impl IntoView {
     let projects = store_value(get_infrastructure_fleet());
-    let (email_copied, set_email_copied) = create_signal(false);
     let (active_filter, set_filter) = create_signal(None::<ProjectCategory>);
 
     let counts = create_memo(move |_| {
@@ -253,42 +252,9 @@ pub fn HomePage() -> impl IntoView {
 
                 <CertificationsSection />
 
-                <footer class="home-footer">
-                    <span class="home-footer-left">"© 2026 Richard Mussell"</span>
-                    <div class="home-footer-right home-footer-links">
-                        <button
-                            on:click=move |_| {
-                                #[cfg(not(feature = "ssr"))]
-                                {
-                                    let email = EMAIL;
-                                    let _ = js_sys::eval(&format!("navigator.clipboard.writeText('{}').catch(function(){{}})", email));
-                                }
-                                set_email_copied.set(true);
-                                set_timeout(move || set_email_copied.set(false), std::time::Duration::from_millis(2000));
-                            }
-                            class="home-footer-link"
-                            aria-label="Copy email address to clipboard"
-                        >
-                            {move || if email_copied.get() { "✓ Copied!" } else { EMAIL }}
-                        </button>
-                        <span class="home-footer-sep">" · "</span>
-                        // VERIFY: https://www.linkedin.com/in/richard-mussell/ — full URL, target=_blank, noopener noreferrer.
-                        <a href=LINKEDIN_URL target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in new tab)" class="home-footer-link">"LinkedIn"<span class="sr-only">"(opens in new tab)"</span></a>
-                        <span class="home-footer-sep">" · "</span>
-                        <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in new tab)" class="home-footer-link">"GitHub"<span class="sr-only">"(opens in new tab)"</span></a>
-                        <span class="home-footer-sep">" · "</span>
-                        // VERIFY: /one-pager — same-site Leptos route; no target=_blank (intentional).
-                        <A href="/one-pager" class="home-footer-link">"One-Pager"</A>
-                        <span class="home-footer-sep">" · "</span>
-                        <a
-                            href="/telemetry"
-                            class="home-footer-link telemetry-status-link"
-                            title="View Real-Time System Telemetry"
-                        >
-                            "[SYSTEM_STATUS: NOMINAL]"
-                        </a>
-                    </div>
-                </footer>
+                // Site-wide footer is now rendered globally via <SiteFooter />
+                // in lib.rs App. Previously this page owned its own footer;
+                // extracted so every page has the same identity band.
             </div>
 
             // ── EXPANDED CARD OVERLAY ─────────────────────────────
