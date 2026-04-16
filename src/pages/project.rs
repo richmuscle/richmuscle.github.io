@@ -236,9 +236,10 @@ pub fn ProjectDocsPage() -> impl IntoView {
             Some(p) => {
                 view! {
                     <Title text=format!("Docs: {} | Richard Mussell", p.title)/>
+                    <Meta name="description" content=format!("{} — technical documentation and implementation notes.", p.subtitle)/>
                     <main id="main-content" class="min-h-screen pt-16 pb-24">
-                        <div class="pd-container max-w-3xl mx-auto px-6">
-                            <nav class="pd-breadcrumb-row">
+                        <div class="pd-container">
+                            <nav class="pd-breadcrumb-row" aria-label="Breadcrumb">
                                 <a href="/">"Portfolio"</a>
                                 <span aria-hidden="true">" / "</span>
                                 <a href=format!("/project/{}", p.slug)>{p.title}</a>
@@ -249,20 +250,18 @@ pub fn ProjectDocsPage() -> impl IntoView {
                                 <h1 class="pd-title">{p.title}</h1>
                                 <p class="pd-subtitle">{p.subtitle}</p>
                                 <div class="pd-tech-pills">
-                                    {p.tech_stack.iter().map(|tech| view! { <span>{*tech}</span> }).collect_view()}
+                                    {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
                             <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
-                                {move || match docs.get() {
-                                    None => Ok(view! {
-                                        <p class="pd-body-text mb-8">"Loading…"</p>
-                                    }.into_view()),
-                                    Some(Ok(d)) => Ok(view! {
-                                        <article class="pd-body-text mb-8" inner_html=d.content></article>
-                                        <A href=format!("/project/{}", p.slug) class="text-[#22d3ee] font-mono text-[13px] hover:underline">"View case study →"</A>
-                                    }.into_view()),
-                                    Some(Err(e)) => Err::<leptos::View, AppError>(e),
-                                }}
+                                <Suspense fallback=move || view! {
+                                    <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
+                                }>
+                                    {move || docs.get().map(|res| res.map(|d| view! {
+                                        <article class="pd-article mb-8" inner_html=d.content></article>
+                                        <A href=format!("/project/{}", p.slug) class="pd-docs-back-cta">"View case study →"</A>
+                                    }))}
+                                </Suspense>
                             </ErrorBoundary>
                         </div>
                     </main>
@@ -351,21 +350,20 @@ pub fn ProjectDemoPage() -> impl IntoView {
 
                 view! {
                     <Title text=format!("Demo: {} | Richard Mussell", p.title)/>
-                    <main id="main-content" class="min-h-screen pt-16 pb-24 bg-[var(--bg-base)] page-enter">
-                        <div class="pd-wrap pb-16 max-w-3xl mx-auto px-6">
-                            <nav class="pd-breadcrumb" aria-label="Breadcrumb">
-                                <a href="/">"Projects"</a>
-                                <span aria-hidden="true">"/"</span>
-                                <span>{p.title}</span>
+                    <Meta name="description" content=format!("{} — operational demo walkthrough.", p.subtitle)/>
+                    <main id="main-content" class="min-h-screen pt-16 pb-24 page-enter">
+                        <div class="pd-container">
+                            <nav class="pd-breadcrumb-row" aria-label="Breadcrumb">
+                                <a href="/">"Portfolio"</a>
+                                <span aria-hidden="true">" / "</span>
+                                <a href=format!("/project/{}", p.slug)>{p.title}</a>
+                                <span aria-hidden="true">" / Demo"</span>
                             </nav>
-                            <p style="margin-top: -1rem; margin-bottom: 2rem;">
-                                <a href="/" class="pd-back">"← Projects"</a>
-                            </p>
                             <header class="pd-header">
-                                <p class="pd-header-cat">"DEMO"</p>
-                                <h1 class="pd-header-title">{demo_header}</h1>
-                                <p class="pd-header-subtitle">{video_caption}</p>
-                                <div class="pd-header-pills">
+                                <div class="pd-category-label" style=format!("color:{}", p.category.accent())>"DEMO"</div>
+                                <h1 class="pd-title">{demo_header}</h1>
+                                <p class="pd-subtitle">{video_caption}</p>
+                                <div class="pd-tech-pills">
                                     {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
@@ -385,7 +383,7 @@ pub fn ProjectDemoPage() -> impl IntoView {
                                 </div>
                             </div>
 
-                            <A href=format!("/project/{}", p.slug) class="text-[#22d3ee] font-mono text-[13px] hover:underline mt-4 inline-block">"View case study →"</A>
+                            <A href=format!("/project/{}", p.slug) class="pd-docs-back-cta">"View case study →"</A>
                             <footer class="pd-footer-nav mt-16 pt-8 border-t border-[var(--border-subtle)]">
                                 <a href=format!("/project/{}", p.slug) class="pd-footer-btn">"Case Study"</a>
                                 <a href=format!("/project/{}/docs", p.slug) class="pd-footer-btn">"Documentation"</a>

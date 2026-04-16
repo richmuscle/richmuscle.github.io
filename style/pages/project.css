@@ -262,8 +262,9 @@
   margin: 0 auto;
   padding: 55px 34px 89px;
 }
+/* Single mobile rule (the duplicate at line ~505 was removed). */
 @media (max-width: 768px) {
-  .pd-container { padding: 21px 13px 55px; }
+  .pd-container { padding: 21px 21px 55px; }
 }
 
 .pd-breadcrumb-row {
@@ -360,6 +361,26 @@
 .pd-back-link:hover,
 .pd-back-link:focus-visible {
   color: var(--text-secondary);
+}
+
+/* Docs / Demo pages — cyan back-to-case-study CTA link.
+   Replaces silent arbitrary-value classes (text-[#22d3ee] font-mono
+   text-[13px] hover:underline) that didn't render. */
+.pd-docs-back-cta {
+  display: inline-block;
+  margin-top: 34px;
+  padding: 8px 0;
+  min-height: 44px;
+  color: var(--accent-cyan);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-decoration: none;
+  transition: opacity 150ms ease;
+}
+.pd-docs-back-cta:hover,
+.pd-docs-back-cta:focus-visible {
+  text-decoration: underline;
+  opacity: 0.85;
 }
 
 .pd-challenge {
@@ -484,9 +505,7 @@
 
 /* ── 5. PROJECT DETAIL (max-width: 768px) ───────────────────────── */
 @media (max-width: 768px) {
-  .pd-container {
-    padding: 21px 21px 55px;
-  }
+  /* pd-container padding handled in the earlier @media block. */
   .pd-stat-bar {
     flex-direction: column;
   }
