@@ -2,6 +2,8 @@ use crate::components::ComponentErrorFallback;
 use crate::data::{WriteUpDetail, WRITEUPS};
 use crate::error::AppError;
 use crate::utils::{sanitize_slug, track};
+#[cfg(not(feature = "ssr"))]
+use leptos::wasm_bindgen::{closure::Closure, JsCast};
 use leptos::*;
 use leptos_meta::{Meta, Title};
 use leptos_router::use_params_map;
@@ -12,12 +14,58 @@ pub fn WritingPage() -> impl IntoView {
     let (active_category, set_active_category) = create_signal(None::<&'static str>);
     let (sheet_open, set_sheet_open) = create_signal(false);
 
+    // Node refs for focus management — trigger button and sheet close button.
+    // The refs are consumed in view! regardless of target; the _ prefix silences
+    // SSR warnings since focus-management effects are wasm32-only.
+    #[allow(unused_variables)]
+    let trigger_ref = create_node_ref::<html::Button>();
+    #[allow(unused_variables)]
+    let close_ref = create_node_ref::<html::Button>();
+
     // Body scroll-lock while the filter bottom-sheet is open.
     #[cfg(not(feature = "ssr"))]
     create_effect(move |_| {
         crate::utils::set_body_scroll_lock(sheet_open.get());
     });
     on_cleanup(|| crate::utils::set_body_scroll_lock(false));
+
+    // Focus management: on open → focus close button; on close → return focus to trigger.
+    #[cfg(not(feature = "ssr"))]
+    create_effect(move |prev: Option<bool>| {
+        let current = sheet_open.get();
+        let was_open = prev.unwrap_or(false);
+        if current && !was_open {
+            if let Some(el) = close_ref.get() {
+                let _ = el.focus();
+            }
+        } else if !current && was_open {
+            if let Some(el) = trigger_ref.get() {
+                let _ = el.focus();
+            }
+        }
+        current
+    });
+
+    // Escape-key closes the sheet. Listener installed once per component lifetime;
+    // handler checks signal inside so it's a no-op when the sheet is closed.
+    #[cfg(not(feature = "ssr"))]
+    {
+        if let Some(window) = web_sys::window() {
+            let closure = Closure::<dyn Fn(web_sys::KeyboardEvent)>::new(
+                move |ev: web_sys::KeyboardEvent| {
+                    if sheet_open.get_untracked() && ev.key() == "Escape" {
+                        ev.prevent_default();
+                        set_sheet_open.set(false);
+                    }
+                },
+            );
+            let _ = window.add_event_listener_with_callback(
+                "keydown",
+                closure.as_ref().unchecked_ref(),
+            );
+            closure.forget();
+        }
+    }
     let categories: [&'static str; 5] = [
         "PLATFORM ARCHITECTURE",
         "CYBERSECURITY & NIST",
@@ -116,6 +164,7 @@ pub fn WritingPage() -> impl IntoView {
                 <button
                     type="button"
                     class="filter-trigger-btn"
+                    node_ref=trigger_ref
                     on:click=move |_| set_sheet_open.set(true)
                     aria-haspopup="dialog"
                     aria-expanded=move || if sheet_open.get() { "true" } else { "false" }
@@ -146,6 +195,7 @@ pub fn WritingPage() -> impl IntoView {
                         <button
                             type="button"
                             class="filter-sheet-close"
+                            node_ref=close_ref
                             on:click=move |_| set_sheet_open.set(false)
                             aria-label="Close filter menu"
                         >"×"</button>
