@@ -256,13 +256,11 @@ pub fn TelemetryPage() -> impl IntoView {
             let set_logs_lcp = set_logs;
             let observer_cb = Closure::wrap(Box::new(
                 move |entries: js_sys::Object, _observer: js_sys::Object| {
-                    let get_entries_val = match js_sys::Reflect::get(
-                        &entries,
-                        &JsValue::from_str("getEntries"),
-                    ) {
-                        Ok(v) => v,
-                        Err(_) => return,
-                    };
+                    let get_entries_val =
+                        match js_sys::Reflect::get(&entries, &JsValue::from_str("getEntries")) {
+                            Ok(v) => v,
+                            Err(_) => return,
+                        };
                     let get_entries_fn = match get_entries_val.dyn_into::<js_sys::Function>() {
                         Ok(f) => f,
                         Err(_) => return,

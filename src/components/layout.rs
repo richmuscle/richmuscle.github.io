@@ -18,8 +18,8 @@ pub fn ReadingProgress() -> impl IntoView {
 
     #[cfg(not(feature = "ssr"))]
     {
-        let stored_closure: Rc<RefCell<Option<wasm_bindgen::closure::Closure<dyn FnMut()>>>> =
-            Rc::new(RefCell::new(None));
+        type StoredClosure = Rc<RefCell<Option<wasm_bindgen::closure::Closure<dyn FnMut()>>>>;
+        let stored_closure: StoredClosure = Rc::new(RefCell::new(None));
         let stored_clone = stored_closure.clone();
         create_effect(move |_| {
             let window = web_sys::window().unwrap();
@@ -36,7 +36,7 @@ pub fn ReadingProgress() -> impl IntoView {
                 } else {
                     0.0
                 };
-                set_progress.set(pct.min(100.0).max(0.0));
+                set_progress.set(pct.clamp(0.0, 100.0));
             }) as Box<dyn FnMut()>);
             window
                 .add_event_listener_with_callback("scroll", closure.as_ref().unchecked_ref())
