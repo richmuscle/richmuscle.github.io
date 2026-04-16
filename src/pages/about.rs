@@ -12,11 +12,13 @@ pub fn AboutPage() -> impl IntoView {
         <main id="main-content" class="min-h-screen page-enter about-main" style="padding-top:80px;">
             <div class="about-wrap" style="max-width:760px;margin:0 auto;padding:clamp(40px,8vw,80px) clamp(16px,5vw,40px) clamp(60px,10vw,100px);padding-top:96px;">
 
+                <h1 class="sr-only">"About Richard Mussell"</h1>
+
                 <section>
                     <div style="margin-bottom:20px;">
                         <p class="font-mono text-[#22d3ee] uppercase" style="font-size:9px;font-weight:600;letter-spacing:0.2em;margin-bottom:0;">"About"</p>
                         <div style="display:flex;align-items:center;gap:16px;margin-bottom:0;">
-                            <span style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;">"Who I Am"</span>
+                            <h2 style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;margin:0;">"Who I Am"</h2>
                             <div style="flex:1;height:1px;background:#1a2540;"></div>
                         </div>
                     </div>
@@ -33,7 +35,7 @@ pub fn AboutPage() -> impl IntoView {
 
                 <section>
                     <div style="display:flex;align-items:center;gap:16px;margin-top:0;margin-bottom:24px;">
-                        <span style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;">"Technical Trajectory"</span>
+                        <h2 style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;margin:0;">"Technical Trajectory"</h2>
                         <div style="flex:1;height:1px;background:#1a2540;"></div>
                     </div>
                     <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:32px;">
@@ -68,7 +70,7 @@ pub fn AboutPage() -> impl IntoView {
                                 } else { base_style.to_string() };
                                 view! {
                                     <div class="about-card" style=style>
-                                        <span style="font-size:11px;letter-spacing:0.12em;color:#22d3ee;font-family:'JetBrains Mono',monospace;margin-bottom:12px;display:block;">{label}</span>
+                                        <h3 style="font-size:11px;letter-spacing:0.12em;color:#22d3ee;font-family:'JetBrains Mono',monospace;margin:0 0 12px 0;display:block;">{label}</h3>
                                         <p style="font-size:12.5px;color:var(--text-body);line-height:1.8;font-family:var(--font-body);">{desc}</p>
                                     </div>
                                 }
@@ -85,7 +87,7 @@ pub fn AboutPage() -> impl IntoView {
 
                 <section style="margin-top:48px;">
                     <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-                        <span style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;">"How I Think About Systems"</span>
+                        <h2 style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;margin:0;">"How I Think About Systems"</h2>
                         <div style="flex:1;height:1px;background:#1a2540;"></div>
                     </div>
                     <p style="font-size:14px;color:var(--text-secondary);line-height:1.9;margin:0 0 16px 0;">
@@ -101,7 +103,7 @@ pub fn AboutPage() -> impl IntoView {
 
                 <section>
                     <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-                        <span style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;">"Adjacent Technologies"</span>
+                        <h2 style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;margin:0;">"Adjacent Technologies"</h2>
                         <div style="flex:1;height:1px;background:#1a2540;"></div>
                     </div>
                     <div class="about-pills-row" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:72px;">
