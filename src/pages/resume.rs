@@ -51,7 +51,7 @@ pub fn ResumePage() -> impl IntoView {
                 <section class="mb-10">
                     <h2 class="text-[11px] font-mono font-semibold text-[var(--accent-cyan)] uppercase tracking-[0.15em] mb-4">"Summary"</h2>
                     <p class="text-[15px] text-[var(--text-secondary)] leading-7 max-w-2xl">
-                        "Systems Administrator and DevOps Engineer with a BS in IT & Administrative Management (Cybersecurity specialization). Hands-on experience in SOC monitoring, ELK Stack log analysis, and enterprise database systems. Lab projects spanning Terraform IaC, Linux hardening, SIEM observability pipelines, and WireGuard zero-trust networking."
+                        "Systems Administrator and DevOps Engineer with a BS in IT & Administrative Management (Cybersecurity specialization). Hands-on experience in SOC monitoring, ELK Stack log analysis, and enterprise toolchain operations (ICOMS, Salesforce). Lab projects spanning Terraform IaC, Linux hardening, SIEM observability pipelines, and WireGuard zero-trust networking."
                     </p>
                 </section>
 
@@ -91,10 +91,10 @@ pub fn ResumePage() -> impl IntoView {
                             <span class="resume-timeline-label">"PISCES Security Operations Center (SOC)"</span>
                             <p class="resume-timeline-detail">
                                 <span>"Role: Student SOC Analyst (Internship)"</span><br/>
-                                <span>"• Monitored security telemetry across 13 municipal government entities using ELK Stack"</span><br/>
-                                <span>"• Triaged and escalated alerts from Elasticsearch/Kibana dashboards during shift rotations"</span><br/>
-                                <span>"• Authored incident summary briefs for SOC leadership and municipal stakeholders"</span><br/>
-                                <span>"• Performed KQL-based log analysis to identify anomalous network and endpoint activity"</span>
+                                <span>"• Triaged ~50 alerts/day across 13 municipal entities' ELK Stack deployments; escalated ~3–5 incidents/week to senior analysts."</span><br/>
+                                <span>"• Authored KQL detection logic for anomalous endpoint behavior and lateral movement indicators."</span><br/>
+                                <span>"• Produced weekly incident briefs summarizing environment-wide threat landscape for SOC leadership and municipal stakeholders."</span><br/>
+                                <span>"• Maintained ELK Stack dashboards and correlation searches during shift rotations."</span>
                             </p>
                         </div>
                         <div class="resume-timeline-dot-item">
@@ -103,21 +103,37 @@ pub fn ResumePage() -> impl IntoView {
                             <span class="resume-timeline-label">"Cox Communications"</span>
                             <p class="resume-timeline-detail">
                                 <span>"Role: Account Management & Retention Specialist"</span><br/>
-                                <span>"• Managed customer accounts using ICOMS and Salesforce enterprise database systems"</span><br/>
-                                <span>"• Diagnosed and resolved technical service issues across network and billing platforms"</span><br/>
-                                <span>"• Met retention targets through structured troubleshooting and service recovery workflows"</span>
+                                <span>"• Managed ~40–60 customer accounts/day using ICOMS and Salesforce enterprise systems; resolved multi-service configuration conflicts across billing, network, and provisioning layers."</span><br/>
+                                <span>"• Met retention targets through consultative troubleshooting and structured escalation paths for Tier-1 ISP service recovery."</span><br/>
+                                <span>"• Navigated enterprise database operations (ICOMS) for account state reconciliation and billing dispute resolution."</span>
                             </p>
                         </div>
                         <div class="resume-timeline-dot-item">
                             <span class="resume-timeline-dot" aria-hidden="true"></span>
-                            <span class="resume-timeline-year">"Sept 2025 – Present"</span>
-                            <span class="resume-timeline-label">"Club Demonstration Services"</span>
+                            <span class="resume-timeline-year">"Sep 2025 – Present"</span>
+                            <span class="resume-timeline-label">"Self-directed Platform Engineering / Homelab"</span>
                             <p class="resume-timeline-detail">
-                                <span>"Role: Product Brand Ambassador"</span><br/>
-                                <span>"• Maintained 100% adherence to safety and organizational protocols across daily operations"</span><br/>
-                                <span>"• Managed product demonstration logistics and customer engagement workflows"</span>
+                                <span>"Role: Independent"</span><br/>
+                                <span>"• Built and shipped a Rust + Leptos + WASM32 portfolio (5,705 LOC, SQLite FFI with 12 unsafe blocks and AtomicU64 telemetry counters) deployed via Trunk to GitHub Pages with a 4-target cargo-check CI matrix."</span><br/>
+                                <span>"• Operating a 12-tool SOC homelab on bare metal — Wazuh, Suricata, Falco, TheHive, MISP, n8n SOAR — end-to-end detection/response pipeline."</span><br/>
+                                <span>"• Authoring IaC labs: Terraform GCP landing zone (CIS-aligned, policy-validated), WireGuard + AD zero-trust fabric, Prometheus/Grafana SLO-aligned monitoring pipeline."</span><br/>
+                                <span>"• Pursuing GCP Associate Cloud Engineer (target: Q3 2026) and Certified Kubernetes Administrator (target: Q4 2026)."</span><br/>
+                                <span>"• Concurrent income: Product Brand Ambassador at Club Demonstration Services (Costco wholesale partner) — non-technical, disclosed for continuity."</span>
                             </p>
                         </div>
+                    </div>
+                </section>
+
+                // ── CERTIFICATIONS ──
+                <section class="mb-10">
+                    <h2 class="text-[11px] font-mono font-semibold text-[var(--accent-cyan)] uppercase tracking-[0.15em] mb-4">"Certifications"</h2>
+                    <div class="space-y-2">
+                        <p class="text-[13px] text-[var(--text-secondary)] font-mono">
+                            "• GCP Associate Cloud Engineer — Pursuing (target exam: Q3 2026)"
+                        </p>
+                        <p class="text-[13px] text-[var(--text-secondary)] font-mono">
+                            "• Certified Kubernetes Administrator — Pursuing (target exam: Q4 2026)"
+                        </p>
                     </div>
                 </section>
 

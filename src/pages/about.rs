@@ -21,10 +21,13 @@ pub fn AboutPage() -> impl IntoView {
                         </div>
                     </div>
                     <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:24px;">
-                        "Richard Mussell is a Systems Administrator and DevOps Engineer based in Oklahoma City. Cybersecurity-specialized ITAM graduate (Central Washington University, 2024) with SOC analyst experience monitoring 13 municipal government networks on ELK. Currently building production-grade infrastructure labs — Intune/Autopilot zero-touch deployment, Active Directory with GPO, WSUS patch automation, and a full SOC homelab stack (Wazuh, Suricata, Falco, TheHive, MISP, n8n SOAR) — while pursuing GCP Associate Cloud Engineer and CKA certifications."
+                        "Richard Mussell is a Systems Administrator and DevOps Engineer based in Oklahoma City. Cybersecurity-specialized ITAM graduate (Central Washington University, 2024) with SOC analyst experience monitoring 13 municipal government networks on ELK. Operating production-grade infrastructure labs spanning Intune/Autopilot zero-touch deployment, Active Directory with GPO, WSUS patch automation, and a 12-tool SOC homelab (Wazuh, Suricata, Falco, TheHive, MISP, n8n SOAR). Pursuing GCP Associate Cloud Engineer (Q3 2026) and Certified Kubernetes Administrator (Q4 2026)."
+                    </p>
+                    <p style="color:#64748b;font-size:12px;line-height:1.7;max-width:620px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;">
+                        "This portfolio is a Rust + Leptos application compiled to wasm32-unknown-unknown. It ships in CSR mode (default deploy); SSR, hydrate, and SSG build targets are feature-gated in Cargo.toml and compile-validated in CI, ready for Phase 2. Served as a static binary on GitHub Pages — zero server runtime, zero GC."
                     </p>
                     <p style="color:#64748b;font-size:12px;line-height:1.7;max-width:620px;margin-bottom:64px;font-family:'JetBrains Mono',monospace;">
-                        "This portfolio is a Rust + Leptos CSR application compiled to wasm32-unknown-unknown and served as a static binary — zero server, zero runtime, zero GC."
+                        "Visual system: fibonacci spacing scale + golden-ratio type scale, single-accent cyan, layered SCSS (tokens → base → components → pages)."
                     </p>
                 </section>
 
@@ -49,8 +52,8 @@ pub fn AboutPage() -> impl IntoView {
                                  "Prometheus metrics collection, ELK Stack log aggregation with Logstash filters, Grafana dashboards tied to SLOs, and KQL-based log analysis from SOC experience."),
                                 ("WireGuard & Zero-Trust Networking",
                                  "Identity-based network access with WireGuard tunnels, micro-segmentation, MSS clamping for cross-cloud stability, and out-of-band peer authorization via AD."),
-                                ("Kubernetes (Currently Studying)",
-                                 "Deploying workloads with kubectl, understanding pods/services/deployments, and studying for CKA. Building toward understanding the control plane and writing custom controllers."),
+                                ("Kubernetes (CKA Prep)",
+                                 "Deploying workloads with kubectl; studying the control plane and writing custom controllers via CKA prep — scheduler internals, etcd consistency model, controller-runtime from first principles."),
                                 ("Containers & CI/CD",
                                  "Docker containerization, GitHub Actions workflows for automated build/test/deploy, and Trunk-based WASM compilation pipelines."),
                                 ("Security Frameworks & Compliance",
@@ -76,7 +79,7 @@ pub fn AboutPage() -> impl IntoView {
 
                 <blockquote style="border-left:2px solid #22d3ee;padding:28px 36px;margin:0 0 72px 0;background:#080c14;border-radius:0 8px 8px 0;font-style:normal;">
                     <p style="font-size:15px;color:#94a3b8;line-height:1.9;margin:0;">
-                        "The professionals I admire most can automate a repetitive onboarding workflow, debug a complex Active Directory sync issue, and maintain high-availability systems with quiet precision. That is the range I am building toward—reliable, automation-focused, and operationally grounded."
+                        "The professionals I admire most can automate a repetitive onboarding workflow, debug a complex Active Directory sync issue, and maintain high-availability systems with quiet precision. That is the range I operate in: reliable, automation-focused, operationally grounded. I built and shipped a Rust/WASM portfolio with SQLite FFI and self-gated CI to demonstrate, not declare, that standard."
                     </p>
                 </blockquote>
 
@@ -86,19 +89,19 @@ pub fn AboutPage() -> impl IntoView {
                         <div style="flex:1;height:1px;background:#1a2540;"></div>
                     </div>
                     <p style="font-size:14px;color:var(--text-secondary);line-height:1.9;margin:0 0 16px 0;">
-                        "Every system I manage starts with the question: how will I know when this is failing? Before deploying a configuration change, I verify the monitoring and alerting stack. A system without clear visibility into its logs and health metrics is an operational risk. I prioritize observability to ensure that I can identify and resolve issues before they impact the end-user experience."
+                        "Every system I manage starts with the question: how will I know when this is failing? Before deploying a configuration change, I verify the monitoring and alerting stack. A system without clear visibility into its logs and health metrics is an operational risk. I prioritize observability to ensure that I can identify and resolve issues before they impact the end-user experience. (See the Prometheus/Grafana SLO pipeline lab; the portfolio's own telemetry page instruments LCP and heap metrics as a live example.)"
                     </p>
                     <p style="font-size:14px;color:var(--text-secondary);line-height:1.9;margin:0 0 16px 0;">
-                        "I am drawn to systems that are predictable and well-documented. In production environments, consistency is the key to stability. I believe in minimizing manual intervention through scripting and Infrastructure as Code (IaC). By standardizing deployments and eliminating configuration drift, we ensure that infrastructure remains reliable as it scales."
+                        "I am drawn to systems that are predictable and well-documented. In production environments, consistency is the key to stability. I believe in minimizing manual intervention through scripting and Infrastructure as Code (IaC). By standardizing deployments and eliminating configuration drift, we ensure that infrastructure remains reliable as it scales. (See the Terraform GCP landing zone — modular, remote-state, policy-validated, CIS-aligned.)"
                     </p>
                     <p style="font-size:14px;color:var(--text-secondary);line-height:1.9;margin:0 0 48px 0;">
-                        "The core infrastructure—Active Directory, Linux, and Cloud services—should be the reliable foundation of any organization. The interesting work is making these systems more efficient: managing secure identity fabrics (IAM), automating user lifecycles with PowerShell and Bash, and ensuring that security and compliance are baked into every workflow. I want to handle the technical complexities so that the infrastructure remains a seamless service for the business."
+                        "The core infrastructure—Active Directory, Linux, and Cloud services—should be the reliable foundation of any organization. The interesting work is making these systems more efficient: managing secure identity fabrics (IAM), automating user lifecycles with PowerShell and Bash, and ensuring that security and compliance are baked into every workflow. I want to handle the technical complexities so that the infrastructure remains a seamless service for the business. (See the Active Directory + GPO + WireGuard zero-trust lab; PowerShell identity lifecycle automation.)"
                     </p>
                 </section>
 
                 <section>
                     <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-                        <span style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;">"Technologies I Want to Go Deeper With"</span>
+                        <span style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;">"Adjacent Technologies"</span>
                         <div style="flex:1;height:1px;background:#1a2540;"></div>
                     </div>
                     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:72px;">
