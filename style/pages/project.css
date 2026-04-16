@@ -947,8 +947,36 @@
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.01em;
-  margin: 0 0 21px;
+  margin: 0 0 var(--space-5);
   line-height: 1.2;
+  position: relative;
+}
+/* Anchor-hash hover affordance — enterprise docs idiom.
+   `#` appears to the left of the heading when the section is hovered
+   or focused-within, suggesting the section is deep-linkable.
+   User right-click-copies the TOC link (docs page) for the actual URL. */
+.pd-v2-heading::before {
+  content: "#";
+  position: absolute;
+  left: -26px;
+  top: 0;
+  color: var(--text-muted);
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity 150ms ease, color 150ms ease;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+.pd-v2-section:hover > .pd-v2-heading::before,
+.pd-v2-section:focus-within > .pd-v2-heading::before {
+  opacity: 0.55;
+  color: var(--accent-cyan);
+}
+@media (max-width: 1200px) {
+  /* Container padding would clip the absolute-positioned `#`; hide below
+     the threshold where there's no free margin to hang it in. */
+  .pd-v2-heading::before { display: none; }
 }
 .pd-v2-subheading {
   font-size: 11px;
