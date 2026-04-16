@@ -1126,6 +1126,10 @@ body.scroll-locked {
   color: var(--text-muted);
   text-decoration: none;
   transition: color 120ms ease;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 2px 0;
 }
 
 .wu-breadcrumb-link:hover {
@@ -1248,6 +1252,8 @@ body.scroll-locked {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   transition: color 150ms ease;
+  min-height: 44px;
+  padding: 2px 0;
 }
 
 .wu-footer-link:hover {
