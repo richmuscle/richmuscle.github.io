@@ -30,10 +30,9 @@ thiserror     = "1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 web-sys     = { version = "0.3", features = [
-    "Clipboard", "Document", "Element", "History",
-    "HtmlIFrameElement", "HtmlInputElement",
-    "IntersectionObserver", "IntersectionObserverEntry", "IntersectionObserverInit",
-    "MediaQueryList", "Navigator", "Window"
+    "console", "Document", "Element",
+    "History", "HtmlElement", "HtmlInputElement",
+    "KeyboardEvent", "Navigator", "Window"
 ] }
 js-sys      = "0.3"
 gloo-net    = { version = "0.5", features = ["http"] }
