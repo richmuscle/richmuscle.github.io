@@ -271,11 +271,17 @@ html.light .timeline-body {
   border-radius: 4px;
   padding: 4px 8px;
 }
+/* ── Inline code block (case study) — always dark regardless of theme.
+   Consolidated from two previously conflicting declarations: the old
+   second rule set overflow:hidden which clipped long code lines; we
+   keep overflow-x:auto on the outer container so horizontal scroll
+   works on narrow viewports. max-width:100% prevents viewport bleed. */
 .pd-code-container {
-  background: var(--bg-base);
-  border: 1px solid var(--border);
+  background: #0d1320;
+  border: 1px solid #1a2540;
   border-radius: 8px;
   padding: 21px 34px;
+  margin-top: 8px;
   overflow-x: auto;
   max-width: 100%;
   overscroll-behavior-x: contain;
@@ -302,17 +308,6 @@ html.light .timeline-body {
   margin-bottom: 0;
 }
 .pd-container .pd-diagram-wrap [inner_html] { max-width: 100%; }
-
-
-/* ── Inline code block (case study) ────────────────────── */
-/* Always dark regardless of theme */
-.pd-code-container {
-  background: #0d1320;
-  border: 1px solid #1a2540;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 8px;
-}
 
 .pd-code-bar {
   background: #111827;

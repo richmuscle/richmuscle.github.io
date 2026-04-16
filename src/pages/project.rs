@@ -114,20 +114,20 @@ pub fn ProjectDetailPage() -> impl IntoView {
                 view! {
                     <main id="main-content" class="min-h-screen pt-16 pb-24 page-enter">
                         <div class="pd-container">
-                            <div class="pd-breadcrumb-row">
+                            <nav class="pd-breadcrumb-row" aria-label="Breadcrumb">
                                 <div>
                                     <a href="/">"Portfolio"</a>
                                     <span aria-hidden="true">" / "</span>
                                     <span>{p.title}</span>
                                 </div>
-                            </div>
+                            </nav>
 
                             <header class="pd-header">
                                 <div class="pd-category-label" style=format!("color:{}", cat_accent)>{p.category.label()}</div>
                                 <h1 class="pd-title">{p.title}</h1>
                                 <p class="pd-subtitle">{p.subtitle}</p>
                                 <div class="pd-tech-pills">
-                                    {p.tech_stack.iter().map(|tech| view! { <span>{*tech}</span> }).collect_view()}
+                                    {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
                                 </div>
                             </header>
 
@@ -136,12 +136,16 @@ pub fn ProjectDetailPage() -> impl IntoView {
                                     <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
                                 }>
                                     {move || detail.get().map(|res| res.map(|d| view! {
-                                        <article class="pd-body-text" inner_html=d.content></article>
+                                        // No max-width on the article wrapper — child pd-section
+                                        // blocks (stat-bar, before-after, challenges) need full
+                                        // container width. Child <p> elements get their own
+                                        // reading width via .pd-body-text in the CSS.
+                                        <article class="pd-article" inner_html=d.content></article>
                                     }))}
                                 </Suspense>
                             </ErrorBoundary>
 
-                            <div class="pd-section flex items-center gap-3 flex-wrap mt-12">
+                            <div class="pd-section pd-footer-actions flex items-center gap-3 flex-wrap mt-12">
                                 <A href=format!("/project/{}/docs", p.slug) class="pd-footer-btn">
                                     <span aria-hidden="true">"📄"</span>"View Documentation"
                                 </A>
@@ -172,8 +176,8 @@ pub fn ProjectDetailPage() -> impl IntoView {
                                 }.into_view()
                             }}
 
-                            <div class="flex items-center gap-6 pt-8 border-t border-[var(--border-subtle)]" style="margin-top: 24px;">
-                                <A href="/" class="text-[13px] font-mono text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors">"← All Projects"</A>
+                            <div class="flex items-center gap-6 pt-8 border-t border-subtle" style="margin-top: 24px;">
+                                <A href="/" class="text-[13px] font-mono text-[var(--text-muted)] transition-colors pd-back-link">"← All Projects"</A>
                             </div>
                         </div>
                     </main>

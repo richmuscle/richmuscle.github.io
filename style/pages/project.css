@@ -338,6 +338,14 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
+/* Container for JSON-injected case study HTML — no max-width so
+   pd-section / pd-stat-bar / pd-before-after children span the full
+   pd-container width. Reading width is applied to individual <p>
+   elements via the .pd-body-text class inside the JSON content. */
+.pd-article {
+  display: block;
+  width: 100%;
+}
 .pd-body-text {
   font-size: 13px;
   line-height: 1.618;
@@ -346,6 +354,13 @@
   margin: 0;
 }
 .pd-body-text + .pd-body-text { margin-top: 13px; }
+
+/* Back-link hover state (replaces arbitrary-value hover:text-[var()] class
+   that was silently failing) */
+.pd-back-link:hover,
+.pd-back-link:focus-visible {
+  color: var(--text-secondary);
+}
 
 .pd-challenge {
   padding: 21px;
