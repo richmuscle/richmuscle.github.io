@@ -344,6 +344,12 @@ html.light .theme-toggle-btn {
 
 /* ── Hide keyboard-centric affordances on touch/mobile.
      No physical keyboard → no Cmd+K hint, no shortcuts modal trigger. ── */
+
+/* Desktop: hide the mobile-only search icon (Cmd+K is the desktop path). */
+.navbar-search-toggle {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .shortcuts-toggle-btn,
   .palette-hint,
@@ -357,6 +363,28 @@ html.light .theme-toggle-btn {
   .theme-toggle-btn {
     width: 44px;
     height: 44px;
+  }
+
+  /* Mobile-only search button — opens the command palette. */
+  .navbar-search-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+  }
+  .navbar-search-toggle:hover,
+  .navbar-search-toggle:focus-visible {
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    background: color-mix(in srgb, var(--accent-cyan) 8%, transparent);
   }
 }
 

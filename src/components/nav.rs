@@ -15,6 +15,9 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
     let shortcuts_open = use_context::<GlobalAppState>()
         .map(|s| s.shortcuts_open)
         .unwrap_or_else(|| create_rw_signal(false));
+    let palette_open = use_context::<GlobalAppState>()
+        .map(|s| s.palette_open)
+        .unwrap_or_else(|| create_rw_signal(false));
     let (nav_open, set_nav_open) = create_signal(false);
 
     // Close drawer when route changes (e.g. keyboard shortcut navigation)
@@ -79,6 +82,17 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
                 } else {
                     view! { <span></span> }.into_view()
                 }}
+                <button
+                    type="button"
+                    class="navbar-search-toggle"
+                    aria-label="Open command palette and search"
+                    on:click=move |_| palette_open.set(true)
+                >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
                 <button
                     type="button"
                     class="theme-toggle-btn shortcuts-toggle-btn"
