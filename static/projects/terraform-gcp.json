@@ -111,5 +111,7 @@
     {"label": "Architecture diagram (full-scale SVG)", "url": "/diagrams/terraform-gcp-architecture.svg", "external": false},
     {"label": "Operational runbook \u2192 Docs page", "url": "/project/terraform-gcp/docs", "external": false},
     {"label": "See it apply \u2192 Demo page", "url": "/project/terraform-gcp/demo", "external": false}
-  ]
+  ],
+  "last_updated": "2026-04-16",
+  "reading_time_minutes": 7
 }

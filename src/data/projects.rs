@@ -117,6 +117,10 @@ pub struct ProjectDetail {
     pub lessons: Vec<String>,
     #[serde(default)]
     pub artifact_links: Vec<ArtifactLink>,
+    #[serde(default)]
+    pub last_updated: Option<String>,
+    #[serde(default)]
+    pub reading_time_minutes: Option<u32>,
 }
 
 impl ProjectDetail {
@@ -199,6 +203,12 @@ pub struct DocsDetail {
     pub limitations: Vec<String>,
     #[serde(default)]
     pub references: Vec<ArtifactLink>,
+    #[serde(default)]
+    pub last_updated: Option<String>,
+    #[serde(default)]
+    pub reading_time_minutes: Option<u32>,
+    #[serde(default)]
+    pub status_label: Option<String>,
 }
 
 impl DocsDetail {
@@ -338,6 +348,12 @@ pub struct DemoDetail {
     pub output_snippets: Vec<OutputSnippet>,
     #[serde(default)]
     pub not_demonstrated: Vec<String>,
+    #[serde(default)]
+    pub last_updated: Option<String>,
+    #[serde(default)]
+    pub reading_time_minutes: Option<u32>,
+    #[serde(default)]
+    pub status_label: Option<String>,
 }
 
 impl DemoDetail {

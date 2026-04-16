@@ -103,5 +103,8 @@
     "Load testing — the landing zone was validated with 3 instances per tier; behavior at 300+ instances is not characterized.",
     "Break-glass state rollback to a specific GCS version is documented in the runbook but not performed in this demo.",
     "Cost optimization under sustained workload — IAP per-byte cost and Cloud NAT egress charges were measured at lab scale ($0.50/mo); production economics unknown."
-  ]
+  ],
+  "last_updated": "2026-04-16",
+  "reading_time_minutes": 4,
+  "status_label": "Homelab"
 }

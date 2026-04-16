@@ -20,6 +20,43 @@ enum Surface {
     Demo,
 }
 
+// Thin meta strip rendered between the surface tabs and first content section.
+// Shows: Last updated · Reading time · Status.
+// Any field that is None is silently skipped. If all three are None, the
+// strip itself doesn't render.
+fn meta_strip(
+    last_updated: Option<String>,
+    reading_time_minutes: Option<u32>,
+    status_label: Option<String>,
+) -> impl IntoView {
+    let has_any = last_updated.is_some() || reading_time_minutes.is_some() || status_label.is_some();
+    if !has_any {
+        return view! { <span></span> }.into_view();
+    }
+    view! {
+        <div class="pd-meta-strip" role="complementary" aria-label="Page metadata">
+            {last_updated.map(|d| view! {
+                <span class="pd-meta-item">
+                    <span class="pd-meta-kicker">"Updated"</span>
+                    <span class="pd-meta-value">{d}</span>
+                </span>
+            })}
+            {reading_time_minutes.map(|t| view! {
+                <span class="pd-meta-item">
+                    <span class="pd-meta-kicker">"Read"</span>
+                    <span class="pd-meta-value">{format!("~{} min", t)}</span>
+                </span>
+            })}
+            {status_label.map(|s| view! {
+                <span class="pd-meta-item">
+                    <span class="pd-meta-kicker">"Status"</span>
+                    <span class="pd-meta-value pd-meta-value-accent">{s}</span>
+                </span>
+            })}
+        </div>
+    }.into_view()
+}
+
 fn surface_tabs(slug: &'static str, current: Surface) -> impl IntoView {
     let tab = move |label: &'static str, path_suffix: &'static str, variant: Surface| {
         let href = if path_suffix.is_empty() {
@@ -79,9 +116,13 @@ fn render_v2_detail(d: ProjectDetail) -> impl IntoView {
     let outcomes = d.outcomes.clone();
     let lessons = d.lessons.clone();
     let artifact_links = d.artifact_links.clone();
+    let last_updated = d.last_updated.clone();
+    let reading_time = d.reading_time_minutes;
 
     view! {
         <article class="pd-v2">
+            {meta_strip(last_updated, reading_time, None)}
+
             // §1  Hero metrics + status badge
             {if status.is_some() || !hero_metrics.is_empty() {
                 view! {
@@ -497,8 +538,12 @@ fn render_v2_docs(d: DocsDetail, p_slug: &'static str) -> impl IntoView {
     let testing = d.testing.clone();
     let limitations = d.limitations.clone();
     let references = d.references.clone();
+    let last_updated = d.last_updated.clone();
+    let reading_time = d.reading_time_minutes;
+    let status_label = d.status_label.clone();
 
     view! {
+        {meta_strip(last_updated, reading_time, status_label)}
         <div class="pd-v2-docs-layout">
             // Sticky TOC (desktop only; hidden on mobile via CSS)
             <aside class="pd-v2-docs-toc" aria-label="Document table of contents">
@@ -921,9 +966,14 @@ fn render_v2_demo(d: DemoDetail, p_slug: &'static str) -> impl IntoView {
     let reproduce = d.reproduce.clone();
     let output_snippets = d.output_snippets.clone();
     let not_demonstrated = d.not_demonstrated.clone();
+    let last_updated = d.last_updated.clone();
+    let reading_time = d.reading_time_minutes;
+    let status_label = d.status_label.clone();
 
     view! {
         <article class="pd-v2">
+            {meta_strip(last_updated, reading_time, status_label)}
+
             // § Hero media (mandatory for V2 demo)
             {hero_src.map(|src| view! {
                 <section class="pd-v2-section" id="hero">

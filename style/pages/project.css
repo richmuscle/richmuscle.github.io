@@ -765,6 +765,54 @@
 }
 
 /* ============================================================
+   META STRIP — last-updated · reading-time · status
+   Rendered between the surface tabs and the first content section.
+   Enterprise polish: every serious doc page has a freshness signal.
+   ============================================================ */
+
+.pd-meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin: 0 0 var(--space-8);
+  padding-bottom: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-3xs);
+  letter-spacing: 0.08em;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+
+.pd-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pd-meta-kicker {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 10px;
+}
+
+.pd-meta-value {
+  color: var(--text-secondary);
+}
+
+.pd-meta-value-accent {
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .pd-meta-strip {
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+}
+
+/* ============================================================
    SURFACE TAB BAR
    Rendered below the hero on every project sub-page.
    3 tabs: Case Study | Documentation | Demo.
