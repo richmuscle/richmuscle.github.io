@@ -241,33 +241,45 @@ pub fn ThemeToggle(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) ->
 pub fn BackToTop() -> impl IntoView {
     let (visible, set_visible) = create_signal(false);
     let read_progress_ctx = use_context::<GlobalAppState>().map(|s| s.read_progress);
+
+    // Scroll listener — panic-safe. If window is unavailable (SSR hook
+    // or headless), silently no-op rather than abort the WASM module.
     #[cfg(not(feature = "ssr"))]
     create_effect(move |_| {
-        let window = web_sys::window().unwrap();
+        let Some(window) = web_sys::window() else { return; };
         let closure = wasm_bindgen::closure::Closure::wrap(Box::new(move || {
-            let scroll_y = web_sys::window().unwrap().scroll_y().unwrap_or(0.0);
+            let Some(w) = web_sys::window() else { return; };
+            let scroll_y = w.scroll_y().unwrap_or(0.0);
             set_visible.set(scroll_y > 300.0);
         }) as Box<dyn FnMut()>);
-        window
-            .add_event_listener_with_callback("scroll", closure.as_ref().unchecked_ref())
-            .ok();
+        let _ = window.add_event_listener_with_callback(
+            "scroll",
+            closure.as_ref().unchecked_ref(),
+        );
+        // Closure is intentionally leaked — BackToTop mounts once at App
+        // level and persists for the page lifetime. remove_event_listener
+        // on unmount is moot since App never unmounts in this CSR app.
         closure.forget();
     });
     #[cfg(feature = "ssr")]
     let _ = set_visible;
+
     view! {
         <div class=move || format!("back-to-top-wrap {}", if visible.get() { "btt-visible" } else { "" })>
             {read_progress_ctx.map(|ctx| {
                 let progress = ctx.progress;
                 view! {
+                    // Progress ring — stroke inherits color from .back-to-top-ring
+                    // via currentColor so theme tokens can override per surface.
                     <svg class="back-to-top-ring" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
                         <circle
                             cx="20"
                             cy="20"
                             r="18"
                             fill="none"
-                            stroke="var(--accent-cyan)"
+                            stroke="currentColor"
                             stroke-width="2"
+                            stroke-linecap="round"
                             stroke-dasharray="113"
                             stroke-dashoffset=move || format!("{}", 113.0 - (progress.get() / 100.0) * 113.0)
                             transform="rotate(-90 20 20)"
@@ -275,12 +287,23 @@ pub fn BackToTop() -> impl IntoView {
                     </svg>
                 }.into_view()
             }).unwrap_or_else(|| view! { <span></span> }.into_view())}
-            <button on:click=move |_| {
-                #[cfg(not(feature = "ssr"))]
-                { web_sys::window().unwrap().scroll_to_with_x_and_y(0.0, 0.0); }
-            } aria-label="Back to top"
-                class="back-to-top">
-                <span class="back-to-top-glyph">"↑"</span>
+            <button
+                type="button"
+                on:click=move |_| {
+                    #[cfg(not(feature = "ssr"))]
+                    {
+                        let Some(w) = web_sys::window() else { return; };
+                        // html { scroll-behavior: smooth } (base.css) makes this
+                        // call animate instead of jump — no need to pass
+                        // ScrollToOptions::smooth (which would require the feature
+                        // to be enabled in Cargo.toml).
+                        w.scroll_to_with_x_and_y(0.0, 0.0);
+                    }
+                }
+                aria-label="Back to top of page"
+                class="back-to-top"
+            >
+                <span class="back-to-top-glyph" aria-hidden="true">"↑"</span>
             </button>
         </div>
     }

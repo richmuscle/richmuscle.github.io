@@ -236,10 +236,24 @@ html.light .theme-toggle-btn {
   min-height: unset;
   min-width: unset;
   z-index: 1;
+  transition:
+    border-color 150ms ease,
+    color 150ms ease,
+    background 150ms ease,
+    transform 100ms ease;
 }
-.back-to-top:hover {
+.back-to-top:hover,
+.back-to-top:focus-visible {
   border-color: var(--accent-cyan);
   color: var(--accent-cyan);
+  background: color-mix(in srgb, var(--accent-cyan) 6%, var(--bg-surface));
+}
+.back-to-top:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+.back-to-top:active {
+  transform: scale(0.92);
 }
 
 /* ── READING PROGRESS BAR ──────────────────────────────────── */

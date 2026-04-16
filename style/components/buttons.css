@@ -12,11 +12,13 @@ html.light .filter-tab-active {
   border-bottom: 2px solid var(--accent-cyan);
 }
 
-/* Writing page tag filter pills */
+/* Writing page tag filter pills.
+   Hidden at ALL viewports — mobile uses the bottom-sheet drawer,
+   desktop relies on the search-box as the primary filter path.
+   The category buttons were adding visual noise without load-bearing
+   value once structured sorting (core → dated) was in place. */
 .tag-pills-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  display: none !important;
 }
 .tag-pill {
   display: inline-block;
