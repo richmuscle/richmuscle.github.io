@@ -19,11 +19,36 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
         .map(|s| s.palette_open)
         .unwrap_or_else(|| create_rw_signal(false));
     let (nav_open, set_nav_open) = create_signal(false);
+    #[allow(unused_variables)]
+    let hamburger_ref = create_node_ref::<html::Button>();
 
     // Close drawer when route changes (e.g. keyboard shortcut navigation)
     create_effect(move |_| {
         let _ = location.pathname.get();
         set_nav_open.set(false);
+    });
+
+    // Focus management: on drawer open, move focus to the first drawer link;
+    // on close, return focus to the hamburger toggle. The first link is
+    // queried by CSS selector since <A> components don't expose node_ref.
+    #[cfg(not(feature = "ssr"))]
+    create_effect(move |prev: Option<bool>| {
+        let current = nav_open.get();
+        let was_open = prev.unwrap_or(false);
+        if current && !was_open {
+            if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+                if let Ok(Some(el)) = document.query_selector(".navbar-mobile-drawer a") {
+                    if let Some(html_el) = el.dyn_ref::<web_sys::HtmlElement>() {
+                        let _ = html_el.focus();
+                    }
+                }
+            }
+        } else if !current && was_open {
+            if let Some(el) = hamburger_ref.get() {
+                let _ = el.focus();
+            }
+        }
+        current
     });
 
     view! {
@@ -66,6 +91,7 @@ pub fn NavBar(is_dark: ReadSignal<bool>, set_is_dark: WriteSignal<bool>) -> impl
                 <button
                     type="button"
                     class="navbar-mobile-toggle"
+                    node_ref=hamburger_ref
                     aria-label="Toggle menu"
                     aria-expanded=move || nav_open.get()
                     on:click=move |_| set_nav_open.update(|v| *v = !*v)
