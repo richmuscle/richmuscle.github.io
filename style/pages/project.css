@@ -926,6 +926,7 @@
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.01em;
+  color: var(--accent-cyan);
 }
 .pd-v2-metric-label {
   font-size: 11px;

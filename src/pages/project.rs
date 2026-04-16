@@ -134,10 +134,14 @@ fn render_v2_detail(d: ProjectDetail) -> impl IntoView {
                             view! {
                                 <div class="pd-v2-metrics">
                                     {hero_metrics.into_iter().map(|m| {
-                                        let color = m.color.clone().unwrap_or_else(|| "var(--accent-cyan)".to_string());
+                                        // JSON-provided color hints ignored — metric values
+                                        // use the single accent token so light-mode theme
+                                        // switching doesn't surface a hardcoded hex with
+                                        // poor contrast. Visual differentiation is carried
+                                        // by the label below each value.
                                         view! {
                                             <div class="pd-v2-metric">
-                                                <span class="pd-v2-metric-value" style=format!("color:{}", color)>{m.value}</span>
+                                                <span class="pd-v2-metric-value">{m.value}</span>
                                                 <span class="pd-v2-metric-label">{m.label}</span>
                                             </div>
                                         }
