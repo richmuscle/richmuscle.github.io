@@ -69,13 +69,14 @@
     <!-- Wasm preload: Trunk does not support data-trunk rel="preload"; inject at runtime from loader script. -->
     <!-- Bundle the custom stylesheet into dist/ -->
     <link data-trunk rel="scss" href="style/style.scss"/>
-    <!-- Copy self-hosted fonts to dist/fonts/ -->
-    <link data-trunk rel="copy-dir" href="static/fonts" />
-    <!-- Copy writeup and project content JSON (lazy-loaded at runtime) -->
-    <link data-trunk rel="copy-dir" href="static/writeups"/>
-    <link data-trunk rel="copy-dir" href="static/projects"/>
-    <link data-trunk rel="copy-dir" href="static/docs"/>
-    <link data-trunk rel="copy-dir" href="static/demos"/>
+    <!-- Single asset root: all served assets live under public/. Trunk copy-dir
+         directives below copy each subdirectory to dist/ at its same path. -->
+    <link data-trunk rel="copy-dir" href="public/fonts" />
+    <!-- Writeup and project content JSON (lazy-loaded at runtime) -->
+    <link data-trunk rel="copy-dir" href="public/writeups"/>
+    <link data-trunk rel="copy-dir" href="public/projects"/>
+    <link data-trunk rel="copy-dir" href="public/docs"/>
+    <link data-trunk rel="copy-dir" href="public/demos"/>
     <link data-trunk rel="copy-dir" href="public/pdfs"/>
     <link data-trunk rel="copy-dir" href="public/diagrams"/>
     <link data-trunk rel="copy-file" href="public/sitemap.xml"/>

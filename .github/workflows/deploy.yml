@@ -32,7 +32,7 @@ jobs:
         run: |
           rm -rf dist/fonts
           mkdir -p dist/fonts
-          cp -v static/fonts/*.woff2 dist/fonts/
+          cp -v public/fonts/*.woff2 dist/fonts/
           test -f dist/fonts/geist-400.woff2
           test -f dist/fonts/geist-500.woff2
           test -f dist/fonts/jbmono-400.woff2
