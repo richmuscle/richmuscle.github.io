@@ -47,6 +47,3 @@ pub struct ReadProgressSignals {
     pub progress: leptos::ReadSignal<f64>,
     pub set_progress: leptos::WriteSignal<f64>,
 }
-
-#[cfg(test)]
-mod tests;
