@@ -61,10 +61,13 @@
     <!-- Trunk directives ─────────────────────────────────────── -->
     <!-- Build and inject the WASM app (required for any output).
          Trunk emits the Wasm script with type="module"; no defer/async needed. -->
-    <!-- data-wasm-opt="0" disables Trunk's built-in wasm-opt pass. wasm-opt is run
-         manually in deploy.yml after trunk build with --all-features (required for
-         the bulk-memory + nontrapping-float-to-int extensions used by this binary).
-         Trunk 0.21 does not support passthrough wasm-opt args, so manual pass is needed. -->
+    <!-- data-wasm-opt="0" disables Trunk's built-in wasm-opt pass because Trunk
+         0.21 does not pass through `--enable-bulk-memory` /
+         `--enable-nontrapping-float-to-int`, which the wasm-bindgen output for
+         this crate requires (verified empirically: both apt binaryen 108 and
+         Trunk's vendored binaryen 123 exit non-zero without those flags).
+         wasm-opt is instead run as a separate step in deploy.yml with the
+         explicit feature flags. See .github/workflows/deploy.yml. -->
     <link data-trunk rel="rust" data-wasm-opt="0" />
     <!-- Wasm preload: Trunk does not support data-trunk rel="preload"; inject at runtime from loader script. -->
     <!-- Bundle the custom stylesheet into dist/ -->
