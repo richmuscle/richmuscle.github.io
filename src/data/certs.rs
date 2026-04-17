@@ -32,3 +32,30 @@ static CERTIFICATIONS: LazyLock<Vec<Certification>> = LazyLock::new(init_certifi
 pub fn get_certifications() -> &'static Vec<Certification> {
     &CERTIFICATIONS
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashSet;
+
+    #[test]
+    fn certifications_not_empty() {
+        assert!(
+            !get_certifications().is_empty(),
+            "certifications list must contain at least one entry"
+        );
+    }
+
+    #[test]
+    fn cert_ids_unique() {
+        let certs = get_certifications();
+        let mut seen = HashSet::new();
+        for c in certs.iter() {
+            assert!(
+                seen.insert(c.name.as_str()),
+                "duplicate certification name detected: {}",
+                c.name
+            );
+        }
+    }
+}
