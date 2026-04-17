@@ -31,7 +31,7 @@ allow = [
 confidence-threshold = 0.8
 
 [licenses.private]
-# Ignore the workspace crate itself — it has no published license field
+# Ignore this crate itself — no published license field, publish = false
 ignore = true
 
 [bans]
