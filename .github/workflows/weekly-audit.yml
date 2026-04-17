@@ -33,7 +33,7 @@ jobs:
 
       - name: Install Trunk
         run: |
-          wget -qO- https://github.com/trunk-rs/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+          wget -qO- https://github.com/trunk-rs/trunk/releases/download/v0.21.14/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
           sudo mv trunk /usr/local/bin/
 
       - name: Install cargo tools
@@ -51,14 +51,18 @@ jobs:
           echo "advisories=$ADVISORIES" >> $GITHUB_OUTPUT
         continue-on-error: true
 
-      - name: Run cargo deny
+      - name: Run cargo deny (fail on hard errors, tolerate warnings)
         id: deny
         run: |
-          cargo deny check 2>&1 | tee deny-report.txt || true
+          cargo deny check 2>&1 | tee deny-report.txt
           DENY_STATUS="pass"
-          grep -q "error:" deny-report.txt && DENY_STATUS="fail" || true
+          if grep -qE "^error(\[|:)" deny-report.txt; then
+            DENY_STATUS="fail"
+            echo "deny_status=$DENY_STATUS" >> $GITHUB_OUTPUT
+            echo "::error::cargo deny reported hard errors — see deny-report.txt"
+            exit 1
+          fi
           echo "deny_status=$DENY_STATUS" >> $GITHUB_OUTPUT
-        continue-on-error: true
 
       - name: Run cargo outdated
         id: outdated
@@ -89,6 +93,20 @@ jobs:
             awk '{print int($1 / 1024)}')
           echo "wasm_kb=$WASM_SIZE" >> $GITHUB_OUTPUT
           echo "gzip_kb=$GZIP_SIZE" >> $GITHUB_OUTPUT
+
+      - name: Bundle-size gate (honest threshold — 700 KB soft-warn)
+        # P0-1 (wasm-opt restoration) landed: deploy.yml now runs wasm-opt -Oz
+        # with bulk-memory + nontrapping-float-to-int enabled (binaryen v123).
+        # Empirical floor for this Leptos 0.6 + sqlite-wasm-rs + 4-highlighter
+        # bundle is ~670 KB gzipped. Setting the soft-warn threshold at 700 KB
+        # gives ~4% headroom; anything above that indicates a real regression.
+        # The aspirational 500 KB target requires dropping sqlite or highlighters.
+        run: |
+          GZIP=${{ steps.wasm_size.outputs.gzip_kb }}
+          echo "Gzipped WASM: ${GZIP} KB"
+          if [ "$GZIP" -gt 700 ]; then
+            echo "::warning::Gzipped WASM size $GZIP KB exceeds 700 KB honest threshold — check for dependency creep or unoptimized code."
+          fi
 
       - name: Count Rust LOC
         id: loc

@@ -35,31 +35,52 @@ A production portfolio site written entirely in Rust — no JavaScript framework
 ```
 src/
 ├── components/          # Reusable UI primitives
-│   ├── terminal.rs      # Animated terminal component (HomePage)
-│   └── nav.rs           # Navigation with resume download
+│   ├── nav.rs           # Navigation + keyboard chords
+│   ├── palette.rs       # Command palette (⌘/Ctrl+K)
+│   ├── project.rs       # ProjectCard + CodeBlock
+│   ├── layout.rs        # Reading-progress signals
+│   ├── site_footer.rs
+│   ├── error_fallback.rs
+│   └── mod.rs
 ├── pages/               # Route-level page components
 │   ├── home.rs
-│   ├── projects.rs      # Error boundary wired
+│   ├── about.rs
 │   ├── writing.rs       # Error boundary wired
+│   ├── project/         # Case Study / Docs / Demo surfaces
+│   │   ├── detail.rs
+│   │   ├── docs.rs
+│   │   ├── demo.rs
+│   │   └── (module root in src/pages/project.rs — shared tabs + meta strip)
 │   ├── resume.rs
-│   └── contact.rs
+│   ├── contact.rs
+│   ├── telemetry.rs
+│   ├── one_pager.rs
+│   ├── not_found.rs
+│   └── mod.rs
 ├── data/                # Content module — split by domain
 │   ├── projects.rs
 │   ├── writeups.rs
 │   ├── certs.rs
+│   ├── tests.rs         # 10 unit tests covering data integrity
 │   └── mod.rs
 ├── state.rs             # GlobalAppState — unified provide_context
 ├── error.rs             # AppError (thiserror)
-└── ssg.rs               # SSG pipeline (opt-in)
+├── db.rs                # sqlite-wasm-rs portfolio index + pure-Rust fallback
+├── utils.rs             # Browser helpers, syntax highlighters, HTML escape
+├── lib.rs               # Crate root + `App` component
+├── main.rs              # WASM entry point
+└── bin/
+    └── ssg.rs           # Static-site-generator binary (feature = "ssg")
 
-styles/
-├── tokens/              # 85-token CSS variable system
-├── base/                # Reset, typography, layout
+style/
+├── tokens.css           # Design token CSS variable system
+├── base.css             # Reset, typography, global rules
+├── style.scss           # Entry point — imports the layered files below
 ├── components/          # Component-scoped styles
 └── pages/               # Page-scoped styles
 ```
 
-**Key design decisions** (full ADR log in `CLAUDE.md`):
+**Key design decisions** (full ADR log in `docs/DECISIONS.md`):
 
 - **CSR deploy** — WASM hydration via Trunk, no SSR runtime required on GitHub Pages
 - **Single context** — `GlobalAppState` replaces five scattered `provide_context` calls
@@ -81,23 +102,31 @@ cargo install trunk
 git clone https://github.com/richmuscle/richmuscle.github.io.git
 cd richmuscle.github.io
 trunk serve
-# → http://localhost:8080
+# → http://localhost:8002
 ```
 
-**Run checks (both gates must pass before any deploy):**
+**Run checks (all four gates must pass before any deploy — mirrors `.github/workflows/ci.yml`):**
 
 ```bash
-# CSR/WASM gate
+# 1. CSR default, wasm32
 cargo check --target wasm32-unknown-unknown
 
-# SSR gate
-cargo check --features ssr
+# 2. SSR host-only
+cargo check --no-default-features --features ssr
+
+# 3. Hydrate + sqlite, wasm32
+cargo check --no-default-features --features "hydrate sqlite" --target wasm32-unknown-unknown
+
+# 4. SSG binary compile gate
+cargo check --features ssg --bin ssg
 ```
+
+The `justfile` wraps all four into `just check`; `just lint` runs `cargo fmt --check` + clippy; `just test` runs the unit suite.
 
 **Run tests:**
 
 ```bash
-cargo test
+cargo test --no-default-features --features ssr
 ```
 
 ---

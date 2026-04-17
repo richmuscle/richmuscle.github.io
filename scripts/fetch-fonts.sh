@@ -2,10 +2,10 @@
 # scripts/fetch-fonts.sh
 # Fetches Inter + JetBrains Mono woff2 files by parsing live Google Fonts CSS.
 # Run from repo root: bash scripts/fetch-fonts.sh
-# Commit the resulting static/fonts/*.woff2 files.
+# Commit the resulting public/fonts/*.woff2 files.
 set -euo pipefail
 
-FONT_DIR="static/fonts"
+FONT_DIR="public/fonts"
 mkdir -p "$FONT_DIR"
 
 UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -65,5 +65,5 @@ done
 
 echo ""
 echo "Done. Next:"
-echo "  git add static/fonts/*.woff2"
+echo "  git add public/fonts/*.woff2"
 echo "  git commit -m 'feat: self-host Inter and JetBrains Mono'"

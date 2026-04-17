@@ -225,3 +225,58 @@ pub fn all_writeups() -> &'static Vec<WriteUpIndex> {
 pub fn find_writeup(slug: &str) -> Option<WriteUpIndex> {
     WRITEUPS.iter().find(|w| w.slug == slug).cloned()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashSet;
+
+    #[test]
+    fn writeups_index_not_empty() {
+        assert!(
+            !all_writeups().is_empty(),
+            "WRITEUPS index must contain at least one entry"
+        );
+    }
+
+    #[test]
+    fn writeup_slugs_unique() {
+        let writeups = all_writeups();
+        let mut seen = HashSet::new();
+        for w in writeups.iter() {
+            assert!(
+                seen.insert(w.slug),
+                "duplicate writeup slug detected: {}",
+                w.slug
+            );
+        }
+    }
+
+    #[test]
+    fn find_writeup_returns_correct() {
+        let first = all_writeups()
+            .first()
+            .expect("writeups index has at least one entry");
+        let result = find_writeup(first.slug);
+        assert!(
+            result.is_some(),
+            "find_writeup must return Some for known slug {}",
+            first.slug
+        );
+        assert_eq!(
+            result.unwrap().slug,
+            first.slug,
+            "find_writeup returned wrong writeup for slug {}",
+            first.slug
+        );
+    }
+
+    #[test]
+    fn find_writeup_unknown_slug_returns_none() {
+        let result = find_writeup("not-a-real-slug");
+        assert!(
+            result.is_none(),
+            "find_writeup must return None for unknown slug"
+        );
+    }
+}

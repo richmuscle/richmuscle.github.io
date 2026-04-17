@@ -8,7 +8,7 @@
 
 **Tech Stack:** Rust 1.x, Leptos 0.6 (`hydrate` + `ssr` features), `leptos_router::RouterIntegrationContext` + `ServerIntegration` for SSR routing, Trunk (WASM build, unchanged), GitHub Actions.
 
-**Spec:** `docs/superpowers/specs/2026-04-11-ssr-static-export-design.md`
+**Spec:** `docs/rfcs/2026-04-11-ssr-static-export-design.md`
 
 ---
 

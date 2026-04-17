@@ -1,5 +1,10 @@
-# Mark CSS and Static assets as documentation/generated so they don't skew language stats
+# Mark CSS and static assets as documentation/generated so they don't skew language stats.
+# The asset root is `public/`; content JSON and fonts live under public/{writeups,projects,docs,demos,fonts}.
 style/** linguist-documentation
-static/** linguist-documentation
+public/writeups/** linguist-documentation
+public/projects/** linguist-documentation
+public/docs/** linguist-documentation
+public/demos/** linguist-documentation
+public/fonts/** linguist-documentation
 *.js linguist-generated
 *.html linguist-generated
