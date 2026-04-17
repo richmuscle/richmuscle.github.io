@@ -63,7 +63,7 @@ jobs:
       - name: Verify resume PDF present and real
         run: test $(stat -c%s dist/pdfs/resume.pdf) -gt 100000
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
