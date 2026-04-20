@@ -17,7 +17,7 @@ pub use writeups::*;
 pub const EMAIL: &str = "Richard.Mussell@yahoo.com";
 pub const GITHUB_URL: &str = "https://github.com/richmuscle";
 pub const LINKEDIN_URL: &str = "https://www.linkedin.com/in/richard-mussell-iii-0b64a1218/";
-pub const PROFESSIONAL_TITLE: &str = "Systems Administrator & DevOps Engineer";
+pub const PROFESSIONAL_TITLE: &str = "Linux Systems Administrator";
 
 // === Shared content types (used by project detail pages) ====
 #[derive(Clone, PartialEq)]

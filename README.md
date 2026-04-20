@@ -1,6 +1,6 @@
 # richardmussell.github.io
 
-> **Systems Administrator & DevOps Engineer** — Portfolio site built with Rust, Leptos 0.6, and WASM.  
+> **Linux Systems Administrator — Infrastructure Automation, Identity, and Observability** — Portfolio site built with Rust, Leptos 0.6, and WASM.  
 > Live at **[richmuscle.github.io](https://richmuscle.github.io)**
 
 ![CI](https://github.com/richmuscle/richmuscle.github.io/actions/workflows/deploy.yml/badge.svg)
@@ -172,7 +172,7 @@ trunk build --release
 
 ## About
 
-**Richard J. Mussell** — Systems Administrator & DevOps Engineer based in Oklahoma City, OK.
+**Richard J. Mussell** — Linux Systems Administrator based in Oklahoma City, OK.
 
 BS in IT & Administrative Management (Cybersecurity specialization) from Central Washington University. Hands-on experience in SOC operations, enterprise identity infrastructure, and platform engineering. Pursuing GCP Associate Cloud Engineer and CKA.
 

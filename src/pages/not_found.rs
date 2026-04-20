@@ -8,7 +8,7 @@ pub fn NotFoundPage() -> impl IntoView {
     let current_path = move || location.pathname.get();
     view! {
         <Title text="404 · Page Not Found · Richard Mussell"/>
-        <Meta name="description" content="Page not found — Richard Mussell Systems Administrator & DevOps Engineer Portfolio."/>
+        <Meta name="description" content="Page not found — Richard Mussell Linux Systems Administrator Portfolio."/>
         <main class="not-found-container min-h-screen pt-28 flex flex-col items-center justify-center px-6">
             <p class="not-found-code text-[96px] font-mono text-[var(--text-muted)] leading-none mb-6">"404"</p>
             <p class="font-mono text-[13px] max-w-md text-center mb-2">

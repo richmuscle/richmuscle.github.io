@@ -12,7 +12,7 @@ pub fn ResumePage() -> impl IntoView {
 
     view! {
         <Title text=move || format!("Resume · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
-        <Meta name="description" content="Resume of Richard Mussell — Systems Administrator & DevOps Engineer with lab projects spanning IaC, Linux automation, observability, and zero-trust networking."/>
+        <Meta name="description" content="Resume of Richard Mussell — Linux Systems Administrator with lab projects spanning IaC, Linux hardening, observability, and zero-trust networking."/>
         <main id="main-content" class="min-h-screen pt-16 pb-24 bg-[var(--bg-base)]">
             <div class="resume-container max-w-3xl mx-auto px-6 py-12">
 
@@ -22,7 +22,7 @@ pub fn ResumePage() -> impl IntoView {
 
                 <header class="mb-10 pb-8 border-b border-[var(--border-subtle)]">
                     <h1 class="text-4xl font-bold text-[var(--text-primary)] tracking-tight mb-1">"Richard J. Mussell"</h1>
-                    <p class="text-[16px] text-[var(--text-secondary)] mb-3">"Systems Administrator & DevOps Engineer"</p>
+                    <p class="text-[16px] text-[var(--text-secondary)] mb-3">{PROFESSIONAL_TITLE}</p>
                     <div style="white-space:nowrap;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);line-height:1.6;">
                         <span>"Oklahoma City, OK"</span>
                         <span style="color:var(--border-subtle);padding:0 10px;">"·"</span>
@@ -54,7 +54,7 @@ pub fn ResumePage() -> impl IntoView {
                 <section class="mb-10">
                     <h2 class="text-[11px] font-mono font-semibold text-[var(--accent-cyan)] uppercase tracking-[0.15em] mb-4">"Summary"</h2>
                     <p class="text-[15px] text-[var(--text-secondary)] leading-7 max-w-2xl">
-                        "Systems Administrator and DevOps Engineer with a BS in IT & Administrative Management (Cybersecurity specialization). Hands-on experience in SOC monitoring, ELK Stack log analysis, and enterprise toolchain operations (ICOMS, Salesforce). Lab projects spanning Terraform IaC, Linux hardening, SIEM observability pipelines, and WireGuard zero-trust networking."
+                        "Linux Systems Administrator with a BS in IT & Administrative Management (Cybersecurity specialization). Hands-on experience in SOC monitoring, ELK Stack log analysis, and enterprise toolchain operations (ICOMS, Salesforce). Lab projects spanning Terraform IaC, Linux hardening, SIEM observability pipelines, and WireGuard zero-trust networking."
                     </p>
                 </section>
 
@@ -114,7 +114,7 @@ pub fn ResumePage() -> impl IntoView {
                         <div class="resume-timeline-dot-item">
                             <span class="resume-timeline-dot" aria-hidden="true"></span>
                             <span class="resume-timeline-year">"Sep 2025 – Present"</span>
-                            <span class="resume-timeline-label">"Self-directed Platform Engineering / Homelab"</span>
+                            <span class="resume-timeline-label">"Self-directed Systems Administration & Infrastructure Lab"</span>
                             <p class="resume-timeline-detail">
                                 <span>"Role: Independent"</span><br/>
                                 <span>"• Built and shipped a Rust + Leptos + WASM32 portfolio (5,705 LOC, SQLite FFI with 12 unsafe blocks and AtomicU64 telemetry counters) deployed via Trunk to GitHub Pages with a 4-target cargo-check CI matrix."</span><br/>

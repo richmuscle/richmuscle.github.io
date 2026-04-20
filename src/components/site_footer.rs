@@ -18,7 +18,7 @@ pub fn SiteFooter() -> impl IntoView {
                 <div class="site-footer-identity">
                     <p class="site-footer-identity-name">"© 2026 Richard J. Mussell"</p>
                     <p class="site-footer-identity-role">
-                        "Systems Administrator · DevOps · Platform Engineer · Oklahoma City"
+                        "Linux Systems Administrator · Oklahoma City"
                     </p>
                 </div>
                 <nav class="site-footer-nav" aria-label="Site footer navigation">

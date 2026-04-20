@@ -12,12 +12,12 @@ pub fn OnePageSummary() -> impl IntoView {
     let projects = get_infrastructure_fleet();
     view! {
         <Title text=move || format!("One-Pager · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
-        <Meta name="description" content="One-page summary of Richard Mussell's platform engineering, DevOps, and systems engineering targets, featured projects, and technical depth."/>
+        <Meta name="description" content="One-page summary of Richard Mussell's Linux systems administration projects, infrastructure automation, and technical depth."/>
         <main id="main-content" class="one-pager min-h-screen pt-16 pb-24">
             <div class="one-pager-inner">
                 <section class="one-pager-section">
                     <h1 class="one-pager-name">"Richard Mussell"</h1>
-                    <p class="one-pager-title">"Systems Administrator & DevOps Engineer"</p>
+                    <p class="one-pager-title">{PROFESSIONAL_TITLE}</p>
                     <p class="one-pager-meta">{format!("{} · Oklahoma City, OK (remote open)", EMAIL)}</p>
                     <div class="one-pager-actions one-pager-action-row">
                         <button

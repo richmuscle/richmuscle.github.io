@@ -1,5 +1,5 @@
 use crate::components::ComponentErrorFallback;
-use crate::data::{WriteUpDetail, WRITEUPS};
+use crate::data::{WriteUpDetail, PROFESSIONAL_TITLE, WRITEUPS};
 use crate::error::AppError;
 use crate::utils::{sanitize_slug, track};
 use leptos::*;
@@ -60,7 +60,7 @@ pub fn WritingPage() -> impl IntoView {
         list
     });
     view! {
-        <Title text="Writing · Richard Mussell · Systems Engineering"/>
+        <Title text=move || format!("Writing · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
         <Meta name="description" content="Technical writing by Richard Mussell on IT systems and security operations: NIST-aligned automation, sysadmin hardening, zero-trust enforcement, and SIEM alert hygiene."/>
         <main class="min-h-screen pt-24 pb-24 page-enter">
             <div class="writing-page-container max-w-3xl mx-auto px-6">

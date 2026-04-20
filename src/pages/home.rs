@@ -88,7 +88,7 @@ pub fn HomePage() -> impl IntoView {
 
     view! {
         <Title text=move || format!("Richard Mussell · {}", PROFESSIONAL_TITLE)/>
-        <Meta name="description" content="Systems Administrator & DevOps Engineer with lab projects spanning IaC, Linux automation, observability, and zero-trust networking."/>
+        <Meta name="description" content="Linux Systems Administrator with lab projects spanning IaC, Linux hardening, observability, and zero-trust networking."/>
         <main id="main-content" role="main" class="home-main min-h-screen pt-24 page-enter">
             <div class="home-page-wrap">
 
@@ -97,9 +97,9 @@ pub fn HomePage() -> impl IntoView {
                     <div class="hero-grid">
                         <div class="hero-left">
                             <h1 id="hero-heading" class="hero-name">"Richard J. Mussell"</h1>
-                            <p class="hero-subtitle">"Systems Administrator & DevOps Engineer"</p>
+                            <p class="hero-subtitle">{PROFESSIONAL_TITLE}</p>
                             <p class="hero-body">
-                                "SOC-trained infrastructure engineer. I build the automation, identity, and observability layers that keep hybrid-cloud environments running when nobody's looking. Oklahoma City — open to remote."
+                                "SOC-trained Linux administrator. I build the automation, identity, and observability layers that keep hybrid-cloud environments running when nobody's looking. Oklahoma City — open to remote."
                             </p>
                             <p class="hero-body">
                                 "Monitored 13 municipal entities in an ELK-based SOC. Shipped zero-touch Windows deployment with Intune/Autopilot, WSUS patch automation, and 3-2-1 DR in lab. Running a 12-tool SOC homelab on bare metal."
@@ -107,7 +107,7 @@ pub fn HomePage() -> impl IntoView {
                             <p class="hero-meta">
                                 <span class="text-[#64748b]">"Oklahoma City, OK"</span>
                                 <span class="hero-meta-sep">" · "</span>
-                                <span class="text-[#64748b]">"Systems Engineering & Lab Projects"</span>
+                                <span class="text-[#64748b]">"Systems Administration & Lab Projects"</span>
                             </p>
                             <div class="hero-buttons">
                                 // VERIFY: /resume opens resume route; user runs window.print() from that page to get PDF — do not change to .pdf href.

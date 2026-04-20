@@ -6,7 +6,7 @@ use leptos_meta::{Meta, Title};
 pub fn AboutPage() -> impl IntoView {
     view! {
         <Title text=move || format!("About · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
-        <Meta name="description" content="About Richard Mussell — Systems Administrator & DevOps Engineer based in Oklahoma City, OK. Lab projects spanning IaC, Linux automation, observability, and zero-trust networking."/>
+        <Meta name="description" content="About Richard Mussell — Linux Systems Administrator based in Oklahoma City, OK. Lab projects spanning IaC, Linux hardening, observability, and zero-trust networking."/>
         <main id="main-content" class="min-h-screen page-enter about-main" style="padding-top:80px;">
             <div class="about-wrap" style="max-width:760px;margin:0 auto;padding:clamp(40px,8vw,80px) clamp(16px,5vw,40px) clamp(60px,10vw,100px);padding-top:96px;">
 
@@ -21,7 +21,7 @@ pub fn AboutPage() -> impl IntoView {
                         </div>
                     </div>
                     <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:24px;">
-                        "Richard Mussell is a Systems Administrator and DevOps Engineer based in Oklahoma City. Cybersecurity-specialized ITAM graduate (Central Washington University, 2024) with SOC analyst experience monitoring 13 municipal government networks on ELK. Operating production-grade infrastructure labs spanning Intune/Autopilot zero-touch deployment, Active Directory with GPO, WSUS patch automation, and a 12-tool SOC homelab (Wazuh, Suricata, Falco, TheHive, MISP, n8n SOAR). Pursuing GCP Associate Cloud Engineer (Q3 2026) and Certified Kubernetes Administrator (Q4 2026)."
+                        "Richard Mussell is a Linux Systems Administrator based in Oklahoma City. Cybersecurity-specialized ITAM graduate (Central Washington University, 2024) with SOC analyst experience monitoring 13 municipal government networks on ELK. Operating production-grade infrastructure labs spanning Intune/Autopilot zero-touch deployment, Active Directory with GPO, WSUS patch automation, and a 12-tool SOC homelab (Wazuh, Suricata, Falco, TheHive, MISP, n8n SOAR). Pursuing GCP Associate Cloud Engineer (Q3 2026) and Certified Kubernetes Administrator (Q4 2026)."
                     </p>
                     <p style="color:var(--text-muted);font-size:12px;line-height:1.7;max-width:620px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;">
                         "This portfolio is a Rust + Leptos application compiled to wasm32-unknown-unknown. It ships in CSR mode (default deploy); SSR, hydrate, and SSG build targets are feature-gated in Cargo.toml and compile-validated in CI, ready for Phase 2. Served as a static binary on GitHub Pages — zero server runtime, zero GC."

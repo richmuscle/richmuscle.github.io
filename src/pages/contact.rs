@@ -12,14 +12,14 @@ pub fn ContactPage() -> impl IntoView {
     let _ = set_email_copied;
     view! {
         <Title text=move || format!("Contact · Richard Mussell · {}", PROFESSIONAL_TITLE)/>
-        <Meta name="description" content="Contact Richard Mussell — Systems Administrator & DevOps Engineer available for sysadmin, DevOps, and infrastructure roles."/>
+        <Meta name="description" content="Contact Richard Mussell — Linux Systems Administrator available for systems administration and infrastructure roles."/>
         <main id="main-content" class="contact-page page-enter">
             <div class="contact-header">
                 <div class="contact-header-inner">
                     <p class="contact-header-label">"Contact"</p>
                     <h1 class="contact-heading">"Let's talk infrastructure, reliability, and automation."</h1>
                     <p class="contact-subtext">
-                        "Systems Administrator and DevOps Engineer with a BS in IT & Administrative Management. I build repeatable infrastructure with Terraform, automate system administration with PowerShell and Bash, and manage identity and access through Active Directory."
+                        "Linux Systems Administrator with a BS in IT & Administrative Management. I build repeatable infrastructure with Terraform, automate system administration with PowerShell and Bash, and manage identity and access through Active Directory."
                     </p>
                 </div>
             </div>
