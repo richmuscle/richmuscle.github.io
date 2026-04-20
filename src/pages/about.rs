@@ -58,7 +58,7 @@ pub fn AboutPage() -> impl IntoView {
                                 ("Kubernetes",
                                  "Studying. I can deploy workloads with kubectl and read the scheduler and etcd at a conceptual level; I haven't operated a cluster at scale or written controllers. Not my current priority — listed because the field asks."),
                                 ("Containers & CI/CD",
-                                 "Docker for lab service packaging. GitHub Actions for the build-check-deploy pipeline on this portfolio (four cargo-check gates across wasm32, ssr, hydrate, and ssg targets; wasm-opt; gh-pages deploy). Hands-on on a single-repo scale, not multi-service CI at team scale."),
+                                 "Docker for lab service packaging. GitHub Actions for the build-check-deploy pipeline on this portfolio (four cargo-check gates across wasm32, ssr, hydrate, and ssg targets; wasm-opt; gh-pages deploy). Hands-on on a single-repo scale, not multi-service CI at team scale. Reading toward Ansible for fleet configuration, Vault for secrets management, ArgoCD for GitOps delivery, and Helm for Kubernetes packaging — haven't shipped with any of them yet."),
                                 ("Security Frameworks & Compliance",
                                  "NIST 800-53 and 800-207 controls referenced in the Terraform and zero-trust labs. CIS benchmarks enforced through Terraform gates on the GCP baseline. Academic SOC exposure at PISCES — the scope described in Who I Am. Framework literacy, not compliance-program ownership."),
                             ];
@@ -94,22 +94,6 @@ pub fn AboutPage() -> impl IntoView {
                     <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin:0 0 48px 0;">
                         "Security and identity are not a layer I add at the end. The zero-trust lab is built around AD-gated WireGuard tunnels because adding identity to a network that didn't start with it means undoing assumptions everywhere. The Terraform baseline runs CIS checks on every apply, not quarterly. The tradeoff is that early decisions constrain later ones — I can't trivially add a service that doesn't fit the access model — and that constraint is the point. Boundaries I can't slip past are the ones that hold."
                     </p>
-                </section>
-
-                <section>
-                    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-                        <h2 style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;margin:0;">"Adjacent Technologies"</h2>
-                        <div style="flex:1;height:1px;background:#1a2540;"></div>
-                    </div>
-                    <div class="about-pills-row" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:72px;">
-                        {vec![
-                            "Kubernetes (CKA path)", "Ansible", "Crossplane", "Pulumi",
-                            "Helm Charts", "ArgoCD", "Vault", "SPIRE/SPIFFE",
-                            "Cilium", "Talos Linux", "Packer", "Rust (systems tooling)",
-                        ].into_iter().map(|pill| view! {
-                            <span style="background:#080c14;border:1px solid #1a2540;border-radius:3px;padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#22d3ee;letter-spacing:0.08em;">{pill}</span>
-                        }).collect_view()}
-                    </div>
                 </section>
 
                 // Email / LinkedIn / GitHub were here; removed because the
