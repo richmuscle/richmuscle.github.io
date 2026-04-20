@@ -21,13 +21,16 @@ pub fn AboutPage() -> impl IntoView {
                         </div>
                     </div>
                     <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:24px;">
-                        "Richard Mussell is a Linux Systems Administrator based in Oklahoma City. Cybersecurity-specialized ITAM graduate (Central Washington University, 2024) with SOC analyst experience monitoring 13 municipal government networks on ELK. Operating production-grade infrastructure labs spanning Intune/Autopilot zero-touch deployment, Active Directory with GPO, WSUS patch automation, and a 12-tool SOC homelab (Wazuh, Suricata, Falco, TheHive, MISP, n8n SOAR). Pursuing GCP Associate Cloud Engineer (Q3 2026) and Certified Kubernetes Administrator (Q4 2026)."
+                        "I'm a Linux systems administrator in Oklahoma City, open to remote. This site documents how I operate, not what title I'm claiming."
                     </p>
-                    <p style="color:var(--text-muted);font-size:12px;line-height:1.7;max-width:620px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;">
-                        "This portfolio is a Rust + Leptos application compiled to wasm32-unknown-unknown. It ships in CSR mode (default deploy); SSR, hydrate, and SSG build targets are feature-gated in Cargo.toml and compile-validated in CI, ready for Phase 2. Served as a static binary on GitHub Pages — zero server runtime, zero GC."
+                    <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:24px;">
+                        "My background includes an academic SOC rotation, not operator tenure. I spent a term at PISCES — Central Washington's student SOC — building visualizations on the ELK stack, working the ticketing system, and watching analysts triage alerts across thirteen municipal networks. The rotation was part of my BS in IT and Administrative Management, cybersecurity specialization, Central Washington University, 2024. I did not own detections or run shifts at volume. What I took from it was a stance, not a skill: most of what breaks production gets buried under noise that looked routine yesterday, and the work of operations is often the work of making that noise visible before it matters."
                     </p>
-                    <p style="color:var(--text-muted);font-size:12px;line-height:1.7;max-width:620px;margin-bottom:64px;font-family:'JetBrains Mono',monospace;">
-                        "Visual system: fibonacci spacing scale + golden-ratio type scale, single-accent cyan, layered SCSS (tokens → base → components → pages)."
+                    <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:24px;">
+                        "I build with that bias now — observability before automation, automation before features, honest limits before claimed outcomes."
+                    </p>
+                    <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:64px;">
+                        "The lab is where that plays out. I run a hardened Windows fleet with Intune and Autopilot, an Active Directory domain with GPO-driven baselines, WSUS patching, and a twelve-tool SOC stack — Wazuh, Suricata, Falco, TheHive, MISP, n8n, and the rest — on bare metal. The Terraform landing zone in this portfolio passes 87 of 92 CIS GCP controls under nightly drift detection. That's lab scale, not enterprise scale, and I'll say so on any page that claims a number."
                     </p>
                 </section>
 
