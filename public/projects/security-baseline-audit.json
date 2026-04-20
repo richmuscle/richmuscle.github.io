@@ -24,7 +24,7 @@
     "HashiCorp Vault integration (Secret Manager suffices at lab scale)",
     "Cross-cloud (AWS/Azure) module parity"
   ],
-  "approach": "Modular Terraform registry (vpc-network, iam-service-accounts, gce-hardening, security-baselines) producing a Private-First VPC with Cloud NAT for controlled egress, IAP tunnelling for admin access, and OIDC-based Workload Identity Federation from GitHub Actions to GCP. State lives in a GCS backend with native locking; all state mutations happen from a non-interactive CI runner impersonating a per-environment service account. Compliance is enforced before apply via tfsec and Checkov gates in the CI pipeline \u2014 the provisioning plan itself fails if a CIS control is violated.",
+  "approach": "The compliance loop has three stages: gate, apply, detect. Before any Terraform change merges, tfsec and Checkov scan the plan against CIS GCP Foundations Benchmark v2.0 \u2014 a HIGH finding blocks the PR. If the scan passes, a CI runner applies via Workload Identity Federation (short-lived OIDC credentials, no stored keys). After apply, a nightly cron runs terraform plan against the live state; any delta from the declared baseline triggers an auto-opened PR with the drift diff. The infrastructure itself is a modular Terraform registry (vpc-network, iam-service-accounts, gce-hardening, security-baselines, audit-sinks) producing a Private-First VPC \u2014 zero public IPs on compute, IAP tunnelling for admin access, Cloud NAT for controlled egress. State is in a GCS backend with native locking. No human runs terraform apply from a laptop; every mutation goes through the CI pipeline.",
   "approach_diagram_src": "/diagrams/security-baseline-audit-architecture.svg",
   "decisions": [
     {
