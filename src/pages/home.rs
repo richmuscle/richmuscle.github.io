@@ -68,7 +68,11 @@ pub fn HomePage() -> impl IntoView {
             .iter()
             .filter(|p| p.category == ProjectCategory::Networking)
             .count();
-        (all_len, cyber, cloud, admin, net)
+        let disciplines = [cyber, cloud, admin, net]
+            .iter()
+            .filter(|&&c| c > 0)
+            .count();
+        (all_len, cyber, cloud, admin, net, disciplines)
     });
 
     let ProjectCardSignals {
@@ -136,7 +140,10 @@ pub fn HomePage() -> impl IntoView {
                 >
                     <div class="projects-header">
                         <p class="projects-eyebrow">"Portfolio"</p>
-                        <h2 class="projects-title">"4 Projects · 4 Disciplines"</h2>
+                        <h2 class="projects-title">{move || {
+                            let (total, _, _, _, _, disc) = counts.get();
+                            format!("{} Projects · {} Disciplines", total, disc)
+                        }}</h2>
                         <p class="text-[13px] font-mono text-[#64748b] mt-2">
                             "Terraform IaC for reliability · PowerShell/GPO & Windows Server 2022/Linux automation · SIEM/Observability · Secure admin via WireGuard"
                         </p>
@@ -170,7 +177,7 @@ pub fn HomePage() -> impl IntoView {
                             let cat_click     = cat.clone();
                             let cat_for_count = cat.clone();
                             let count = move || {
-                                let (_all, cyber, cloud, admin, net) = counts.get();
+                                let (_all, cyber, cloud, admin, net, _disc) = counts.get();
                                 match &cat_for_count {
                                     ProjectCategory::CyberSecurity => cyber,
                                     ProjectCategory::CloudInfrastructure => cloud,

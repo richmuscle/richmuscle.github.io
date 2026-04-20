@@ -402,13 +402,13 @@ fn init_projects_index() -> Vec<ProjectIndex> {
             category: ProjectCategory::SystemsAdmin,
             status: SystemStatus::Operational,
             tech_stack: &[
-                "Bash (POSIX)",
-                "Linux (RHEL/Ubuntu)",
-                "Cron",
-                "RBAC",
-                "Systems Hardening",
-                "GPO for Linux",
-                "Sysctl",
+                "Terraform",
+                "GCP",
+                "tfsec",
+                "Checkov",
+                "CIS Benchmark",
+                "Workload Identity",
+                "NIST 800-53",
             ],
         },
         ProjectIndex {
@@ -445,6 +445,33 @@ fn init_projects_index() -> Vec<ProjectIndex> {
                 "IAM",
             ],
         },
+        ProjectIndex {
+            slug: "endpoint-management-compliance",
+            title: "Endpoint Management & Compliance System",
+            subtitle: "Managed endpoint provisioning, compliance evaluation, and policy enforcement across Windows, macOS, and iOS devices via Intune and Autopilot.",
+            description: "Centralized endpoint lifecycle management: zero-touch provisioning, OS patching, compliance scoring, and GPO-equivalent policy enforcement for hybrid Windows/macOS/iOS fleets.",
+            category: ProjectCategory::SystemsAdmin,
+            status: SystemStatus::Operational,
+            tech_stack: &[],
+        },
+        ProjectIndex {
+            slug: "backup-recovery-continuity",
+            title: "Backup, Recovery & Business Continuity System",
+            subtitle: "Tiered backup, tested restore, and deliberate-disaster recovery exercises for the operational infrastructure of the other projects in this portfolio.",
+            description: "3-2-1 backup strategy with scheduled restore validation, documented RTO/RPO targets per service tier, and quarterly disaster-recovery drills against the live operational stack.",
+            category: ProjectCategory::SystemsAdmin,
+            status: SystemStatus::Operational,
+            tech_stack: &[],
+        },
+        ProjectIndex {
+            slug: "operational-foundation",
+            title: "Operational Foundation",
+            subtitle: "The wiki, runbook library, change-management process, and incident-response procedures that govern the other projects as a system.",
+            description: "Operational governance layer: structured runbooks, change-advisory process, incident-response playbooks, and a documentation wiki that ties the portfolio projects into a single managed platform.",
+            category: ProjectCategory::SystemsAdmin,
+            status: SystemStatus::Operational,
+            tech_stack: &[],
+        },
     ]
 }
 
@@ -465,6 +492,9 @@ pub fn one_liner_for_project(slug: &str) -> &'static str {
         "security-baseline-audit" => "CIS GCP 87/92 controls passing, Terraform compliance gates, Workload Identity Federation, nightly drift detection with automated reconciliation.",
         "observability-operational-intelligence" => "Multi-tier alerting pipeline: Prometheus metrics, ELK log enrichment, Grafana SLO dashboards, and automated anomaly detection.",
         "identity-access-lifecycle" => "Identity-based admin access via WireGuard tunnels, AD-gated authorization, micro-segmentation, and instant credential revocation.",
+        "endpoint-management-compliance" => "Managed endpoint provisioning, compliance evaluation, and policy enforcement across Windows, macOS, and iOS devices via Intune and Autopilot.",
+        "backup-recovery-continuity" => "Tiered backup, tested restore, and deliberate-disaster recovery exercises for the operational infrastructure.",
+        "operational-foundation" => "Wiki, runbook library, change-management process, and incident-response procedures governing the portfolio as a system.",
         _ => "Operational infrastructure project",
     }
 }
@@ -565,6 +595,53 @@ mod tests {
                 !fleet.iter().any(|p| p.slug == *old),
                 "redirect source '{}' still exists in registry — rename incomplete",
                 old
+            );
+        }
+    }
+
+    #[test]
+    fn all_six_canonical_slugs_in_registry() {
+        let fleet = get_infrastructure_fleet();
+        let canonical = [
+            "security-baseline-audit",
+            "observability-operational-intelligence",
+            "identity-access-lifecycle",
+            "endpoint-management-compliance",
+            "backup-recovery-continuity",
+            "operational-foundation",
+        ];
+        for slug in &canonical {
+            let entry = fleet.iter().find(|p| p.slug == *slug);
+            assert!(
+                entry.is_some(),
+                "canonical slug '{}' missing from registry",
+                slug
+            );
+            let e = entry.unwrap();
+            assert!(
+                !e.title.is_empty(),
+                "canonical slug '{}' has empty title",
+                slug
+            );
+        }
+    }
+
+    #[test]
+    fn all_canonical_slugs_have_one_liner() {
+        let canonical = [
+            "security-baseline-audit",
+            "observability-operational-intelligence",
+            "identity-access-lifecycle",
+            "endpoint-management-compliance",
+            "backup-recovery-continuity",
+            "operational-foundation",
+        ];
+        for slug in &canonical {
+            let liner = one_liner_for_project(slug);
+            assert!(
+                liner != "Operational infrastructure project",
+                "canonical slug '{}' has only the default one-liner",
+                slug
             );
         }
     }
