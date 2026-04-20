@@ -156,17 +156,6 @@ fn init_writeups_index() -> Vec<WriteUpIndex> {
             summary: "A deep-dive into high-fidelity enterprise sandboxing. Utilizing PowerShell and AutomatedLab to build a deterministic Windows Server 2022 simulation for testing identity governance, GPO enforcement, and network sovereignty.",
             read_time: "8 min read",
         },
-        WriteUpIndex {
-            slug: "universal-dialects-the-role-of-linux-and-shell-in-the-unified-control-plane",
-            title: "Universal Dialects: The Role of Linux and Shell in the Unified Control Plane",
-            date: "2024",
-            tags: &["LINUX-ADMIN", "POWERSHELL", "CONFIGURATION-AS-CODE", "HYBRID-CLOUD"],
-            category: "PLATFORM ARCHITECTURE",
-            is_core: true,
-            pdf_url: Some("/pdfs/universal-dialects.pdf"),
-            summary: "Analyzing the fundamental roles of Linux and PowerShell as the 'hammer and nails' of systems architecture. Transitioning from 'Script-Ops' into declarative configuration-as-code for high-integrity governance.",
-            read_time: "9 min read",
-        },
     ]
 }
 

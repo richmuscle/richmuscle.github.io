@@ -12,12 +12,11 @@ pub fn WritingPage() -> impl IntoView {
     // Category filter removed from UI; kept in signal for potential deep-link
     // support via URL query param in the future. Always None for now.
     let active_category = create_signal(None::<&'static str>).0;
-    let core_order: [&'static str; 5] = [
+    let core_order: [&'static str; 4] = [
         "the-orchestrator-of-intent-reflections-on-service-provisioning",
         "the-architect-of-oceanic-visibility-soc-operations-at-universal-scale",
         "the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane",
         "the-mirror-universe-architecting-deterministic-enterprise-simulations",
-        "universal-dialects-the-role-of-linux-and-shell-in-the-unified-control-plane",
     ];
     let filtered = create_memo(move |_| {
         let q = search_query.get().to_lowercase();
