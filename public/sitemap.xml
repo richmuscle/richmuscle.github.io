@@ -37,12 +37,12 @@
        <priority>0.7</priority><changefreq>never</changefreq></url>
   <url><loc>https://richmuscle.github.io/writing/ebpf-from-zero-to-prod</loc>
        <priority>0.7</priority><changefreq>never</changefreq></url>
-  <url><loc>https://richmuscle.github.io/writing/the-orchestrator-of-intent-reflections-on-service-provisioning</loc>
+  <url><loc>https://richmuscle.github.io/writing/service-provisioning-cox-control-planes</loc>
        <priority>0.7</priority><changefreq>never</changefreq></url>
-  <url><loc>https://richmuscle.github.io/writing/the-architect-of-oceanic-visibility-soc-operations-at-universal-scale</loc>
+  <url><loc>https://richmuscle.github.io/writing/soc-observability-pisces-elk-kql</loc>
        <priority>0.7</priority><changefreq>never</changefreq></url>
-  <url><loc>https://richmuscle.github.io/writing/the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane</loc>
+  <url><loc>https://richmuscle.github.io/writing/cisco-ios-fundamentals</loc>
        <priority>0.7</priority><changefreq>never</changefreq></url>
-  <url><loc>https://richmuscle.github.io/writing/the-mirror-universe-architecting-deterministic-enterprise-simulations</loc>
+  <url><loc>https://richmuscle.github.io/writing/windows-server-lab-powershell-automatedlab</loc>
        <priority>0.7</priority><changefreq>never</changefreq></url>
 </urlset>

@@ -1,5 +1,5 @@
 use crate::components::ComponentErrorFallback;
-use crate::data::{WriteUpDetail, PROFESSIONAL_TITLE, WRITEUPS};
+use crate::data::{resolve_legacy_writeup_slug, WriteUpDetail, PROFESSIONAL_TITLE, WRITEUPS};
 use crate::error::AppError;
 use crate::utils::{sanitize_slug, track};
 use leptos::*;
@@ -13,10 +13,10 @@ pub fn WritingPage() -> impl IntoView {
     // support via URL query param in the future. Always None for now.
     let active_category = create_signal(None::<&'static str>).0;
     let core_order: [&'static str; 4] = [
-        "the-orchestrator-of-intent-reflections-on-service-provisioning",
-        "the-architect-of-oceanic-visibility-soc-operations-at-universal-scale",
-        "the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane",
-        "the-mirror-universe-architecting-deterministic-enterprise-simulations",
+        "service-provisioning-cox-control-planes",
+        "soc-observability-pisces-elk-kql",
+        "cisco-ios-fundamentals",
+        "windows-server-lab-powershell-automatedlab",
     ];
     let filtered = create_memo(move |_| {
         let q = search_query.get().to_lowercase();
@@ -147,9 +147,31 @@ pub fn WritingPage() -> impl IntoView {
 #[component]
 pub fn WriteupDetailPage() -> impl IntoView {
     let params = use_params_map();
-    let slug = move || {
+    let raw_slug = move || {
         let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
         sanitize_slug(&raw)
+    };
+
+    #[cfg(not(feature = "ssr"))]
+    {
+        let nav = leptos_router::use_navigate();
+        create_effect(move |_| {
+            let s = raw_slug();
+            if let Some(new) = resolve_legacy_writeup_slug(&s) {
+                nav(
+                    &format!("/writing/{}", new),
+                    leptos_router::NavigateOptions {
+                        replace: true,
+                        ..Default::default()
+                    },
+                );
+            }
+        });
+    }
+
+    let slug = move || {
+        let s = raw_slug();
+        resolve_legacy_writeup_slug(&s).map(String::from).unwrap_or(s)
     };
     let index = create_memo(move |_| WRITEUPS.iter().find(|w| w.slug == slug()).cloned());
     let detail = create_resource(slug, |s| async move {

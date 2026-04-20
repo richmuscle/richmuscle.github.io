@@ -113,47 +113,47 @@ fn init_writeups_index() -> Vec<WriteUpIndex> {
             read_time: "10 min read",
         },
         WriteUpIndex {
-            slug: "the-orchestrator-of-intent-reflections-on-service-provisioning",
-            title: "The Orchestrator of Intent: Reflections on Service Provisioning",
+            slug: "service-provisioning-cox-control-planes",
+            title: "Service Provisioning at Cox: Lessons for Infrastructure Control Planes",
             date: "2024",
-            tags: &["PLATFORM ENGINEERING", "SYSTEMS ARCHITECTURE", "CONTROL PLANES"],
-            category: "PLATFORM ARCHITECTURE",
+            tags: &["TELECOM", "PROVISIONING", "CONTROL PLANES"],
+            category: "OPERATIONS",
             is_core: true,
-            pdf_url: Some("#"),
-            summary: "A deep-dive into how high-volume telecommunications operations function as a precursor to modern platform engineering-utilizing legacy databases as declarative control planes for service intent.",
+            pdf_url: None,
+            summary: "How navigating a telecom provisioning database (ICOMS) at Cox Communications parallels modern infrastructure control planes: declarative intent, status propagation, and admission control.",
             read_time: "8 min read",
         },
         WriteUpIndex {
-            slug: "the-architect-of-oceanic-visibility-soc-operations-at-universal-scale",
-            title: "The Architect of High-Fidelity Observability: SOC Operations at Universal Scale",
+            slug: "soc-observability-pisces-elk-kql",
+            title: "Building SOC Observability at PISCES: ELK, KQL, and Threat Correlation",
             date: "2024",
-            tags: &["CYBERSECURITY", "OBSERVABILITY", "SOC-OPS", "ELK-STACK"],
+            tags: &["SOC", "ELK-STACK", "KQL", "THREAT-DETECTION"],
             category: "OBSERVABILITY & SOC-OPS",
             is_core: true,
-            pdf_url: Some("#"),
-            summary: "A deep-dive into SOC 3.0 observability. Transforming raw telemetry into high-fidelity actionable intelligence through the ELK Stack, KQL semantic search, and the MantisBT ledger of truth.",
+            pdf_url: None,
+            summary: "Operational SOC observability at PISCES International: ELK Stack log aggregation, KQL semantic search for APT detection, temporal correlation of IDS alerts with outbound traffic, and MantisBT for incident state tracking.",
             read_time: "10 min read",
         },
         WriteUpIndex {
-            slug: "the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane",
-            title: "The Connectivity Fabric: Mastering the Bedrock of the Universal Control Plane",
+            slug: "cisco-ios-fundamentals",
+            title: "Cisco IOS Fundamentals: Subnetting, Port Security, and OSI Troubleshooting",
             date: "2024",
-            tags: &["NETWORKING", "CISCO-IOS", "INFRASTRUCTURE", "CONTROL-PLANES"],
+            tags: &["NETWORKING", "CISCO-IOS", "VLSM", "OSI"],
             category: "NETWORKING & INFRA",
             is_core: true,
-            pdf_url: Some("#"),
-            summary: "Exploring the \"physics\" of the digital world through Cisco IOS. A deep-dive into how hardware-level configuration, VLSM, and port security form the original declarative control plane for modern infrastructure.",
+            pdf_url: None,
+            summary: "Foundational networking via Cisco IOS: VLSM subnetting for environment isolation, MAC-based port security, and bottom-up OSI troubleshooting as the bedrock of infrastructure operations.",
             read_time: "7 min read",
         },
         WriteUpIndex {
-            slug: "the-mirror-universe-architecting-deterministic-enterprise-simulations",
-            title: "The Mirror Universe: Architecting Deterministic Enterprise Simulations",
+            slug: "windows-server-lab-powershell-automatedlab",
+            title: "Building a Windows Server Lab with PowerShell and AutomatedLab",
             date: "2024",
-            tags: &["ACTIVE-DIRECTORY", "POWERSHELL", "AUTOMATION", "HYPER-V"],
-            category: "PLATFORM ARCHITECTURE",
+            tags: &["ACTIVE-DIRECTORY", "POWERSHELL", "AUTOMATEDLAB", "GPO"],
+            category: "SYSTEMS ADMINISTRATION",
             is_core: true,
-            pdf_url: Some("#"),
-            summary: "A deep-dive into high-fidelity enterprise sandboxing. Utilizing PowerShell and AutomatedLab to build a deterministic Windows Server 2022 simulation for testing identity governance, GPO enforcement, and network sovereignty.",
+            pdf_url: None,
+            summary: "Declarative lab provisioning with PowerShell and AutomatedLab: Windows Server 2022, Active Directory schema architecture, GPO governance testing, and virtual network sovereignty for safe experimentation.",
             read_time: "8 min read",
         },
     ]
@@ -169,6 +169,20 @@ pub fn all_writeups() -> &'static Vec<WriteUpIndex> {
 
 pub fn find_writeup(slug: &str) -> Option<WriteUpIndex> {
     WRITEUPS.iter().find(|w| w.slug == slug).cloned()
+}
+
+pub const LEGACY_WRITEUP_REDIRECTS: &[(&str, &str)] = &[
+    ("the-orchestrator-of-intent-reflections-on-service-provisioning", "service-provisioning-cox-control-planes"),
+    ("the-architect-of-oceanic-visibility-soc-operations-at-universal-scale", "soc-observability-pisces-elk-kql"),
+    ("the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane", "cisco-ios-fundamentals"),
+    ("the-mirror-universe-architecting-deterministic-enterprise-simulations", "windows-server-lab-powershell-automatedlab"),
+];
+
+pub fn resolve_legacy_writeup_slug(slug: &str) -> Option<&'static str> {
+    LEGACY_WRITEUP_REDIRECTS
+        .iter()
+        .find(|(old, _)| *old == slug)
+        .map(|(_, new)| *new)
 }
 
 #[cfg(test)]
@@ -223,5 +237,22 @@ mod tests {
             result.is_none(),
             "find_writeup must return None for unknown slug"
         );
+    }
+
+    #[test]
+    fn writeup_redirects_target_known_slugs() {
+        let all = all_writeups();
+        for (old, new) in LEGACY_WRITEUP_REDIRECTS {
+            assert!(
+                all.iter().any(|w| w.slug == *new),
+                "writeup redirect target '{}' (from '{}') not in registry",
+                new, old
+            );
+            assert!(
+                !all.iter().any(|w| w.slug == *old),
+                "writeup redirect source '{}' still in registry",
+                old
+            );
+        }
     }
 }
