@@ -128,10 +128,9 @@ async fn run_network_probe(
     set_logs: WriteSignal<VecDeque<String>>,
 ) {
     let probes = vec![
-        "linux-admin-scripting",
-        "monitoring-observability",
-        "terraform-gcp",
-        "zero-trust-networking",
+        "security-baseline-audit",
+        "observability-operational-intelligence",
+        "identity-access-lifecycle",
     ];
     let mut rows = Vec::new();
     for slug in probes {

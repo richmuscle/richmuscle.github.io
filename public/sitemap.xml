@@ -11,13 +11,11 @@
   <url><loc>https://richmuscle.github.io/contact</loc>
        <priority>0.8</priority><changefreq>monthly</changefreq></url>
 
-  <url><loc>https://richmuscle.github.io/project/terraform-gcp</loc>
+  <url><loc>https://richmuscle.github.io/project/security-baseline-audit</loc>
        <priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richmuscle.github.io/project/linux-admin-scripting</loc>
+  <url><loc>https://richmuscle.github.io/project/observability-operational-intelligence</loc>
        <priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richmuscle.github.io/project/monitoring-observability</loc>
-       <priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://richmuscle.github.io/project/zero-trust-networking</loc>
+  <url><loc>https://richmuscle.github.io/project/identity-access-lifecycle</loc>
        <priority>0.9</priority><changefreq>monthly</changefreq></url>
 
   <url><loc>https://richmuscle.github.io/writing</loc>

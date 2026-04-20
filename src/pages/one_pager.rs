@@ -47,27 +47,21 @@ pub fn OnePageSummary() -> impl IntoView {
                     <h2 class="one-pager-h2">"Featured Projects"</h2>
                     {[
                         (
-                            "terraform-gcp",
-                            "Hardened Cloud Landing Zone (IaC)",
-                            "Engineered a secure, version-controlled GCP Landing Zone with deterministic Terraform modules and backend state management.",
-                            ["Terraform", "GCP", "GCS Backend"],
+                            "security-baseline-audit",
+                            "Security Baseline & Continuous Audit Toolkit",
+                            "CIS GCP 87/92 controls passing, Terraform compliance gates, nightly drift detection, and automated reconciliation back to hardened baseline.",
+                            ["Terraform", "CIS Benchmark", "tfsec"],
                         ),
                         (
-                            "monitoring-observability",
-                            "Strategic Observability Pipeline",
-                            "Architected an action-oriented observability pipeline with noise reduction, SLO alignment, and MTTR-focused anomaly detection.",
+                            "observability-operational-intelligence",
+                            "Observability & Operational Intelligence Platform",
+                            "Multi-tier alerting pipeline: Prometheus metrics, ELK log enrichment, Grafana SLO dashboards, and automated anomaly detection.",
                             ["Prometheus", "Grafana", "ELK Stack"],
                         ),
                         (
-                            "linux-admin-scripting",
-                            "Systems Lifecycle Automation Framework",
-                            "Built an idempotent lifecycle framework using POSIX-compliant Bash to eliminate configuration drift and automate RBAC-aligned provisioning.",
-                            ["Bash (POSIX)", "Linux", "Idempotency"],
-                        ),
-                        (
-                            "zero-trust-networking",
-                            "Zero-Trust Administrative Fabric",
-                            "Engineered a ZTNA administrative fabric with WireGuard identity controls, micro-segmentation, and MSS-clamped stability.",
+                            "identity-access-lifecycle",
+                            "Identity & Access Lifecycle Platform",
+                            "Identity-based admin access via WireGuard tunnels, AD-gated authorization, micro-segmentation, and instant credential revocation.",
                             ["WireGuard", "AWS VPC", "Active Directory"],
                         ),
                     ]

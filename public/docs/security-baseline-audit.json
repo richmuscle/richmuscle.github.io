@@ -1,5 +1,5 @@
 {
-  "slug": "terraform-gcp",
+  "slug": "security-baseline-audit",
   "content": "",
   "toc": [
     {"id": "overview", "label": "System Overview"},
@@ -236,8 +236,8 @@
     {"label": "GCP Workload Identity Federation (official docs)", "url": "https://cloud.google.com/iam/docs/workload-identity-federation", "external": true},
     {"label": "tfsec \u2014 Security scanner for Terraform", "url": "https://github.com/aquasecurity/tfsec", "external": true},
     {"label": "Terraform module best practices", "url": "https://developer.hashicorp.com/terraform/language/modules/develop/structure", "external": true},
-    {"label": "Project detail case study \u2192", "url": "/project/terraform-gcp", "external": false},
-    {"label": "Operational demo \u2192", "url": "/project/terraform-gcp/demo", "external": false}
+    {"label": "Project detail case study \u2192", "url": "/project/security-baseline-audit", "external": false},
+    {"label": "Operational demo \u2192", "url": "/project/security-baseline-audit/demo", "external": false}
   ],
   "last_updated": "2026-04-16",
   "reading_time_minutes": 12,

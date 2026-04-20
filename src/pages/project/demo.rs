@@ -1,5 +1,5 @@
 use super::{meta_strip, surface_tabs, Surface};
-use crate::data::{find_project, DemoDetail};
+use crate::data::{find_project, resolve_legacy_slug, DemoDetail};
 use crate::error::AppError;
 use crate::utils::sanitize_slug;
 use leptos::*;
@@ -167,15 +167,34 @@ pub fn ProjectDemoPage() -> impl IntoView {
     }
 
     let params = use_params_map();
-    let slug = move || {
+    let raw_slug = move || {
         let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
         sanitize_slug(&raw)
     };
+
+    #[cfg(not(feature = "ssr"))]
+    {
+        let nav = leptos_router::use_navigate();
+        create_effect(move |_| {
+            let s = raw_slug();
+            if let Some(new) = resolve_legacy_slug(&s) {
+                nav(
+                    &format!("/project/{}/demo", new),
+                    leptos_router::NavigateOptions {
+                        replace: true,
+                        ..Default::default()
+                    },
+                );
+            }
+        });
+    }
+
+    let slug = move || {
+        let s = raw_slug();
+        resolve_legacy_slug(&s).map(String::from).unwrap_or(s)
+    };
     let project = create_memo(move |_| find_project(&slug()));
 
-    // V2 demo resource — fetches /demos/{slug}.json. 404 (project without
-    // a demo JSON) resolves to an error that the legacy fallback catches
-    // via is_populated() check.
     let demo_data = create_resource(slug, |s| async move {
         #[cfg(feature = "ssr")]
         {
@@ -215,7 +234,7 @@ pub fn ProjectDemoPage() -> impl IntoView {
                 struct DemoStep { title: &'static str, body: &'static str }
 
                 let (demo_header, video_caption, steps) = match p.slug {
-                    "zero-trust-networking" => (
+                    "identity-access-lifecycle" => (
                         "Operational Demo: ZTNA Identity Enforcement",
                         "Demonstrating stateless tunnel establishment and instant access revocation via Active Directory.",
                         vec![
@@ -226,18 +245,7 @@ pub fn ProjectDemoPage() -> impl IntoView {
                             DemoStep { title: "5) Verification (Prove Success End-to-End)", body: "Verify: (a) LDAP authorization gates the tunnel, (b) DB tier access is blocked, (c) post-disable connectivity is revoked and no route remains for the disabled identity." },
                         ],
                     ),
-                    "terraform-gcp" => (
-                        "Operational Demo: Deterministic Cloud Provisioning",
-                        "Demonstrating modular deployment and the identification/reversal of configuration drift.",
-                        vec![
-                            DemoStep { title: "1) Plan & Apply (GCS Backend + State Locking)", body: "Execute Terraform with the GCS remote backend. Confirm state locking prevents concurrent execution and preserves a single source of truth." },
-                            DemoStep { title: "2) Injected Drift (Out-of-Band Console Change)", body: "Manually modify a firewall rule or IAM policy in the GCP Console to create an unauthorized configuration delta." },
-                            DemoStep { title: "3) Drift Detection (terraform plan Diff)", body: "Run 'terraform plan' and confirm it identifies the unauthorized change as a drift delta against the hardened desired state." },
-                            DemoStep { title: "4) Reconciliation (terraform apply Back to Baseline)", body: "Re-run 'terraform apply' to revert the environment to the hardened baseline that enforces deterministic, policy-validated configuration." },
-                            DemoStep { title: "5) Verification (Success Criteria + No-Diff Check)", body: "Verify that the post-reconciliation 'terraform plan' reports zero changes (no diff) and the backend state remains consistent and locked during the apply cycle." },
-                        ],
-                    ),
-                    "linux-admin-scripting" => (
+                    "security-baseline-audit" => (
                         "Operational Demo: Idempotent Lifecycle Automation",
                         "Demonstrating automated user provisioning and CIS-standard system hardening.",
                         vec![
@@ -248,7 +256,7 @@ pub fn ProjectDemoPage() -> impl IntoView {
                             DemoStep { title: "5) Verification (Golden Baseline + Audit Consistency)", body: "Verify: (a) strict-mode execution prevents silent failure, (b) idempotency converges without diffs, and (c) syslog shows expected audit trails for the automated actions." },
                         ],
                     ),
-                    "monitoring-observability" => (
+                    "observability-operational-intelligence" => (
                         "Operational Demo: Multi-Tier Alerting & Log Enrichment",
                         "Demonstrating anomaly detection in Prometheus and root-cause analysis in Kibana.",
                         vec![

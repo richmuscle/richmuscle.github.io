@@ -1,6 +1,6 @@
 use super::{meta_strip, surface_tabs, Surface};
 use crate::components::ComponentErrorFallback;
-use crate::data::{find_project, DocsDetail};
+use crate::data::{find_project, resolve_legacy_slug, DocsDetail};
 use crate::error::AppError;
 use crate::utils::sanitize_slug;
 use leptos::*;
@@ -346,9 +346,31 @@ pub fn ProjectDocsPage() -> impl IntoView {
     }
 
     let params = use_params_map();
-    let slug = move || {
+    let raw_slug = move || {
         let raw = params.with(|p| p.get("slug").cloned().unwrap_or_default());
         sanitize_slug(&raw)
+    };
+
+    #[cfg(not(feature = "ssr"))]
+    {
+        let nav = leptos_router::use_navigate();
+        create_effect(move |_| {
+            let s = raw_slug();
+            if let Some(new) = resolve_legacy_slug(&s) {
+                nav(
+                    &format!("/project/{}/docs", new),
+                    leptos_router::NavigateOptions {
+                        replace: true,
+                        ..Default::default()
+                    },
+                );
+            }
+        });
+    }
+
+    let slug = move || {
+        let s = raw_slug();
+        resolve_legacy_slug(&s).map(String::from).unwrap_or(s)
     };
     let project = create_memo(move |_| find_project(&slug()));
     let docs = create_resource(slug, |s| async move {

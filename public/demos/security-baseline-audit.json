@@ -1,7 +1,7 @@
 {
-  "slug": "terraform-gcp",
+  "slug": "security-baseline-audit",
   "hero_media_type": "svg",
-  "hero_media_src": "/diagrams/terraform-gcp-demo-flow.svg",
+  "hero_media_src": "/diagrams/security-baseline-audit-demo-flow.svg",
   "hero_caption": "Drift-detect → reconciliation cycle: a console-injected out-of-band change surfaced on the nightly plan, turned into a PR, reviewed, and reverted to the hardened baseline.",
   "narration": [
     {"timestamp": "t0", "caption": "Baseline — terraform plan against the applied state shows no diff. 87/92 CIS controls passing. Zero public IPv4 on compute."},

@@ -1,5 +1,5 @@
 {
-  "slug": "terraform-gcp",
+  "slug": "security-baseline-audit",
   "content": "",
   "demo_url": null,
   "status_label": "Homelab",
@@ -25,7 +25,7 @@
     "Cross-cloud (AWS/Azure) module parity"
   ],
   "approach": "Modular Terraform registry (vpc-network, iam-service-accounts, gce-hardening, security-baselines) producing a Private-First VPC with Cloud NAT for controlled egress, IAP tunnelling for admin access, and OIDC-based Workload Identity Federation from GitHub Actions to GCP. State lives in a GCS backend with native locking; all state mutations happen from a non-interactive CI runner impersonating a per-environment service account. Compliance is enforced before apply via tfsec and Checkov gates in the CI pipeline \u2014 the provisioning plan itself fails if a CIS control is violated.",
-  "approach_diagram_src": "/diagrams/terraform-gcp-architecture.svg",
+  "approach_diagram_src": "/diagrams/security-baseline-audit-architecture.svg",
   "decisions": [
     {
       "title": "GCS remote state vs. Terraform Cloud vs. S3 + DynamoDB",
@@ -108,9 +108,9 @@
     "I underestimated the IAP tunneling setup cost. A Private-First network is cheap to describe; operationally reaching it for admin work is not. If I did this again I would spike the admin-access pattern (IAP tunnel from laptop, credential flow, IAM bindings) in a scratch project BEFORE committing to Private-First for the real thing. The cost is the unfamiliarity, not the dollars."
   ],
   "artifact_links": [
-    {"label": "Architecture diagram (full-scale SVG)", "url": "/diagrams/terraform-gcp-architecture.svg", "external": false},
-    {"label": "Operational runbook \u2192 Docs page", "url": "/project/terraform-gcp/docs", "external": false},
-    {"label": "See it apply \u2192 Demo page", "url": "/project/terraform-gcp/demo", "external": false}
+    {"label": "Architecture diagram (full-scale SVG)", "url": "/diagrams/security-baseline-audit-architecture.svg", "external": false},
+    {"label": "Operational runbook \u2192 Docs page", "url": "/project/security-baseline-audit/docs", "external": false},
+    {"label": "See it apply \u2192 Demo page", "url": "/project/security-baseline-audit/demo", "external": false}
   ],
   "last_updated": "2026-04-16",
   "reading_time_minutes": 7
