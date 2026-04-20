@@ -170,7 +170,10 @@ pub fn HomePage() -> impl IntoView {
                             ProjectCategory::CloudInfrastructure,
                             ProjectCategory::SystemsAdmin,
                             ProjectCategory::Networking,
-                        ].into_iter().map(|cat| {
+                        ].into_iter().filter(|cat| {
+                            let all = get_infrastructure_fleet();
+                            all.iter().any(|p| &p.category == cat)
+                        }).map(|cat| {
                             let label         = cat.label();
                             let cat_filter    = cat.clone();
                             let cat_pressed   = cat.clone();
@@ -282,7 +285,7 @@ pub fn HomePage() -> impl IntoView {
                                 let p_stack     = p.tech_stack;
                                 let cat_label   = p.category.label();
                                 let cat_accent  = p.category.accent();
-                                let metric_line = crate::data::one_liner_for_project(p.slug);
+                                let metric_line = p.one_liner;
 
                                 view! {
                                     <div

@@ -1,6 +1,6 @@
 use super::{meta_strip, surface_tabs, Surface};
 use crate::components::ComponentErrorFallback;
-use crate::data::{find_project, get_infrastructure_fleet, resolve_legacy_slug, ProjectDetail};
+use crate::data::{find_project, get_infrastructure_fleet, resolve_legacy_slug, ProjectDetail, ProjectStatus};
 use crate::error::AppError;
 use crate::utils::sanitize_slug;
 use leptos::*;
@@ -385,6 +385,10 @@ pub fn ProjectDetailPage() -> impl IntoView {
             }.into_view(),
             Some(p) => {
                 let cat_accent = p.category.accent();
+                let ps = p.project_status.clone();
+                let is_planned = ps == ProjectStatus::Planned;
+                let is_in_dev = ps == ProjectStatus::InDevelopment;
+                let planned_one_liner = p.one_liner.to_string();
                 view! {
                     <main id="main-content" class="min-h-screen pt-16 pb-24 page-enter">
                         <div class="pd-container">
@@ -400,31 +404,66 @@ pub fn ProjectDetailPage() -> impl IntoView {
                                 <div class="pd-category-label" style=format!("color:{}", cat_accent)>{p.category.label()}</div>
                                 <h1 class="pd-title">{p.title}</h1>
                                 <p class="pd-subtitle">{p.subtitle}</p>
-                                <div class="pd-tech-pills">
-                                    {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
-                                </div>
+                                {if !p.tech_stack.is_empty() {
+                                    view! {
+                                        <div class="pd-tech-pills">
+                                            {p.tech_stack.iter().map(|tech| view! { <span class="pd-pill">{*tech}</span> }).collect_view()}
+                                        </div>
+                                    }.into_view()
+                                } else {
+                                    view! { <span></span> }.into_view()
+                                }}
                             </header>
 
-                            {surface_tabs(p.slug, Surface::Detail)}
+                            {if is_planned {
+                                view! {
+                                    <div class="pd-v2-section" style="text-align:center;padding:48px 0 32px;">
+                                        <span class="pd-v2-status-badge" style="display:inline-block;font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;color:#475569;border:1px solid #1e293b;border-radius:4px;padding:6px 16px;margin-bottom:24px;">"○ PLANNED"</span>
+                                        <p style="color:var(--text-secondary);font-size:15px;line-height:1.8;max-width:560px;margin:0 auto 16px;">{planned_one_liner.clone()}</p>
+                                        <p style="color:var(--text-muted);font-size:13px;font-family:'JetBrains Mono',monospace;">"Work has not begun. Design documentation and case study will appear as this project progresses."</p>
+                                    </div>
+                                }.into_view()
+                            } else {
+                                view! {
+                                    <span></span>
+                                }.into_view()
+                            }}
 
-                            <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
-                                <Suspense fallback=move || view! {
-                                    <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
-                                }>
-                                    {move || detail.get().map(|res| res.map(|d| {
-                                        // V2 structured render when the JSON carries FAANG-grade
-                                        // fields (problem/decisions/outcomes/…); otherwise fall
-                                        // back to the legacy inner_html content string.
-                                        if d.is_structured() {
-                                            render_v2_detail(d).into_view()
-                                        } else {
-                                            view! {
-                                                <article class="pd-article" inner_html=d.content></article>
-                                            }.into_view()
-                                        }
-                                    }))}
-                                </Suspense>
-                            </ErrorBoundary>
+                            {if is_in_dev {
+                                view! {
+                                    <div style="border:1px solid #1e293b;border-radius:6px;padding:14px 20px;margin-bottom:24px;font-size:13px;font-family:'JetBrains Mono',monospace;color:#94a3b8;">
+                                        "◐ This case study is currently at V1 depth. A fuller treatment is in progress."
+                                    </div>
+                                }.into_view()
+                            } else {
+                                view! { <span></span> }.into_view()
+                            }}
+
+                            {if !is_planned {
+                                view! {
+                                    <div>
+                                        {surface_tabs(p.slug, Surface::Detail)}
+
+                                        <ErrorBoundary fallback=|errors| view! { <ComponentErrorFallback errors/> }>
+                                            <Suspense fallback=move || view! {
+                                                <div class="font-mono text-[var(--text-muted)] py-16 text-center">"Loading…"</div>
+                                            }>
+                                                {move || detail.get().map(|res| res.map(|d| {
+                                                    if d.is_structured() {
+                                                        render_v2_detail(d).into_view()
+                                                    } else {
+                                                        view! {
+                                                            <article class="pd-article" inner_html=d.content></article>
+                                                        }.into_view()
+                                                    }
+                                                }))}
+                                            </Suspense>
+                                        </ErrorBoundary>
+                                    </div>
+                                }.into_view()
+                            } else {
+                                view! { <span></span> }.into_view()
+                            }}
 
                             // NOTE: docs/demo navigation is already served by the surface
                                 //       tab bar at the top AND by the §Artifacts section inside

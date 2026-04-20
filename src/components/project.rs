@@ -1,6 +1,6 @@
 //! ProjectCard, CodeBlock, TimelineSection, BeforeAfterSection, RelatedProjects, StatCard.
 use crate::data::{
-    get_infrastructure_fleet, BeforeAfter, CodeSnippet, ProjectIndex, SystemStatus, TimelineEntry,
+    get_infrastructure_fleet, BeforeAfter, CodeSnippet, ProjectIndex, TimelineEntry,
 };
 use crate::utils::{highlight_code, sanitize_slug, track};
 use leptos::*;
@@ -62,17 +62,9 @@ pub fn ProjectCard(
                           style=format!("color:{}", cat_accent)>
                         {project.category.label()}
                     </span>
-                    {match project.status {
-                        SystemStatus::Operational => view! {
-                            <span class="project-card-status-chip" style="color:#10b981;">"● LIVE"</span>
-                        }.into_view(),
-                        SystemStatus::Degraded => view! {
-                            <span class="project-card-status-chip" style="color:#f59e0b;">"◐ PARTIAL"</span>
-                        }.into_view(),
-                        SystemStatus::Maintenance => view! {
-                            <span class="project-card-status-chip" style="color:var(--text-muted);">"○ WIP"</span>
-                        }.into_view(),
-                    }}
+                    <span class="project-card-status-chip" style=project.project_status.chip_style()>
+                        {project.project_status.chip_glyph()}" "{project.project_status.label()}
+                    </span>
                 </div>
                 <h3 class="project-card-title">{project.title}</h3>
                 <p class="project-card-subtitle">{project.subtitle}</p>

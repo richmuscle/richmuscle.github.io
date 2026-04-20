@@ -11,6 +11,60 @@ pub enum SystemStatus {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub enum ProjectStatus {
+    Shipped,
+    InDevelopment,
+    Planned,
+}
+
+impl ProjectStatus {
+    pub fn label(&self) -> &'static str {
+        match self {
+            Self::Shipped => "LIVE",
+            Self::InDevelopment => "IN DEVELOPMENT",
+            Self::Planned => "PLANNED",
+        }
+    }
+
+    pub fn chip_style(&self) -> &'static str {
+        match self {
+            Self::Shipped => "color:#10b981;",
+            Self::InDevelopment => "color:#94a3b8;",
+            Self::Planned => "color:#475569;",
+        }
+    }
+
+    pub fn chip_glyph(&self) -> &'static str {
+        match self {
+            Self::Shipped => "●",
+            Self::InDevelopment => "◐",
+            Self::Planned => "○",
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum ProjectDomain {
+    Identity,
+    Endpoints,
+    Security,
+    DataProtection,
+    Operations,
+}
+
+impl ProjectDomain {
+    pub fn label(&self) -> &'static str {
+        match self {
+            Self::Identity => "Identity & Access",
+            Self::Endpoints => "Endpoint Management",
+            Self::Security => "Security & Compliance",
+            Self::DataProtection => "Data Protection",
+            Self::Operations => "Operations & Governance",
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub enum ProjectCategory {
     CyberSecurity,
     CloudInfrastructure,
@@ -72,7 +126,10 @@ pub struct ProjectIndex {
     pub title: &'static str,
     pub subtitle: &'static str,
     pub description: &'static str,
+    pub one_liner: &'static str,
     pub category: ProjectCategory,
+    pub project_status: ProjectStatus,
+    pub domain: ProjectDomain,
     pub status: SystemStatus,
     pub tech_stack: &'static [&'static str],
 }
@@ -399,58 +456,46 @@ fn init_projects_index() -> Vec<ProjectIndex> {
             title: "Security Baseline & Continuous Audit Toolkit",
             subtitle: "CIS-Aligned Hardening, Terraform Compliance Gates & Continuous Drift Detection",
             description: "CIS GCP Foundations Benchmark compliance (87/92 controls passing), idempotent Terraform modules with tfsec/Checkov gates, Workload Identity Federation for zero-credential CI, and nightly drift detection with automated reconciliation.",
+            one_liner: "CIS GCP 87/92 controls passing, Terraform compliance gates, Workload Identity Federation, nightly drift detection with automated reconciliation.",
             category: ProjectCategory::SystemsAdmin,
+            project_status: ProjectStatus::Shipped,
+            domain: ProjectDomain::Security,
             status: SystemStatus::Operational,
-            tech_stack: &[
-                "Terraform",
-                "GCP",
-                "tfsec",
-                "Checkov",
-                "CIS Benchmark",
-                "Workload Identity",
-                "NIST 800-53",
-            ],
+            tech_stack: &["Terraform", "GCP", "tfsec", "Checkov", "CIS Benchmark", "Workload Identity", "NIST 800-53"],
         },
         ProjectIndex {
             slug: "observability-operational-intelligence",
             title: "Observability & Operational Intelligence Platform",
             subtitle: "Prometheus, ELK Stack & Grafana SLO Pipeline with Automated Alerting",
             description: "A multi-tier observability pipeline that converts time-series signals into operational decisions. Prometheus metrics, ELK log aggregation with Logstash filters, and Grafana dashboards tied to SLOs — built to reduce alert noise and surface actionable signals.",
+            one_liner: "Multi-tier alerting pipeline: Prometheus metrics, ELK log enrichment, Grafana SLO dashboards, and automated anomaly detection.",
             category: ProjectCategory::Networking,
+            project_status: ProjectStatus::InDevelopment,
+            domain: ProjectDomain::Operations,
             status: SystemStatus::Operational,
-            tech_stack: &[
-                "Prometheus",
-                "Grafana",
-                "Telemetry",
-                "SNMP",
-                "Performance Tuning",
-                "Automation",
-                "SLO/SLI",
-            ],
+            tech_stack: &["Prometheus", "Grafana", "Telemetry", "SNMP", "Performance Tuning", "Automation", "SLO/SLI"],
         },
         ProjectIndex {
             slug: "identity-access-lifecycle",
             title: "Identity & Access Lifecycle Platform",
             subtitle: "Zero-Trust Admin Access via WireGuard, Active Directory & IAM Lifecycle Automation",
             description: "Legacy VPNs grant excessive lateral trust once a perimeter is breached. This platform enforces identity-based network access with WireGuard tunnels, micro-segmentation, and out-of-band peer authorization via Active Directory — verify explicitly, least privilege.",
+            one_liner: "Identity-based admin access via WireGuard tunnels, AD-gated authorization, micro-segmentation, and instant credential revocation.",
             category: ProjectCategory::CyberSecurity,
+            project_status: ProjectStatus::InDevelopment,
+            domain: ProjectDomain::Identity,
             status: SystemStatus::Operational,
-            tech_stack: &[
-                "WireGuard",
-                "AWS VPC",
-                "Active Directory",
-                "NIST 800-207",
-                "Micro-segmentation",
-                "MSS Clamping",
-                "IAM",
-            ],
+            tech_stack: &["WireGuard", "AWS VPC", "Active Directory", "NIST 800-207", "Micro-segmentation", "MSS Clamping", "IAM"],
         },
         ProjectIndex {
             slug: "endpoint-management-compliance",
             title: "Endpoint Management & Compliance System",
             subtitle: "Managed endpoint provisioning, compliance evaluation, and policy enforcement across Windows, macOS, and iOS devices via Intune and Autopilot.",
             description: "Centralized endpoint lifecycle management: zero-touch provisioning, OS patching, compliance scoring, and GPO-equivalent policy enforcement for hybrid Windows/macOS/iOS fleets.",
+            one_liner: "Managed endpoint provisioning, compliance evaluation, and policy enforcement across Windows, macOS, and iOS devices via Intune and Autopilot.",
             category: ProjectCategory::SystemsAdmin,
+            project_status: ProjectStatus::Planned,
+            domain: ProjectDomain::Endpoints,
             status: SystemStatus::Operational,
             tech_stack: &[],
         },
@@ -459,7 +504,10 @@ fn init_projects_index() -> Vec<ProjectIndex> {
             title: "Backup, Recovery & Business Continuity System",
             subtitle: "Tiered backup, tested restore, and deliberate-disaster recovery exercises for the operational infrastructure of the other projects in this portfolio.",
             description: "3-2-1 backup strategy with scheduled restore validation, documented RTO/RPO targets per service tier, and quarterly disaster-recovery drills against the live operational stack.",
+            one_liner: "Tiered backup, tested restore, and deliberate-disaster recovery exercises for the operational infrastructure.",
             category: ProjectCategory::SystemsAdmin,
+            project_status: ProjectStatus::Planned,
+            domain: ProjectDomain::DataProtection,
             status: SystemStatus::Operational,
             tech_stack: &[],
         },
@@ -468,7 +516,10 @@ fn init_projects_index() -> Vec<ProjectIndex> {
             title: "Operational Foundation",
             subtitle: "The wiki, runbook library, change-management process, and incident-response procedures that govern the other projects as a system.",
             description: "Operational governance layer: structured runbooks, change-advisory process, incident-response playbooks, and a documentation wiki that ties the portfolio projects into a single managed platform.",
+            one_liner: "Wiki, runbook library, change-management process, and incident-response procedures governing the portfolio as a system.",
             category: ProjectCategory::SystemsAdmin,
+            project_status: ProjectStatus::Planned,
+            domain: ProjectDomain::Operations,
             status: SystemStatus::Operational,
             tech_stack: &[],
         },
@@ -485,18 +536,6 @@ pub fn get_infrastructure_fleet() -> &'static Vec<ProjectIndex> {
 
 pub fn find_project(slug: &str) -> Option<ProjectIndex> {
     PROJECTS.iter().find(|p| p.slug == slug).cloned()
-}
-
-pub fn one_liner_for_project(slug: &str) -> &'static str {
-    match slug {
-        "security-baseline-audit" => "CIS GCP 87/92 controls passing, Terraform compliance gates, Workload Identity Federation, nightly drift detection with automated reconciliation.",
-        "observability-operational-intelligence" => "Multi-tier alerting pipeline: Prometheus metrics, ELK log enrichment, Grafana SLO dashboards, and automated anomaly detection.",
-        "identity-access-lifecycle" => "Identity-based admin access via WireGuard tunnels, AD-gated authorization, micro-segmentation, and instant credential revocation.",
-        "endpoint-management-compliance" => "Managed endpoint provisioning, compliance evaluation, and policy enforcement across Windows, macOS, and iOS devices via Intune and Autopilot.",
-        "backup-recovery-continuity" => "Tiered backup, tested restore, and deliberate-disaster recovery exercises for the operational infrastructure.",
-        "operational-foundation" => "Wiki, runbook library, change-management process, and incident-response procedures governing the portfolio as a system.",
-        _ => "Operational infrastructure project",
-    }
 }
 
 pub const LEGACY_REDIRECTS: &[(&str, &str)] = &[
@@ -628,22 +667,25 @@ mod tests {
 
     #[test]
     fn all_canonical_slugs_have_one_liner() {
-        let canonical = [
-            "security-baseline-audit",
-            "observability-operational-intelligence",
-            "identity-access-lifecycle",
-            "endpoint-management-compliance",
-            "backup-recovery-continuity",
-            "operational-foundation",
-        ];
-        for slug in &canonical {
-            let liner = one_liner_for_project(slug);
+        let fleet = get_infrastructure_fleet();
+        for p in fleet.iter() {
             assert!(
-                liner != "Operational infrastructure project",
-                "canonical slug '{}' has only the default one-liner",
-                slug
+                !p.one_liner.is_empty(),
+                "project '{}' has empty one_liner",
+                p.slug
             );
         }
+    }
+
+    #[test]
+    fn project_status_distribution_matches_intent() {
+        let fleet = get_infrastructure_fleet();
+        let shipped = fleet.iter().filter(|p| p.project_status == ProjectStatus::Shipped).count();
+        let in_dev = fleet.iter().filter(|p| p.project_status == ProjectStatus::InDevelopment).count();
+        let planned = fleet.iter().filter(|p| p.project_status == ProjectStatus::Planned).count();
+        assert_eq!(shipped, 1, "expected 1 Shipped project");
+        assert_eq!(in_dev, 2, "expected 2 InDevelopment projects");
+        assert_eq!(planned, 3, "expected 3 Planned projects");
     }
 
     #[test]
