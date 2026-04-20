@@ -78,7 +78,7 @@
   ],
   "outcomes": [
     {
-      "metric": "Environment provisioning time",
+      "metric": "Time to compliant baseline",
       "baseline": "~4 hours manual console click-through (VPC + IAM + firewall + NAT + monitoring)",
       "result": "4 min 32 s median",
       "method": "10 consecutive `terraform apply -auto-approve` runs against a freshly created empty GCP project, measured with `time` wrapper on a GitHub Actions ubuntu-latest runner. Mean 4:32, stdev 0:18, range 4:11 \u2013 5:07."
