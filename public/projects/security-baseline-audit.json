@@ -4,7 +4,7 @@
   "demo_url": null,
   "status_label": "Homelab",
   "hero_metrics": [
-    {"value": "~4 h → <5 min", "label": "Environment provisioning time", "color": "#3b82f6"},
+    {"value": "\u2264 24 h", "label": "Drift detection latency (nightly cron)", "color": "#3b82f6"},
     {"value": "87 / 92", "label": "CIS GCP Foundations v2.0 controls passing", "color": "#10b981"},
     {"value": "0", "label": "Public IPv4 listeners on compute tier", "color": "#22d3ee"}
   ],
