@@ -40,27 +40,27 @@ pub fn AboutPage() -> impl IntoView {
                         <div style="flex:1;height:1px;background:#1a2540;"></div>
                     </div>
                     <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin-bottom:32px;">
-                        "Where I have hands-on experience and where I am actively building depth."
+                        "Eight areas, split honestly between hands-on lab work and deliberate study. Where a card says studying, I haven't shipped production work in it yet."
                     </p>
                     <div class="about-card-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:72px;">
                         {
                             let cards = vec![
                                 ("Terraform & Infrastructure as Code",
-                                 "Building modular, version-controlled cloud environments with remote state locking, drift detection, and policy-validated deployments. Hands-on with GCP and AWS."),
+                                 "Modular Terraform on GCP, with remote state in GCS, nightly drift detection, and tfsec + Checkov gates in CI. The lab landing zone passes 87 of 92 CIS controls. I own the state-locking failure modes because state lives in my GCS bucket; the tradeoff was auditability over managed-service ease."),
                                 ("Linux Systems Administration",
-                                 "RHEL and Ubuntu server management, CIS-standard hardening, sysctl tuning, fstab security flags, and idempotent provisioning with POSIX-compliant Bash scripts."),
-                                ("Active Directory & Identity Management",
-                                 "GPO management, RBAC-aligned user provisioning, LDAP-based authorization gates, and identity lifecycle automation with PowerShell."),
+                                 "RHEL and Ubuntu server administration in lab: CIS-aligned hardening baselines, sysctl tuning, fstab security flags (noexec, nosuid), and idempotent provisioning through POSIX Bash with strict mode. Hands-on. Not production-scale fleet management yet — lab scale."),
+                                ("Active Directory & Identity",
+                                 "Hands-on in lab: GPO-driven baselines, OU-based RBAC, PowerShell for user lifecycle automation, AutomatedLab for deterministic Windows Server 2022 domains. Production-scale AD operations — large directories, federation, lifecycle at headcount — I haven't done."),
                                 ("Observability & SIEM",
-                                 "Prometheus metrics collection, ELK Stack log aggregation with Logstash filters, Grafana dashboards tied to SLOs, and KQL-based log analysis from SOC experience."),
-                                ("WireGuard & Zero-Trust Networking",
-                                 "Identity-based network access with WireGuard tunnels, micro-segmentation, MSS clamping for cross-cloud stability, and out-of-band peer authorization via AD."),
-                                ("Kubernetes (CKA Prep)",
-                                 "Deploying workloads with kubectl; studying the control plane and writing custom controllers via CKA prep — scheduler internals, etcd consistency model, controller-runtime from first principles."),
+                                 "Lab stack: Prometheus metrics, Grafana dashboards tied to SLOs, ELK for log aggregation. Wazuh, Suricata, Falco, TheHive, MISP wired up end-to-end on bare metal for the SOC homelab. Tuning detections at production noise levels is exposure, not experience."),
+                                ("Zero-Trust & WireGuard",
+                                 "Identity-based admin access via WireGuard tunnels, AD-gated authorization, and micro-segmentation enforced at the network layer. In-development lab — the design exists end-to-end, the reconciliation against production-grade identity infrastructure hasn't happened."),
+                                ("Kubernetes",
+                                 "Studying. I can deploy workloads with kubectl and read the scheduler and etcd at a conceptual level; I haven't operated a cluster at scale or written controllers. Not my current priority — listed because the field asks."),
                                 ("Containers & CI/CD",
-                                 "Docker containerization, GitHub Actions workflows for automated build/test/deploy, and Trunk-based WASM compilation pipelines."),
+                                 "Docker for lab service packaging. GitHub Actions for the build-check-deploy pipeline on this portfolio (four cargo-check gates across wasm32, ssr, hydrate, and ssg targets; wasm-opt; gh-pages deploy). Hands-on on a single-repo scale, not multi-service CI at team scale."),
                                 ("Security Frameworks & Compliance",
-                                 "NIST 800-53 and 800-207 controls, CIS benchmarks, network defense coursework, and hands-on SOC monitoring across municipal government entities."),
+                                 "NIST 800-53 and 800-207 controls referenced in the Terraform and zero-trust labs. CIS benchmarks enforced through Terraform gates on the GCP baseline. Academic SOC exposure at PISCES — the scope described in Who I Am. Framework literacy, not compliance-program ownership."),
                             ];
 
                             cards.into_iter().enumerate().map(|(i, (label, desc))| {
