@@ -24,6 +24,9 @@ pub fn WritingPage() -> impl IntoView {
         let mut list = WRITEUPS
             .iter()
             .filter(|w| {
+                if w.is_demoted {
+                    return false;
+                }
                 let search_ok = q.is_empty()
                     || w.title.to_lowercase().contains(&q)
                     || w.summary.to_lowercase().contains(&q)
