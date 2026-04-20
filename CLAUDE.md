@@ -1,6 +1,6 @@
 # CLAUDE.md — Portfolio
 
-Personal portfolio for Richard Mussell. Rust + Leptos 0.6 (CSR) compiled to wasm32-unknown-unknown via Trunk, deployed to GitHub Pages through a GitHub Actions workflow, live at richmuscle.github.io. The site's purpose is to market the owner to technical recruiters and hiring managers for **senior Linux Systems Administrator** roles.
+Personal portfolio for Richard Mussell. Rust + Leptos 0.6 (CSR) compiled to wasm32-unknown-unknown via Trunk, deployed to GitHub Pages through a GitHub Actions workflow, live at richmuscle.github.io. The site's purpose is to market the owner to technical recruiters and hiring managers for **Linux Systems Administrator** roles. Target tier is not declared; the rigor of the work is the evidence a hiring team uses to place the candidate.
 
 ## Imports
 
@@ -14,7 +14,7 @@ Global rules and cross-project ADRs are loaded via the imports above. This file 
 
 **Identity being projected:** Linux Systems Administrator with modern infrastructure toolkit (IaC, automation, observability, identity management). NOT "DevOps Engineer." NOT "Platform Engineer." That positioning choice matters throughout the site copy.
 
-**Target level:** Senior. The word "staff" is a lens applied to the depth and rigor of the work (ADRs, failure modes, measurement methodology, scope boundaries). It never appears as a claimed title in user-visible copy.
+**Target level is not declared on the site.** The lens applied to the depth and rigor of the work is staff-engineer-level (ADRs, failure modes, measurement methodology, scope boundaries). The role tier the candidate is hired into is a decision for the hiring team, not a claim the portfolio makes. The word "staff" never appears as a claimed title. The word "senior" does not appear as a self-declaration of tier in user-visible copy. The owner is open to senior, mid, or entry placements depending on the role.
 
 **Footer label:** `© 2026 Richard J. Mussell · Linux Systems Administrator · Oklahoma City`
 

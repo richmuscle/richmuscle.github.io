@@ -174,7 +174,9 @@ pub fn WriteupDetailPage() -> impl IntoView {
 
     let slug = move || {
         let s = raw_slug();
-        resolve_legacy_writeup_slug(&s).map(String::from).unwrap_or(s)
+        resolve_legacy_writeup_slug(&s)
+            .map(String::from)
+            .unwrap_or(s)
     };
     let index = create_memo(move |_| WRITEUPS.iter().find(|w| w.slug == slug()).cloned());
     let detail = create_resource(slug, |s| async move {

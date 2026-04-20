@@ -541,7 +541,10 @@ pub fn find_project(slug: &str) -> Option<ProjectIndex> {
 pub const LEGACY_REDIRECTS: &[(&str, &str)] = &[
     ("linux-admin-scripting", "security-baseline-audit"),
     ("zero-trust-networking", "identity-access-lifecycle"),
-    ("monitoring-observability", "observability-operational-intelligence"),
+    (
+        "monitoring-observability",
+        "observability-operational-intelligence",
+    ),
     ("terraform-gcp", "security-baseline-audit"),
 ];
 
@@ -680,9 +683,18 @@ mod tests {
     #[test]
     fn project_status_distribution_matches_intent() {
         let fleet = get_infrastructure_fleet();
-        let shipped = fleet.iter().filter(|p| p.project_status == ProjectStatus::Shipped).count();
-        let in_dev = fleet.iter().filter(|p| p.project_status == ProjectStatus::InDevelopment).count();
-        let planned = fleet.iter().filter(|p| p.project_status == ProjectStatus::Planned).count();
+        let shipped = fleet
+            .iter()
+            .filter(|p| p.project_status == ProjectStatus::Shipped)
+            .count();
+        let in_dev = fleet
+            .iter()
+            .filter(|p| p.project_status == ProjectStatus::InDevelopment)
+            .count();
+        let planned = fleet
+            .iter()
+            .filter(|p| p.project_status == ProjectStatus::Planned)
+            .count();
         assert_eq!(shipped, 1, "expected 1 Shipped project");
         assert_eq!(in_dev, 2, "expected 2 InDevelopment projects");
         assert_eq!(planned, 3, "expected 3 Planned projects");

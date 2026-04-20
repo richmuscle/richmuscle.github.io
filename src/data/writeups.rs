@@ -185,10 +185,22 @@ pub fn find_writeup(slug: &str) -> Option<WriteUpIndex> {
 }
 
 pub const LEGACY_WRITEUP_REDIRECTS: &[(&str, &str)] = &[
-    ("the-orchestrator-of-intent-reflections-on-service-provisioning", "service-provisioning-cox-control-planes"),
-    ("the-architect-of-oceanic-visibility-soc-operations-at-universal-scale", "soc-observability-pisces-elk-kql"),
-    ("the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane", "cisco-ios-fundamentals"),
-    ("the-mirror-universe-architecting-deterministic-enterprise-simulations", "windows-server-lab-powershell-automatedlab"),
+    (
+        "the-orchestrator-of-intent-reflections-on-service-provisioning",
+        "service-provisioning-cox-control-planes",
+    ),
+    (
+        "the-architect-of-oceanic-visibility-soc-operations-at-universal-scale",
+        "soc-observability-pisces-elk-kql",
+    ),
+    (
+        "the-connectivity-fabric-mastering-the-bedrock-of-the-universal-control-plane",
+        "cisco-ios-fundamentals",
+    ),
+    (
+        "the-mirror-universe-architecting-deterministic-enterprise-simulations",
+        "windows-server-lab-powershell-automatedlab",
+    ),
 ];
 
 pub fn resolve_legacy_writeup_slug(slug: &str) -> Option<&'static str> {
@@ -259,7 +271,8 @@ mod tests {
             assert!(
                 all.iter().any(|w| w.slug == *new),
                 "writeup redirect target '{}' (from '{}') not in registry",
-                new, old
+                new,
+                old
             );
             assert!(
                 !all.iter().any(|w| w.slug == *old),

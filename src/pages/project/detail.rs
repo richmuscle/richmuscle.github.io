@@ -1,6 +1,8 @@
 use super::{meta_strip, surface_tabs, Surface};
 use crate::components::ComponentErrorFallback;
-use crate::data::{find_project, get_infrastructure_fleet, resolve_legacy_slug, ProjectDetail, ProjectStatus};
+use crate::data::{
+    find_project, get_infrastructure_fleet, resolve_legacy_slug, ProjectDetail, ProjectStatus,
+};
 use crate::error::AppError;
 use crate::utils::sanitize_slug;
 use leptos::*;
