@@ -65,7 +65,7 @@ pub fn WritingPage() -> impl IntoView {
                 <section class="pt-12 pb-14 border-b border-[var(--border-subtle)]">
                     <p class="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-[0.15em] mb-4">"Writing"</p>
                     <h1 class="text-[36px] font-bold text-[var(--text-primary)] tracking-tight mb-3">"Technical Write-ups"</h1>
-                    <p class="text-[14px] font-mono text-[var(--text-muted)]">"Architectural manifestos and operational deep-dives focused on orchestrating equilibrium within high-integrity ecosystems-from the technical bedrock of connectivity to the 50-year lookout of strategic governance."</p>
+                    <p class="text-[14px] font-mono text-[var(--text-muted)]">"Technical notes from lab work and prior experience — Linux hardening, compliance automation, SOC observability, zero-trust networking, and a few pieces on networking and Windows administration."</p>
                 </section>
                 // Category filter UI (desktop pills + mobile drawer) fully
                 // removed. Search input below is the only filter affordance.
