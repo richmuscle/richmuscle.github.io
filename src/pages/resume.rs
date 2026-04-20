@@ -186,7 +186,7 @@ pub fn ResumePage() -> impl IntoView {
                             (
                                 "Hardened Cloud Landing Zone (IaC)",
                                 "Tags: Terraform, GCP, GCS Backend, NIST 800-53",
-                                "Summary: Engineered a secure, modular landing zone using Terraform and GCP. Implemented GCS remote state-locking and architected \"Private-First\" VPCs with zero public-facing entry points, aligned with NIST 800-53 security controls.",
+                                "Summary: Built a secure, modular landing zone using Terraform and GCP. Implemented GCS remote state-locking and designed \"Private-First\" VPCs with zero public-facing entry points, aligned with NIST 800-53 security controls.",
                                 vec!["Terraform", "GCP", "GCS Backend", "NIST 800-53"],
                             ),
                             (
@@ -198,13 +198,13 @@ pub fn ResumePage() -> impl IntoView {
                             (
                                 "Multi-Tier Strategic Observability Pipeline",
                                 "Tags: Prometheus, ELK Stack, Grafana, SLO/SLI",
-                                "Summary: Architected a multi-tier observability pipeline using Prometheus and ELK. Integrated Logstash filters for security-context enrichment and designed Grafana dashboards mapping technical metrics to operational SLOs.",
+                                "Summary: Built a multi-tier observability pipeline using Prometheus and ELK. Integrated Logstash filters for security-context enrichment and designed Grafana dashboards mapping technical metrics to operational SLOs.",
                                 vec!["Prometheus", "ELK Stack", "Grafana", "SLO/SLI"],
                             ),
                             (
                                 "Zero-Trust Administrative Fabric",
                                 "Tags: WireGuard, AWS VPC, Active Directory, NIST 800-207",
-                                "Summary: Engineered an identity-based SASE administrative fabric using WireGuard and AWS. Implemented MSS clamping to prevent packet fragmentation across cloud boundaries and integrated out-of-band peer authorization via Active Directory.",
+                                "Summary: Deployed an identity-based ZTNA administrative fabric using WireGuard and AWS. Implemented MSS clamping to prevent packet fragmentation across cloud boundaries and integrated out-of-band peer authorization via Active Directory.",
                                 vec!["WireGuard", "AWS VPC", "Active Directory", "NIST 800-207"],
                             ),
                         ].into_iter().map(|(title, subtitle, summary, stack)| {
