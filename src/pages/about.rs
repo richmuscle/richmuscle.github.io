@@ -80,25 +80,19 @@ pub fn AboutPage() -> impl IntoView {
                     </div>
                 </section>
 
-                <blockquote class="about-quote" style="border-left:2px solid #22d3ee;padding:28px 36px;margin:0 0 72px 0;background:#080c14;border-radius:0 8px 8px 0;font-style:normal;">
-                    <p style="font-size:15px;color:#94a3b8;line-height:1.9;margin:0;">
-                        "The professionals I admire most can automate a repetitive onboarding workflow, debug a complex Active Directory sync issue, and maintain high-availability systems with quiet precision. That is the range I operate in: reliable, automation-focused, operationally grounded. I built and shipped a Rust/WASM portfolio with SQLite FFI and self-gated CI to demonstrate, not declare, that standard."
-                    </p>
-                </blockquote>
-
                 <section style="margin-top:48px;">
                     <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-                        <h2 style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;margin:0;">"How I Think About Systems"</h2>
+                        <h2 style="font-size:9px;font-weight:600;letter-spacing:0.2em;color:#22d3ee;font-family:'JetBrains Mono',monospace;white-space:nowrap;margin:0;">"How I Operate"</h2>
                         <div style="flex:1;height:1px;background:#1a2540;"></div>
                     </div>
-                    <p style="font-size:14px;color:var(--text-secondary);line-height:1.9;margin:0 0 16px 0;">
-                        "Every system I manage starts with the question: how will I know when this is failing? Before deploying a configuration change, I verify the monitoring and alerting stack. A system without clear visibility into its logs and health metrics is an operational risk. I prioritize observability to ensure that I can identify and resolve issues before they impact the end-user experience. (See the Prometheus/Grafana SLO pipeline lab; the portfolio's own telemetry page instruments LCP and heap metrics as a live example.)"
+                    <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin:0 0 16px 0;">
+                        "Every system I run gets its observability wired before it gets anything else. When a change lands, I want to know what it affected before the next ticket comes in. The tradeoff is upfront time — instrumenting a service takes longer than just deploying it — and I pay that cost on purpose, because the alternative is debugging production in the dark. The portfolio's telemetry page instruments LCP, heap, TTFB, and network probes as a live example; the Prometheus and ELK lab does the same pattern at infrastructure scale."
                     </p>
-                    <p style="font-size:14px;color:var(--text-secondary);line-height:1.9;margin:0 0 16px 0;">
-                        "I am drawn to systems that are predictable and well-documented. In production environments, consistency is the key to stability. I believe in minimizing manual intervention through scripting and Infrastructure as Code (IaC). By standardizing deployments and eliminating configuration drift, we ensure that infrastructure remains reliable as it scales. (See the Terraform GCP landing zone — modular, remote-state, policy-validated, CIS-aligned.)"
+                    <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin:0 0 16px 0;">
+                        "I don't do manual changes to systems I expect to run twice. If a task is worth doing once by hand, it's worth the next hour writing it as code — Bash when the scope is small and local, Terraform when the scope is infrastructure, PowerShell when it's a Windows domain. First runs cost more: my Terraform landing zone took longer to build than console click-through would have. The return is that the second environment costs me five minutes, the tenth is free, and every one of them is auditable."
                     </p>
-                    <p style="font-size:14px;color:var(--text-secondary);line-height:1.9;margin:0 0 48px 0;">
-                        "The core infrastructure—Active Directory, Linux, and Cloud services—should be the reliable foundation of any organization. The interesting work is making these systems more efficient: managing secure identity fabrics (IAM), automating user lifecycles with PowerShell and Bash, and ensuring that security and compliance are baked into every workflow. I want to handle the technical complexities so that the infrastructure remains a reliable service for the business. (See the Active Directory + GPO + WireGuard zero-trust lab; PowerShell identity lifecycle automation.)"
+                    <p style="color:#94a3b8;font-size:15px;line-height:1.9;max-width:620px;margin:0 0 48px 0;">
+                        "Security and identity are not a layer I add at the end. The zero-trust lab is built around AD-gated WireGuard tunnels because adding identity to a network that didn't start with it means undoing assumptions everywhere. The Terraform baseline runs CIS checks on every apply, not quarterly. The tradeoff is that early decisions constrain later ones — I can't trivially add a service that doesn't fit the access model — and that constraint is the point. Boundaries I can't slip past are the ones that hold."
                     </p>
                 </section>
 
