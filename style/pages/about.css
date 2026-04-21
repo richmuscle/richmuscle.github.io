@@ -57,11 +57,6 @@
     padding: 21px 21px !important;
   }
 
-  /* Adjacent-technologies pill row: 72px → 34px bottom gap. */
-  .about-pills-row {
-    margin-bottom: 34px !important;
-    gap: 6px !important;
-  }
 
   /* Tighten top-of-wrap divider spacing and contact bar above footer. */
   .about-wrap > section + section,

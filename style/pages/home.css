@@ -1,8 +1,4 @@
 
-html.light .cert-row {
-  border-bottom-color: var(--border-subtle);
-}
-
 html.light .category-desc {
   color: var(--text-muted);
 }
@@ -107,100 +103,8 @@ html.light .category-desc {
 }
 
 /* Certifications (home page) */
-.home-page-wrap .certifications-section {
-  border-top: 1px solid var(--border);
-  padding-top: 55px;
-  content-visibility: auto;
-  contain-intrinsic-size: 0 400px;
-}
-.cert-section-header {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin-bottom: 34px;
-}
-.cert-section-name {
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent-cyan);
-  margin: 0;
-}
-.cert-section-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-.cert-list { }
-.home-page-wrap .certifications-section .cert-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--border);
-}
-.cert-name {
-  font-size: 13px;
-  color: var(--text-primary);
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.cert-issuer {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin: 0 13px;
-  flex-shrink: 0;
-}
-.cert-status {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-.cert-status-pursuing {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid #3b82f6;
-  color: #3b82f6;
-}
-.cert-status-studying {
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid #8b5cf6;
-  color: #8b5cf6;
-}
-.cert-status-interested,
-.cert-status-completed {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid #10b981;
-  color: #10b981;
-}
-.cert-status-default {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-}
-
 /* Legacy .home-footer rules removed — superseded by the site-wide
    .site-footer component (style/components/site-footer.css). */
-
-/* ── CERTIFICATIONS ──────────────────────────────────────────── */
-.cert-row {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.cert-row:last-child {
-  border-bottom: none;
-}
 
 /* ── 3. HOME HERO + layout (max-width: 768px) ───────────────────── */
 @media (max-width: 768px) {
@@ -305,33 +209,3 @@ html.light .category-desc {
   }
 }
 
-/* ── Certifications: stack on narrow viewports ───────────────────── */
-@media (max-width: 640px) {
-  .home-page-wrap .certifications-section .cert-row {
-    flex-wrap: wrap;
-    gap: 4px 13px;
-    padding: 13px 0;
-    align-items: baseline;
-  }
-  .home-page-wrap .certifications-section .cert-name {
-    flex: 1 1 auto;
-    min-width: 0;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-    font-size: 13px;
-    line-height: 1.4;
-    order: 1;
-  }
-  .home-page-wrap .certifications-section .cert-status {
-    order: 2;
-    margin-left: auto;
-  }
-  .home-page-wrap .certifications-section .cert-issuer {
-    flex: 1 1 100%;
-    order: 3;
-    margin: 0;
-    font-size: 12px;
-    line-height: 1.5;
-  }
-}
