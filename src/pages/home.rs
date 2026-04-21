@@ -1,7 +1,6 @@
 use crate::components::ProjectCard;
 use crate::data::{
-    get_certifications, get_infrastructure_fleet, ProjectCardSignals, ProjectCategory, GITHUB_URL,
-    PROFESSIONAL_TITLE,
+    get_infrastructure_fleet, ProjectCardSignals, ProjectCategory, GITHUB_URL, PROFESSIONAL_TITLE,
 };
 use crate::GlobalAppState;
 use leptos::*;
@@ -11,38 +10,6 @@ use leptos_router::A;
 // ============================================================
 //  HOME PAGE
 // ============================================================
-
-#[component]
-fn CertificationsSection() -> impl IntoView {
-    let certs = store_value(get_certifications());
-    view! {
-        <section class="certifications-section">
-            <div class="cert-section-header">
-                <p class="cert-section-name">"Professional Development"</p>
-                <div class="cert-section-line"></div>
-            </div>
-            <div role="list" aria-label="Certifications" class="cert-list">
-                {certs.get_value().clone().into_iter().map(|cert| {
-                    let status_class = match cert.status.as_str() {
-                        "Completed"  => "cert-status cert-status-completed",
-                        "Pursuing"   => "cert-status cert-status-pursuing",
-                        "Studying"   => "cert-status cert-status-studying",
-                        "Planned"    => "cert-status cert-status-interested",
-                        "Interested" => "cert-status cert-status-interested",
-                        _            => "cert-status cert-status-default",
-                    };
-                    view! {
-                        <div role="listitem" class="cert-row">
-                            <span class="cert-name">{cert.name.clone()}</span>
-                            <span class="cert-issuer">{cert.issuer.clone()}</span>
-                            <span class=status_class>{cert.status.clone()}</span>
-                        </div>
-                    }
-                }).collect_view()}
-            </div>
-        </section>
-    }
-}
 
 #[component]
 pub fn HomePage() -> impl IntoView {
@@ -259,8 +226,6 @@ pub fn HomePage() -> impl IntoView {
                         }).collect_view()
                     }
                 </section>
-
-                <CertificationsSection />
 
                 // Site-wide footer is now rendered globally via <SiteFooter />
                 // in lib.rs App. Previously this page owned its own footer;

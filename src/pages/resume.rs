@@ -120,22 +120,18 @@ pub fn ResumePage() -> impl IntoView {
                                 <span>"• Built and shipped a Rust + Leptos + WASM32 portfolio (5,705 LOC, SQLite FFI with 12 unsafe blocks and AtomicU64 telemetry counters) deployed via Trunk to GitHub Pages with a 4-target cargo-check CI matrix."</span><br/>
                                 <span>"• Operating a 12-tool SOC homelab on bare metal — Wazuh, Suricata, Falco, TheHive, MISP, n8n SOAR — end-to-end detection/response pipeline."</span><br/>
                                 <span>"• Authoring IaC labs: Terraform GCP landing zone (CIS-aligned, policy-validated), WireGuard + AD zero-trust fabric, Prometheus/Grafana SLO-aligned monitoring pipeline."</span><br/>
-                                <span>"• Pursuing GCP Associate Cloud Engineer (target: Q3 2026) and Certified Kubernetes Administrator (target: Q4 2026)."</span><br/>
                                 <span>"• Concurrent income: Product Brand Ambassador at Club Demonstration Services (Costco wholesale partner) — non-technical, disclosed for continuity."</span>
                             </p>
                         </div>
                     </div>
                 </section>
 
-                // ── CERTIFICATIONS ──
+                // ── TRAINING ──
                 <section class="mb-10">
-                    <h2 class="text-[11px] font-mono font-semibold text-[var(--accent-cyan)] uppercase tracking-[0.15em] mb-4">"Certifications"</h2>
+                    <h2 class="text-[11px] font-mono font-semibold text-[var(--accent-cyan)] uppercase tracking-[0.15em] mb-4">"Training"</h2>
                     <div class="space-y-2">
                         <p class="text-[13px] text-[var(--text-secondary)] font-mono">
-                            "• GCP Associate Cloud Engineer — Pursuing (target exam: Q3 2026)"
-                        </p>
-                        <p class="text-[13px] text-[var(--text-secondary)] font-mono">
-                            "• Certified Kubernetes Administrator — Pursuing (target exam: Q4 2026)"
+                            "• Cisco Networking Academy — CCNA track, four courses completed (2018–2019). No exam taken."
                         </p>
                     </div>
                 </section>

@@ -1,15 +1,13 @@
 //! Static data, types, and shared constants.
 //!
-//! Split into topical submodules (`projects`, `writeups`, `certs`); this file
+//! Split into topical submodules (`projects`, `writeups`); this file
 //! holds shared profile constants and small cross-cutting types, then
 //! `pub use`-re-exports each submodule so existing `use crate::data::*` paths
 //! continue to resolve unchanged.
 
-pub mod certs;
 pub mod projects;
 pub mod writeups;
 
-pub use certs::*;
 pub use projects::*;
 pub use writeups::*;
 

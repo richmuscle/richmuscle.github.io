@@ -141,11 +141,9 @@ pub fn OnePageSummary() -> impl IntoView {
                         </p>
                     </div>
                     <div class="one-pager-edu-divider" aria-hidden="true"></div>
-                    <p class="one-pager-h2">"Currently Studying"</p>
-                    <ul class="one-pager-edu-list one-pager-edu-list-certs">
-                        <li><span class="one-pager-edu-label">"GCP ACE"</span>" — Google Cloud Associate Cloud Engineer (Target Q3 2026)"</li>
-                        <li><span class="one-pager-edu-label">"CKA"</span>" — Certified Kubernetes Administrator (Target Q4 2026)"</li>
-                        <li><span class="one-pager-edu-label">"Cisco CCNA"</span>" — Networking Academy Coursework (2018–2019)"</li>
+                    <p class="one-pager-h2">"Training"</p>
+                    <ul class="one-pager-edu-list">
+                        <li><span class="one-pager-edu-label">"Cisco Networking Academy"</span>" — CCNA track, four courses completed (2018–2019). No exam taken."</li>
                     </ul>
                 </section>
 
