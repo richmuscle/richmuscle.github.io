@@ -39,9 +39,9 @@ Infrastructure-focused engineer with hands-on IaC, observability, and zero-trust
 Operated as a self-managed platform engineer: designed, provisioned, and maintained a multi-project homelab environment spanning GCP cloud infrastructure, a 12-tool SOC stack, and a production-shipped web application.
 
 - **Provisioned a CIS-aligned GCP landing zone** using Terraform: 5+ encapsulated modules covering VPC, IAM service accounts, Compute, Cloud NAT, and Secret Manager; GCS remote state with locking prevents concurrent drift; enforces NIST 800-53 (AC, IA, SC) controls from first apply, reducing environment setup time from hours to under 5 minutes.
-- **Deployed and tuned a Prometheus + ELK observability stack** across a hybrid-cloud homelab: engineered PromQL alerting rules targeting memory, disk I/O, and network saturation; Logstash filters cut non-actionable alert noise by 60%; Grafana dashboards map SLI signals to SLO impact classes, reducing triage MTTR from minutes to seconds.
+- **Deployed and tuned a Prometheus + ELK observability stack** across a hybrid-cloud homelab: wrote PromQL alerting rules targeting memory, disk I/O, and network saturation; Logstash filters cut non-actionable alert noise by 60%; Grafana dashboards map SLI signals to SLO impact classes, reducing triage MTTR from minutes to seconds.
 - **Shipped a production CI/CD pipeline** (GitHub Actions → Trunk → GitHub Pages) for a Rust/WASM portfolio application: automated release builds on every merge to `revamp`, zero-touch deploy to Pages, 5,705 Rust LOC compiled to wasm32-unknown-unknown; demonstrates end-to-end ownership from code to deployment.
-- **Engineered a zero-trust administrative fabric** (WireGuard + AWS VPC + Active Directory LDAP): eliminated the public bastion host, applied NIST 800-207 micro-segmentation (Admin Peer reaches DB-Proxy, not DB-Master), MSS clamping at 1280 bytes ensures 100% tunnel stability across cloud boundaries; administrative session overhead under 15 ms.
+- **Built a zero-trust administrative fabric** (WireGuard + AWS VPC + Active Directory LDAP): eliminated the public bastion host, applied NIST 800-207 micro-segmentation (Admin Peer reaches DB-Proxy, not DB-Master), MSS clamping at 1280 bytes ensures 100% tunnel stability across cloud boundaries; administrative session overhead under 15 ms.
 - **Maintained a 12-tool SOC homelab** (Wazuh, Suricata, Falco, MISP, n8n SOAR) as a live observability and incident-response environment; directly maps to enterprise SIEM/SOAR stacks used in production SecOps deployments.
 
 Concurrent: Product Brand Ambassador, Club Demonstration Services (Costco Wholesale Partner) — income continuity, non-technical.
@@ -57,12 +57,11 @@ Concurrent: Product Brand Ambassador, Club Demonstration Services (Costco Wholes
 
 ### Student SOC Analyst (Internship) — PISCES Security Operations Center — Mar 2024–Jun 2024
 
-Early hands-on exposure to production observability and incident response at regional government scale.
+Academic SOC rotation — exposure to production SOC operations, not operator tenure.
 
-- **Owned ELK Stack monitoring** across 13 municipal government entities during shift rotations: triaged alerts from Elasticsearch/Kibana dashboards, applied KQL log correlation to isolate anomalous network and endpoint activity.
-- **Escalated and documented incidents** for SOC leadership and municipal stakeholders: authored structured incident summaries translating technical signals into actionable briefs — same artifact type as post-incident review (PIR) documentation in SRE workflows.
-- **Applied KQL-based log analysis** to identify threat patterns across production municipal infrastructure, building the query and correlation skills that underpin modern observability and SIEM alert hygiene.
-- Operated in a team SOC environment with defined escalation tiers, demonstrating shift-discipline and chain-of-custody documentation habits expected in on-call engineering roles.
+- Observed analysts triaging alerts across 13 municipal network feeds on the ELK stack during shift rotations.
+- Built visualizations in Kibana as the rotation's hands-on deliverable; worked the ticketing system alongside the analyst shift, tracking how cases moved from alert to resolution.
+- Did not author detections, run shifts, or produce stakeholder briefs. What the rotation taught was how a SOC functions in practice — the cadence of triage, the structure of escalation, the texture of noise versus signal.
 
 ---
 

@@ -50,10 +50,11 @@ Systems Administrator with a BS in IT & Administrative Management (Cybersecurity
 
 ### Student SOC Analyst (Internship) — PISCES SOC — Mar 2024–Jun 2024
 
-- Monitored live network telemetry across 13 municipal government entities using ELK Stack (Elasticsearch, Logstash, Kibana), triaging ~30–50 alerts per shift rotation.
-- Performed KQL-based log analysis to surface anomalous Windows event log activity and endpoint behavioral deviations; escalated confirmed incidents to senior analysts within a 15-minute SLA target.
-- Enforced RBAC review workflows as part of access-hygiene rounds — flagged stale service accounts and over-privileged identities for remediation across municipal Active Directory environments.
-- Authored incident summary briefs for SOC leadership and municipal stakeholders, documenting triage decisions, escalation rationale, and recommended hardening actions.
+Academic SOC rotation — exposure to production SOC operations, not operator tenure.
+
+- Observed analysts triaging alerts across 13 municipal network feeds on the ELK stack during shift rotations.
+- Built visualizations in Kibana as the rotation's hands-on deliverable; worked the ticketing system alongside the analyst shift, tracking how cases moved from alert to resolution.
+- Did not author detections, run shifts, or produce stakeholder briefs. What the rotation taught was how a SOC functions in practice — identity hygiene rounds, triage cadence, escalation structure.
 
 ---
 

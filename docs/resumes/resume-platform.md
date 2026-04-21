@@ -51,10 +51,11 @@ Systems-curious platform engineer shipping Rust/WASM with managed unsafe FFI; SO
 
 ### Student SOC Analyst (Internship) — PISCES SOC — Mar 2024–Jun 2024
 
-- Monitored live security telemetry across 13 municipal government entities using the ELK Stack (Elasticsearch, Logstash, Kibana) during shift rotations.
-- Triaged and escalated alerts from Kibana dashboards; authored KQL-based detection queries to identify anomalous network and endpoint behavior.
-- Produced incident summary briefs and escalation documentation for SOC leadership and municipal stakeholders across a regulated public-sector environment.
-- Operated under real-incident conditions with production infrastructure serving government endpoints — not a sandbox simulation.
+Academic SOC rotation — exposure to production SOC operations, not operator tenure.
+
+- Observed analysts triaging alerts across 13 municipal network feeds on the ELK stack during shift rotations.
+- Built visualizations in Kibana as the rotation's hands-on deliverable; worked the ticketing system alongside the analyst shift, tracking how cases moved from alert to resolution.
+- Did not author detections, run shifts, or produce stakeholder briefs. What the rotation taught was how a SOC functions in practice at regional government scale.
 
 ---
 
