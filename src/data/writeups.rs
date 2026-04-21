@@ -166,7 +166,7 @@ fn init_writeups_index() -> Vec<WriteUpIndex> {
             is_core: true,
             is_demoted: false,
             pdf_url: None,
-            summary: "Declarative lab provisioning with PowerShell and AutomatedLab: Windows Server 2022, Active Directory schema architecture, GPO governance testing, and virtual network sovereignty for safe experimentation.",
+            summary: "AutomatedLab + Windows Server 2022 lab provisioning — what running an AD environment end-to-end teaches, deliberately scoped to lab work and not production-scale operations.",
             read_time: "8 min read",
         },
     ]
