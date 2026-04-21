@@ -94,10 +94,10 @@ pub fn ResumePage() -> impl IntoView {
                             <span class="resume-timeline-label">"PISCES Security Operations Center (SOC)"</span>
                             <p class="resume-timeline-detail">
                                 <span>"Role: Student SOC Analyst (Internship)"</span><br/>
-                                <span>"• Triaged ~50 alerts/day across 13 municipal entities' ELK Stack deployments; escalated ~3–5 incidents/week to senior analysts."</span><br/>
-                                <span>"• Authored KQL detection logic for anomalous endpoint behavior and lateral movement indicators."</span><br/>
-                                <span>"• Produced weekly incident briefs summarizing environment-wide threat landscape for SOC leadership and municipal stakeholders."</span><br/>
-                                <span>"• Maintained ELK Stack dashboards and correlation searches during shift rotations."</span>
+                                <span>"• Academic SOC rotation — exposure to production SOC operations, not operator tenure. Observed analysts triaging alerts across 13 municipal network feeds on the ELK stack."</span><br/>
+                                <span>"• Built visualizations in Kibana against the environment's log indices — index patterns, saved searches, dashboard panels — as the rotation's hands-on deliverable."</span><br/>
+                                <span>"• Worked the ticketing system alongside the analyst shift: reading queued tickets, following triage workflow end-to-end, tracking how cases moved from alert to resolution."</span><br/>
+                                <span>"• Did not author detections, run shifts, or produce stakeholder briefs. What the rotation taught was how a SOC functions in practice — the shape of alert noise, the discipline of ticket hygiene, the feel of production-scale observability."</span>
                             </p>
                         </div>
                         <div class="resume-timeline-dot-item">
