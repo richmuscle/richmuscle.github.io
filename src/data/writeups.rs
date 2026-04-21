@@ -154,7 +154,7 @@ fn init_writeups_index() -> Vec<WriteUpIndex> {
             is_core: true,
             is_demoted: false,
             pdf_url: None,
-            summary: "Foundational networking via Cisco IOS: VLSM subnetting for environment isolation, MAC-based port security, and bottom-up OSI troubleshooting as the bedrock of infrastructure operations.",
+            summary: "High-school CCNA-track coursework — what foundational networking literacy gives you in 2026, and what it doesn't.",
             read_time: "7 min read",
         },
         WriteUpIndex {

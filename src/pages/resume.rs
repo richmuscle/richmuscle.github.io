@@ -131,7 +131,7 @@ pub fn ResumePage() -> impl IntoView {
                     <h2 class="text-[11px] font-mono font-semibold text-[var(--accent-cyan)] uppercase tracking-[0.15em] mb-4">"Training"</h2>
                     <div class="space-y-2">
                         <p class="text-[13px] text-[var(--text-secondary)] font-mono">
-                            "• Cisco Networking Academy — CCNA track, four courses completed (2018–2019). No exam taken."
+                            "• Cisco Networking Academy — CCNA track, four courses completed (2018–2019). Sat the CCNA exam, did not pass."
                         </p>
                     </div>
                 </section>

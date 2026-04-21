@@ -143,7 +143,7 @@ pub fn OnePageSummary() -> impl IntoView {
                     <div class="one-pager-edu-divider" aria-hidden="true"></div>
                     <p class="one-pager-h2">"Training"</p>
                     <ul class="one-pager-edu-list">
-                        <li><span class="one-pager-edu-label">"Cisco Networking Academy"</span>" — CCNA track, four courses completed (2018–2019). No exam taken."</li>
+                        <li><span class="one-pager-edu-label">"Cisco Networking Academy"</span>" — CCNA track, four courses completed (2018–2019). Sat the CCNA exam, did not pass."</li>
                     </ul>
                 </section>
 
