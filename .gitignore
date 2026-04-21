@@ -8,3 +8,4 @@
 .claude/
 /tmp/
 *.iml
+.claudedoc/
