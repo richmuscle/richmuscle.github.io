@@ -142,7 +142,7 @@ fn init_writeups_index() -> Vec<WriteUpIndex> {
             is_core: true,
             is_demoted: false,
             pdf_url: None,
-            summary: "Operational SOC observability at PISCES International: ELK Stack log aggregation, KQL semantic search for APT detection, temporal correlation of IDS alerts with outbound traffic, and MantisBT for incident state tracking.",
+            summary: "Dashboard work and first-line ticketing during an academic SOC rotation — what observability looks like from the upstream side of detection.",
             read_time: "10 min read",
         },
         WriteUpIndex {
