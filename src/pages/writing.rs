@@ -276,10 +276,7 @@ pub fn WriteupDetailPage() -> impl IntoView {
                                                 .replace("SECTION_02: THE STRATEGIC NARRATIVE (LaTeX View)", "FULL NARRATIVE")
                                                 .replace("SECTION_02: THE STRATEGIC NARRATIVE", "FULL NARRATIVE")
                                                 .replace("[DOWNLOAD_STRATEGIC_WHITE_PAPER_//_PDF]", "Download Strategic Brief (PDF)")
-                                                .replace("[DOWNLOAD_WHITE_PAPER_PDF]", "Download Strategic Brief (PDF)")
-                                                .replace("AUTHOR: Senior Principal Platform Architect", "AUTHOR: Richard Mussell — Principal Platform Architect")
-                                                .replace("// ARCHITECT'S SEAL // RICHARD MUSSELL // PRINCIPAL ARCHITECT", "Richard Mussell — Principal Platform Architect")
-                                                .replace("// ARCHITECT'S SEAL // Richard Mussell // PRINCIPAL ARCHITECT", "Richard Mussell — Principal Platform Architect");
+                                                .replace("[DOWNLOAD_WHITE_PAPER_PDF]", "Download Strategic Brief (PDF)");
                                             view! {
                                                 <article class="wu-prose" inner_html=content/>
                                             }
