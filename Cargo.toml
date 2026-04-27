@@ -36,7 +36,7 @@ web-sys     = { version = "0.3", features = [
     "KeyboardEvent", "Navigator", "Window"
 ] }
 js-sys      = "0.3"
-gloo-net    = { version = "0.5", features = ["http"] }
+gloo-net    = { version = "0.6", features = ["http"] }
 gloo-timers = { version = "0.3", features = ["futures"] }
 getrandom   = { version = "0.2", features = ["js"] }
 sqlite-wasm-rs = { version = "0.5.2", optional = true }
