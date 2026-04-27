@@ -1389,7 +1389,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlite-wasm-rs",
- "thiserror 1.0.69",
+ "thiserror 2.0.18",
  "tokio",
  "web-sys",
 ]
